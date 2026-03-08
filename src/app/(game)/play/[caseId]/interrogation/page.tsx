@@ -239,10 +239,10 @@ function LogModal({
               <p className="mb-1 text-xs text-gray-500">過去の尋問の記録。今回と食い違いがあれば矛盾として突ける。</p>
               {previousConversation.map((m, i) =>
                 m.role === 'divider' ? (
-                  <div key={i} className="flex items-center gap-2 py-1">
-                    <div className="h-px flex-1 bg-gray-700" />
-                    <span className="text-xs text-gray-500">{m.content}</span>
-                    <div className="h-px flex-1 bg-gray-700" />
+                  <div key={i} className="sticky top-0 z-10 py-2">
+                    <div className="rounded-lg bg-yellow-950/80 border border-yellow-700/60 px-3 py-1.5 text-center backdrop-blur-sm">
+                      <span className="text-xs font-bold text-yellow-400 tracking-wide">{m.content}</span>
+                    </div>
                   </div>
                 ) : (
                   <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>

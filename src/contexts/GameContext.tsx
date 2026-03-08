@@ -66,15 +66,16 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
               .map((m) => m.content)
               .slice(-10);
             setPreviousTestimony(criminalMessages);
-            // 表示用：全セッションを古い順に並べ、セッション境界にラベルを挿入
-            const chronological = [...prevSessions].reverse();
+            // 表示用：新しい順（prevSessionsはすでに新しい順）でラベルを挿入
+            const total = prevSessions.length;
             const conversation: PreviousMessage[] = [];
-            chronological.forEach((sess, idx) => {
+            prevSessions.forEach((sess: { createdAt: string; messages?: { role: string; content: string }[] }, idx: number) => {
               const msgs: { role: string; content: string }[] = sess.messages ?? [];
               const date = new Date(sess.createdAt).toLocaleDateString('ja-JP', {
                 month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
               });
-              conversation.push({ role: 'divider', content: `第${idx + 1}回目の尋問（${date}）` });
+              const label = idx === 0 ? `最新の尋問（${date}）` : `第${total - idx}回目の尋問（${date}）`;
+              conversation.push({ role: 'divider', content: label });
               msgs.slice(1).forEach((m) => {
                 conversation.push({ role: m.role as 'player' | 'criminal', content: m.content });
               });
