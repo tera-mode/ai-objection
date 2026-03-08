@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ユーザードキュメント
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ゲームセッションドキュメント
+    match /gameSessions/{sessionId} {
+      // 認証済みユーザーは自分のセッションのみ読み取り可能
+      allow read: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+
+      // 認証済みユーザーは自分のセッションのみ作成・更新可能
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+
+      // 削除は不可
+      allow delete: if false;
+    }
+
+    // ケースメタデータ（公開情報のみ）
+    match /cases/{caseId} {
+      // 認証済みユーザーは読み取り可能
+      allow read: if request.auth != null;
+      // 書き込みは不可（サーバーサイドのみ）
+      allow write: if false;
+    }
+
+    // その他はデフォルトで拒否
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
