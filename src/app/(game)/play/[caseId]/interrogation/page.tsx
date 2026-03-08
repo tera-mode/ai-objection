@@ -205,6 +205,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showEvidence, setShowEvidence] = useState(false);
   const [showLog, setShowLog] = useState(false);
+  const [showObjection, setShowObjection] = useState(false);
+  const prevMessageCountRef = useRef(0);
 
   const meta = CASE_META[caseId];
 
@@ -224,6 +226,21 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     }
   }, [session?.phase, caseId, router]);
 
+  // 矛盾検知 → 「異議あり！」演出
+  useEffect(() => {
+    if (!session) return;
+    const messages = session.messages;
+    if (messages.length <= prevMessageCountRef.current) return;
+    prevMessageCountRef.current = messages.length;
+
+    const latest = messages[messages.length - 1];
+    if (latest?.role === 'criminal' && latest.contradiction) {
+      setShowObjection(true);
+      const timer = setTimeout(() => setShowObjection(false), 1800);
+      return () => clearTimeout(timer);
+    }
+  }, [session?.messages]);
+
   if (!session || !meta) return null;
 
   const isGameOver = session.isCompleted || session.turn >= 15;
@@ -231,6 +248,27 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
   return (
     <div className="flex h-dvh flex-col bg-gray-950">
+      {/* 異議あり！オーバーレイ */}
+      {showObjection && (
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
+          <p
+            className="select-none text-6xl font-black tracking-tight text-red-500 drop-shadow-[0_0_24px_rgba(239,68,68,0.8)]"
+            style={{ animation: 'objection 1.8s ease-out forwards' }}
+          >
+            異議あり！
+          </p>
+          <style>{`
+            @keyframes objection {
+              0%   { opacity: 0; transform: scale(0.4) rotate(-6deg); }
+              15%  { opacity: 1; transform: scale(1.15) rotate(2deg); }
+              30%  { transform: scale(1.0) rotate(0deg); }
+              70%  { opacity: 1; }
+              100% { opacity: 0; transform: scale(1.05); }
+            }
+          `}</style>
+        </div>
+      )}
+
       {/* ヘッダー: ターン数・コヒーレンス */}
       <div className="shrink-0 border-b border-gray-800 bg-gray-900 px-4 py-2">
         <div className="mx-auto flex max-w-md flex-col gap-1.5">
