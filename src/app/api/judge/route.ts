@@ -40,7 +40,12 @@ export async function POST(request: NextRequest) {
     const rawResponse = result.text ?? '';
     const judgeResult = parseJudgeResponse(rawResponse);
 
-    return NextResponse.json(judgeResult);
+    return NextResponse.json({
+      hasContradiction: judgeResult.hasContradiction,
+      contradictionDetail: judgeResult.contradictionDetail,
+      coherenceChange: judgeResult.coherenceChange,
+      proofLevel: judgeResult.proofLevel,
+    });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('Judge error:', msg);

@@ -179,34 +179,14 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         content: m.content,
       }));
 
-      // CriminalAIを呼び出す
-      const criminalRes = await authenticatedFetch('/api/criminal-response', {
-        method: 'POST',
-        body: JSON.stringify({
-          sessionId: session.sessionId,
-          message,
-          caseId: session.caseId,
-          coherence: session.coherence,
-          conversationHistory: conversationHistory.slice(0, -1),
-          previousTestimony,
-        }),
-      });
-
-      if (!criminalRes.ok) {
-        const errData = await criminalRes.json().catch(() => ({}));
-        throw new Error(`Criminal response failed: ${errData.error ?? criminalRes.status}`);
-      }
-
-      const { response: criminalResponse } = await criminalRes.json();
-
-      // JudgeAIを呼び出す
+      // 1. JudgeAIを先に呼び出してproofLevelを取得
       const judgeRes = await authenticatedFetch('/api/judge', {
         method: 'POST',
         body: JSON.stringify({
           sessionId: session.sessionId,
           caseId: session.caseId,
           playerMessage: message,
-          criminalResponse,
+          criminalResponse: '',
           conversationHistory,
           previousTestimony,
         }),
@@ -217,7 +197,28 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error(`Judge response failed: ${errData.error ?? judgeRes.status}`);
       }
 
-      const { hasContradiction, contradictionDetail, coherenceChange } = await judgeRes.json();
+      const { hasContradiction, contradictionDetail, coherenceChange, proofLevel } = await judgeRes.json();
+
+      // 2. proofLevelをCriminalAIに渡して返答を生成
+      const criminalRes = await authenticatedFetch('/api/criminal-response', {
+        method: 'POST',
+        body: JSON.stringify({
+          sessionId: session.sessionId,
+          message,
+          caseId: session.caseId,
+          coherence: session.coherence,
+          conversationHistory: conversationHistory.slice(0, -1),
+          previousTestimony,
+          proofLevel: proofLevel ?? 'none',
+        }),
+      });
+
+      if (!criminalRes.ok) {
+        const errData = await criminalRes.json().catch(() => ({}));
+        throw new Error(`Criminal response failed: ${errData.error ?? criminalRes.status}`);
+      }
+
+      const { response: criminalResponse } = await criminalRes.json();
 
       const newCoherence = Math.max(0, Math.min(100, session.coherence + coherenceChange));
 

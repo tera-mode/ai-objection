@@ -4,6 +4,7 @@ export interface JudgeResult {
   hasContradiction: boolean;
   contradictionDetail: string | null;
   coherenceChange: number; // -30〜+5
+  proofLevel: 'none' | 'partial' | 'confirmed';
 }
 
 /**
@@ -45,7 +46,7 @@ ${timelineText}
 【物証一覧】
 ${evidenceText}
 
-【犯人のカバーストーリーの弱点】
+【犯人のカバーストーリーが崩れる弱点】
 ${weaknessText}
 
 【これまでの会話（最新10件）】
@@ -53,38 +54,43 @@ ${historyText}
 
 【今回の判定対象】
 プレイヤーの発言: ${playerMessage}
-犯人の返答: ${criminalResponse}
+${criminalResponse ? `犯人の返答: ${criminalResponse}` : ''}
 
-${previousTestimony.length > 0 ? `【前回の尋問での容疑者の証言（今回の返答がこれと矛盾していれば、プレイヤーが指摘していなくても矛盾と判定してよい）】
+${previousTestimony.length > 0 ? `【前回の尋問での証言（矛盾があれば判定に含める）】
 ${previousTestimony.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 
 ` : ''}【最重要ルール】
-- 判定対象は「プレイヤーの発言」のみ。犯人の返答に矛盾が含まれていても、プレイヤーがそれを指摘していなければ has_contradiction: false にすること
-- 犯人が自分でボロを出した場合でも、プレイヤーが指摘していなければ矛盾判定しない
+- 判定するのは「プレイヤーの発言の正しさ」のみ
+- 犯人が巧みに言い訳しても、事実と矛盾していれば has_contradiction: true
+- 単なる質問・感情的攻撃・根拠のない推測は has_contradiction: false
 
-【判定基準】
-- プレイヤーの発言が「具体的な物証・タイムラインの事実」を根拠に犯人の証言の矛盾を突いている場合のみ矛盾判定する
-- 以下はすべて矛盾判定しない（has_contradiction: false, coherence_change: +5）:
-  - 普通の質問（「あの日どこにいましたか？」「事件について教えてください」など）
-  - 感情的な攻撃（「嘘つき！」「怪しい！」など）
-  - あいまいな疑惑（「何か隠していますよね」など）
-  - 犯人が否定するだけで済む指摘
-  - 証拠と直接つながらない推測
-- 矛盾と判定する条件（1と2を両方満たせば矛盾。犯人の言い訳は判定に影響しない）:
-  1. プレイヤーが具体的な物証・証拠・タイムラインの事実を根拠にしている
-  2. その根拠が、ワールドステート（真実）に照らして犯人の証言と客観的に矛盾している
-  ※ 犯人が巧みに言い訳しても、事実と矛盾していれば has_contradiction: true にすること
-  ※ 犯人の返答の内容は判定に使わない。プレイヤーの根拠の正しさだけで判定する
-- coherence_changeのルール:
-  - 矛盾なし: 必ず +5
-  - 軽微な矛盾（言い訳できる余地あり）: -5〜-10
-  - 明確な矛盾（証拠で完全に崩れた）: -15〜-25
-  - 致命的な矛盾（犯行を直接証明する）: -25〜-30
+【proof_level の判定基準】
+proof_level は CriminalAI に「どこまで後退すべきか」を伝える重要な値。
+
+  "none"
+    → 証拠なし・疑いだけ。犯人は否定してよい
+    → 例：「嘘をついているでしょう」「怪しい」
+
+  "partial"
+    → 状況証拠あり。まだ逃げられるが苦しい
+    → 例：証拠1つで間接的に矛盾を示している
+
+  "confirmed"
+    → 物証で論理的に証明済み。その事実は認めるべき
+    → 例：入室ログ・カメラ映像など直接的な証拠を突きつけられた
+    → この場合、CriminalAI はその事実を認めた上で殺害だけを否定する
+
+【coherence_change のルール】
+- has_contradiction: false → 必ず +5
+- proof_level "partial"   → -5 〜 -15
+- proof_level "confirmed" → -15 〜 -25
+- 殺害を直接証明する証拠（複数の confirmed が揃った場合）→ -25 〜 -30
 
 必ず以下のJSON形式のみで返答すること（他のテキストは一切含めない）:
 {
   "has_contradiction": true または false,
-  "detail": "矛盾の具体的な説明（プレイヤーに見せる文章。矛盾がない場合はnull）",
+  "proof_level": "none" または "partial" または "confirmed",
+  "detail": "矛盾の具体的な説明（矛盾がない場合はnull）",
   "coherence_change": 数値（-30〜+5）
 }`;
 }
@@ -109,10 +115,15 @@ export function parseJudgeResponse(rawResponse: string): JudgeResult {
       ? Math.max(-30, Math.min(-1, rawChange))
       : 5;
 
+    const proofLevel = (['none', 'partial', 'confirmed'] as const).includes(parsed.proof_level)
+      ? parsed.proof_level as 'none' | 'partial' | 'confirmed'
+      : 'none';
+
     return {
       hasContradiction,
       contradictionDetail: parsed.detail || null,
       coherenceChange,
+      proofLevel,
     };
   } catch (error) {
     console.error('Failed to parse judge response:', error);
@@ -120,6 +131,7 @@ export function parseJudgeResponse(rawResponse: string): JudgeResult {
       hasContradiction: false,
       contradictionDetail: null,
       coherenceChange: 5,
+      proofLevel: 'none',
     };
   }
 }
