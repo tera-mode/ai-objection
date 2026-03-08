@@ -55,10 +55,22 @@ ${historyText}
 犯人の返答: ${criminalResponse}
 
 【判定基準】
-- プレイヤーの指摘が、事実（タイムライン・物証）と犯人の証言の矛盾を突いているか判定する
-- 単なる感情的な攻撃（「嘘つき！」など）は矛盾判定しない
-- 矛盾がない場合はcoherence_changeを+5（回復）にする
-- 矛盾の強さに応じてcoherence_changeを-5〜-30にする
+- プレイヤーの発言が「具体的な物証・タイムラインの事実」を根拠に犯人の証言の矛盾を突いている場合のみ矛盾判定する
+- 以下はすべて矛盾判定しない（has_contradiction: false, coherence_change: +5）:
+  - 普通の質問（「あの日どこにいましたか？」など）
+  - 感情的な攻撃（「嘘つき！」「怪しい！」など）
+  - あいまいな疑惑（「何か隠していますよね」など）
+  - 犯人が否定するだけで済む指摘
+  - 証拠と直接つながらない推測
+- 矛盾と判定する条件（すべてを満たす場合のみ）:
+  1. プレイヤーが具体的な物証・証拠を言及または明確に示唆している
+  2. その証拠が犯人の証言と客観的に矛盾している
+  3. 犯人の返答がその矛盾を回避できていない
+- coherence_changeのルール:
+  - 矛盾なし: 必ず +5
+  - 軽微な矛盾（言い訳できる余地あり）: -5〜-10
+  - 明確な矛盾（証拠で完全に崩れた）: -15〜-25
+  - 致命的な矛盾（犯行を直接証明する）: -25〜-30
 
 必ず以下のJSON形式のみで返答すること（他のテキストは一切含めない）:
 {
@@ -81,10 +93,17 @@ export function parseJudgeResponse(rawResponse: string): JudgeResult {
 
     const parsed = JSON.parse(jsonMatch[0]);
 
+    const hasContradiction = Boolean(parsed.has_contradiction);
+    const rawChange = Number(parsed.coherence_change) || 5;
+    // 矛盾なしのときは絶対にコヒーレンスを下げない（AIが誤ってマイナスを返しても強制+5）
+    const coherenceChange = hasContradiction
+      ? Math.max(-30, Math.min(-1, rawChange))
+      : 5;
+
     return {
-      hasContradiction: Boolean(parsed.has_contradiction),
+      hasContradiction,
       contradictionDetail: parsed.detail || null,
-      coherenceChange: Math.max(-30, Math.min(5, Number(parsed.coherence_change) || 5)),
+      coherenceChange,
     };
   } catch (error) {
     console.error('Failed to parse judge response:', error);
