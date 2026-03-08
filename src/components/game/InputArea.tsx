@@ -19,6 +19,12 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
     }
   }, [value]);
 
+  useEffect(() => {
+    if (!disabled) {
+      textareaRef.current?.focus();
+    }
+  }, [disabled]);
+
   const handleSend = () => {
     const trimmed = value.trim();
     if (!trimmed || disabled) return;
