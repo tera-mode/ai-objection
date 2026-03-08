@@ -5,7 +5,7 @@ import { GameSession, ChatMessage } from '@/types/game';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
 interface PreviousMessage {
-  role: 'player' | 'criminal';
+  role: 'player' | 'criminal' | 'divider';
   content: string;
 }
 
@@ -58,19 +58,27 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           const prevData = await prevRes.json();
           const prevSessions = prevData.sessions ?? [];
           if (prevSessions.length > 0) {
-            const allMessages: { role: string; content: string }[] = prevSessions[0].messages ?? [];
-            // AI用：犯人発言のみ（最初の挨拶を除外、最大10件）
-            const criminalMessages: string[] = allMessages
+            // AI用：最新セッションの犯人発言のみ（最初の挨拶を除外、最大10件）
+            const latestMessages: { role: string; content: string }[] = prevSessions[0].messages ?? [];
+            const criminalMessages: string[] = latestMessages
               .filter((m) => m.role === 'criminal')
               .slice(1)
               .map((m) => m.content)
               .slice(-10);
             setPreviousTestimony(criminalMessages);
-            // 表示用：プレイヤーと犯人の会話（最初の犯人挨拶を除外、最大20件）
-            const conversation: PreviousMessage[] = allMessages
-              .slice(1)
-              .slice(-20)
-              .map((m) => ({ role: m.role as 'player' | 'criminal', content: m.content }));
+            // 表示用：全セッションを古い順に並べ、セッション境界にラベルを挿入
+            const chronological = [...prevSessions].reverse();
+            const conversation: PreviousMessage[] = [];
+            chronological.forEach((sess, idx) => {
+              const msgs: { role: string; content: string }[] = sess.messages ?? [];
+              const date = new Date(sess.createdAt).toLocaleDateString('ja-JP', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+              });
+              conversation.push({ role: 'divider', content: `第${idx + 1}回目の尋問（${date}）` });
+              msgs.slice(1).forEach((m) => {
+                conversation.push({ role: m.role as 'player' | 'criminal', content: m.content });
+              });
+            });
             setPreviousConversation(conversation);
           } else {
             setPreviousTestimony([]);

@@ -140,7 +140,7 @@ function LogModal({
   onClose,
 }: {
   messages: { role: string; content: string }[];
-  previousConversation: { role: 'player' | 'criminal'; content: string }[];
+  previousConversation: { role: 'player' | 'criminal' | 'divider'; content: string }[];
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<'current' | 'previous'>('current');
@@ -194,17 +194,25 @@ function LogModal({
           )}
           {tab === 'previous' && (
             <div className="space-y-3">
-              <p className="mb-1 text-xs text-gray-500">前回の尋問の記録。今回と食い違いがあれば矛盾として突ける。</p>
-              {previousConversation.map((m, i) => (
-                <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
-                  <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-yellow-500'}`}>
-                    {m.role === 'player' ? 'あなた' : '容疑者'}
-                  </span>
-                  <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
-                    m.role === 'player' ? 'bg-cyan-900/30' : 'bg-yellow-950/40 border border-yellow-900/40'
-                  }`}>{m.content}</p>
-                </div>
-              ))}
+              <p className="mb-1 text-xs text-gray-500">過去の尋問の記録。今回と食い違いがあれば矛盾として突ける。</p>
+              {previousConversation.map((m, i) =>
+                m.role === 'divider' ? (
+                  <div key={i} className="flex items-center gap-2 py-1">
+                    <div className="h-px flex-1 bg-gray-700" />
+                    <span className="text-xs text-gray-500">{m.content}</span>
+                    <div className="h-px flex-1 bg-gray-700" />
+                  </div>
+                ) : (
+                  <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
+                    <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-yellow-500'}`}>
+                      {m.role === 'player' ? 'あなた' : '容疑者'}
+                    </span>
+                    <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
+                      m.role === 'player' ? 'bg-cyan-900/30' : 'bg-yellow-950/40 border border-yellow-900/40'
+                    }`}>{m.content}</p>
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>
