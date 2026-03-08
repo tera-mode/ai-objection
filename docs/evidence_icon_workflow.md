@@ -6,18 +6,27 @@
 |---|---|
 | 保存先 | `public/images/evidence/` |
 | ファイル名 | `{evidence_id}.png`（例：`ev_checklist.png`） |
-| サイズ | **512 × 512 px**（表示時は48×48に縮小） |
+| サイズ | **512 × 512 px**（表示時は96×96に縮小） |
 | フォーマット | PNG（透過あり推奨） |
-| evidence_id | `case_002.json` の `evidence[].id` と一致させること |
+| evidence_id | `case_XXX.json` の `evidence[].id` と一致させること |
 
 ---
 
 ## スタイルガイド
 
 ### 全体トーン
-- **暗め・ミステリー調**：背景は濃いグレー系またはダークシアン系
-- **写実的ではなくイラスト風**：フラットデザインと写実の中間
-- **ハイコントラスト**：48px縮小時でも内容が識別できること
+- **アニメ・逆転裁判風**：日本のビジュアルノベル（逆転裁判）スタイル
+- **太い黒縁・セルシェーディング**：bold black outlines, cel-shaded
+- **フラットな鮮やかな色使い**：flat vibrant colors
+- **ハイコントラスト**：96px縮小時でも内容が識別できること
+
+### ⚠️ 重要：文字を絶対に入れない
+Gemini Image は指示がなくても謎の文字・ロゴ・ラベルを描き込む場合がある。
+プロンプトに必ず以下を含めること：
+
+```
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana
+```
 
 ### カラーパレット
 | 用途 | HEX |
@@ -40,38 +49,45 @@
 ```
 証拠アイコン生成プロンプト（英語で入力すること）:
 
-"[OBJECT DESCRIPTION], evidence photograph style, dark moody background (#1a1f2e),
-high contrast, flat icon style, 512x512, no text, centered object,
-[CASE-SPECIFIC ATMOSPHERE]"
+"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines,
+flat vibrant colors, [OBJECT DESCRIPTION], [CASE-SPECIFIC ATMOSPHERE], centered object,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+512x512, clean illustration"
 ```
 
 ### case_002（水族館）用テンプレート
 ```
-"[OBJECT], dimly lit aquarium backroom, dark teal atmosphere,
-moisture on surfaces, forensic evidence style, centered, no text, 512x512"
+"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines,
+flat vibrant colors, [OBJECT], dark teal aquarium atmosphere background, centered object,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+512x512, clean illustration"
 ```
 
 ### 各証拠のプロンプト例
 
 | evidence_id | プロンプト |
 |---|---|
-| `ev_checklist` | `"handwritten clipboard checklist with some items checked, dimly lit aquarium backroom, dark teal atmosphere, forensic evidence style, centered, no text, 512x512"` |
-| `ev_id_log` | `"electronic keycard access log terminal screen glowing, dark aquarium corridor, forensic evidence style, centered, no text, 512x512"` |
-| `ev_camera` | `"security camera footage still frame, dark grainy monitor screen, surveillance footage aesthetic, forensic evidence style, centered, no text, 512x512"` |
-| `ev_director` | `"folded testimony document with official stamp, dark moody background, forensic evidence style, centered, no text, 512x512"` |
-| `ev_bribery` | `"contract document with signature and seal, partially shadowed, dark moody background, forensic evidence style, centered, no text, 512x512"` |
-| `ev_autopsy` | `"autopsy report document with medical diagram, dark moody background, forensic evidence style, centered, no text, 512x512"` |
-| `ev_emergency_exit` | `"emergency exit door sensor log panel glowing red, dark aquarium corridor, forensic evidence style, centered, no text, 512x512"` |
+| `ev_checklist` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, handwritten clipboard checklist with pencil check marks on paper, dark teal aquarium atmosphere background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_id_log` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, electronic keycard swipe terminal screen glowing cyan, dark aquarium corridor atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_camera` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, security camera surveillance monitor showing grainy static footage, dark atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_director` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, folded official document with large red ink stamp circle, dark moody background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_bribery` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, contract paper with signature handwriting marks and wax seal, partially in shadow, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_autopsy` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, autopsy report clipboard with simple body silhouette outline diagram drawn on paper, dark background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_emergency_exit` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, emergency exit door sensor panel with glowing red warning light and green indicator, dark aquarium corridor, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 
 ---
 
 ## 生成手順
 
-1. **プロンプト確認**：上記テンプレートを参考に英語プロンプトを作成
+1. **プロンプト確認**：上記テンプレートを参考に英語プロンプトを作成（文字禁止フレーズを必ず含める）
 2. **生成**：Claude Code の `mcp__gemini-image__generate_image` ツールで生成
-3. **保存**：`public/images/evidence/{evidence_id}.png` に配置
-4. **動作確認**：ブラウザで `/images/evidence/{evidence_id}.png` に直接アクセスして表示確認
-5. **コミット**：`git add public/images/evidence/ && git commit -m "assets: case_XXX 証拠アイコン追加"`
+3. **注意**: ツールがファイル名に `_1` を付けて保存することがある。その場合はリネーム：
+   ```bash
+   mv ev_XXX_1.png ev_XXX.png
+   ```
+4. **保存**：`public/images/evidence/{evidence_id}.png` に配置
+5. **動作確認**：ブラウザで `/images/evidence/{evidence_id}.png` に直接アクセスして表示確認
+6. **コミット**：`git add public/images/evidence/ && git commit -m "assets: case_XXX 証拠アイコン追加"`
 
 ---
 

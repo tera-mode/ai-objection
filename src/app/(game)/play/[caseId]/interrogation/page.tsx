@@ -163,7 +163,7 @@ function EvidenceModal({
                   onClick={() => setSelected(ev)}
                   className="flex w-full items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-left transition-colors hover:border-cyan-500 hover:text-white"
                 >
-                  <EvidenceIcon evId={ev.id} size={48} />
+                  <EvidenceIcon evId={ev.id} size={96} />
                   <span className="text-sm text-gray-300">{ev.name}</span>
                 </button>
               </li>
@@ -357,25 +357,32 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           const imgSrc = getCharacterImage(caseId, session.coherence);
           const bgSrc = getInterrogationBg(caseId);
           return imgSrc ? (
-            <div
-              className="relative mx-auto w-full max-w-md overflow-hidden"
-              style={bgSrc ? { backgroundImage: `url(${bgSrc})`, backgroundSize: 'cover', backgroundPosition: 'center top' } : {}}
-            >
+            <div className="relative mx-auto w-full max-w-md overflow-hidden">
+              {/* 背景画像 */}
+              {bgSrc && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={bgSrc}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover object-top"
+                />
+              )}
               {/* 背景オーバーレイ（暗め） */}
               {bgSrc && <div className="absolute inset-0 bg-gray-950/40" />}
               <Image
+                key={imgSrc}
                 src={imgSrc}
                 alt={meta.criminalName}
                 width={1024}
                 height={1024}
-                className="relative w-full h-auto"
+                className="relative z-10 w-full h-auto"
                 priority
               />
               {/* 下部グラデーション */}
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-950 to-transparent" />
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-20 bg-gradient-to-t from-gray-950 to-transparent" />
               {/* 思考中スピナー */}
               {isCriminalThinking && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-950/40">
+                <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-950/40">
                   <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
                 </div>
               )}
