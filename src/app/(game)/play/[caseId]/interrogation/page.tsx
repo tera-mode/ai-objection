@@ -248,7 +248,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         {(() => {
           const imgSrc = getCharacterImage(caseId, session.coherence);
           return imgSrc ? (
-            <div className="relative w-full">
+            <div className="relative mx-auto w-full max-w-md">
               <Image
                 src={imgSrc}
                 alt={meta.criminalName}
