@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { caseId, playerMessage, criminalResponse, conversationHistory, previousTestimony } = body;
 
-    if (!caseId || !playerMessage || !criminalResponse) {
+    if (!caseId || !playerMessage) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
