@@ -199,7 +199,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { hasContradiction, contradictionDetail, coherenceChange, proofLevel } = await judgeRes.json();
 
-      // 2. proofLevelをCriminalAIに渡して返答を生成
+      // 2. proofLevel + contradictionDetail をCriminalAIに渡して返答を生成
       const criminalRes = await authenticatedFetch('/api/criminal-response', {
         method: 'POST',
         body: JSON.stringify({
@@ -210,6 +210,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           conversationHistory: conversationHistory.slice(0, -1),
           previousTestimony,
           proofLevel: proofLevel ?? 'none',
+          contradictionDetail: contradictionDetail ?? null,
         }),
       });
 

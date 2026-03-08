@@ -8,7 +8,8 @@ export function buildCriminalAIPrompt(
   coherence: number,
   conversationHistory: { role: 'player' | 'criminal'; content: string }[],
   previousTestimony: string[] = [],
-  proofLevel: 'none' | 'partial' | 'confirmed' = 'none'
+  proofLevel: 'none' | 'partial' | 'confirmed' = 'none',
+  contradictionDetail: string | null = null
 ): { systemPrompt: string; history: { role: string; parts: { text: string }[] }[] } {
   const { criminal } = caseData;
 
@@ -26,11 +27,11 @@ export function buildCriminalAIPrompt(
     personalityDesc = criminal.personality.collapsed;
   }
 
-  const proofLevelInstruction = {
-    none:      '【今回の証明度】none — プレイヤーの指摘は証拠不足。否定してよい',
-    partial:   '【今回の証明度】partial — 状況証拠あり。苦しいが部分的に認め始める段階',
-    confirmed: '【今回の証明度】confirmed — 物証で証明済み。その事実は認めること。殺害だけは認めない',
-  }[proofLevel];
+  const proofLevelInstruction = proofLevel === 'confirmed' && contradictionDetail
+    ? `【今回の判定：証拠で証明済み】\n今回のプレイヤーの指摘で、以下の事実が物証によって証明された:\n「${contradictionDetail}」\nこの事実については認めること。ただし「殺した」だけは認めない。新しい嘘で次の言い訳を用意すること。`
+    : proofLevel === 'partial'
+    ? `【今回の判定：状況証拠あり】\nプレイヤーの指摘は状況証拠として成立している。完全に否定はできないが、まだ逃げられる。部分的に認め始めながら別の説明を試みること。`
+    : `【今回の判定：証拠不足】\nプレイヤーの指摘は証拠が不十分。自信を持って否定してよい。`;
 
   const systemPrompt = `あなたはミステリーゲームのNPCキャラクター「${criminal.name}」を演じる俳優です。
 

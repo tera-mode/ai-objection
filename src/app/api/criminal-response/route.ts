@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { message, caseId, coherence, conversationHistory, previousTestimony, proofLevel } = body;
+    const { message, caseId, coherence, conversationHistory, previousTestimony, proofLevel, contradictionDetail } = body;
 
     if (!message || !caseId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
       coherence ?? 100,
       conversationHistory ?? [],
       previousTestimony ?? [],
-      proofLevel ?? 'none'
+      proofLevel ?? 'none',
+      contradictionDetail ?? null
     );
 
     const ai = getGenAI();
@@ -39,7 +40,8 @@ export async function POST(request: NextRequest) {
     });
 
     const result = await chat.sendMessage({ message });
-    const response = result.text;
+    // Geminiが証明度トークン(__confirmed__等)を出力することがあるため除去する
+    const response = result.text?.replace(/^__\w+__\s*/, '').trim();
 
     if (!response) {
       return NextResponse.json({ error: 'Empty response from AI' }, { status: 500 });
