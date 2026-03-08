@@ -35,7 +35,7 @@ export default function HistoryPage() {
         if (caseRes.ok) {
           const caseData = await caseRes.json();
           const titles: Record<string, string> = {};
-          for (const c of caseData.cases ?? []) {
+          for (const c of [...(caseData.cases ?? []), ...(caseData.sampleCases ?? [])]) {
             titles[c.id] = c.title;
           }
           setCaseTitles(titles);

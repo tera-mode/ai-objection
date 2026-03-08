@@ -28,11 +28,15 @@ export default function PlayPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [cases, setCases] = useState<CaseItem[]>([]);
+  const [sampleCases, setSampleCases] = useState<CaseItem[]>([]);
 
   useEffect(() => {
     authenticatedFetch('/api/list-cases')
       .then((res) => res.json())
-      .then((data) => setCases(data.cases ?? []))
+      .then((data) => {
+        setCases(data.cases ?? []);
+        setSampleCases(data.sampleCases ?? []);
+      })
       .catch(console.error);
   }, []);
 
@@ -69,6 +73,23 @@ export default function PlayPage() {
             </button>
           ))}
         </div>
+
+        {sampleCases.length > 0 && (
+          <div className="mt-8 border-t border-gray-800 pt-6">
+            <p className="mb-3 text-xs text-gray-600">サンプルシナリオ</p>
+            <div className="flex flex-col gap-2">
+              {sampleCases.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => router.push(`/play/${c.id}/crime-scene`)}
+                  className="text-left text-xs text-gray-600 underline-offset-2 hover:text-gray-400 hover:underline"
+                >
+                  {c.title}（{difficultyLabel[c.difficulty] ?? c.difficulty}）→
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -18,22 +18,28 @@ export function loadCase(caseId: string): CaseData {
   return JSON.parse(raw) as CaseData;
 }
 
-export function listCases(): { id: string; title: string; difficulty: string; description: string }[] {
+type CaseSummary = { id: string; title: string; difficulty: string; description: string };
+
+export function listCases(): { cases: CaseSummary[]; sampleCases: CaseSummary[] } {
   if (!fs.existsSync(CASES_DIR)) {
-    return [];
+    return { cases: [], sampleCases: [] };
   }
 
   const files = fs.readdirSync(CASES_DIR).filter((f) => f.endsWith('.json'));
+  const cases: CaseSummary[] = [];
+  const sampleCases: CaseSummary[] = [];
 
-  return files.map((file) => {
+  files.forEach((file) => {
     const filePath = path.join(CASES_DIR, file);
     const raw = fs.readFileSync(filePath, 'utf-8');
     const data = JSON.parse(raw) as CaseData;
-    return {
-      id: data.id,
-      title: data.title,
-      difficulty: data.difficulty,
-      description: data.description,
-    };
+    const summary = { id: data.id, title: data.title, difficulty: data.difficulty, description: data.description };
+    if (data.id.startsWith('case_sample')) {
+      sampleCases.push(summary);
+    } else {
+      cases.push(summary);
+    }
   });
+
+  return { cases, sampleCases };
 }

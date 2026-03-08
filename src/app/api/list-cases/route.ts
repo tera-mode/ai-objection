@@ -9,8 +9,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const cases = listCases();
-    return NextResponse.json({ cases });
+    const { cases, sampleCases } = listCases();
+    return NextResponse.json({ cases, sampleCases });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: msg }, { status: 500 });
