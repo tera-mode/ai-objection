@@ -22,7 +22,7 @@ function getCharacterImage(caseId: string, coherence: number): string | null {
     coherence >= 10 ? 'breaking' : 'collapsed';
 
   const available: Record<string, string[]> = {
-    case_001: [],
+    case_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
   };
 
@@ -35,6 +35,7 @@ function getCharacterImage(caseId: string, coherence: number): string | null {
 // ケース別の尋問背景画像
 function getInterrogationBg(caseId: string): string | null {
   const bgs: Record<string, string> = {
+    case_001: '/images/backgrounds/case_001_interrogation.png',
     case_002: '/images/backgrounds/case_002_interrogation.png',
   };
   return bgs[caseId] ?? null;
