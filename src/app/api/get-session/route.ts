@@ -34,6 +34,24 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
 
+      const caseId = searchParams.get('caseId');
+
+      if (caseId) {
+        // 特定ケースの過去セッションを取得（最新5件、完了済みのみ）
+        const snapshot = await adminDb
+          .collection('gameSessions')
+          .where('userId', '==', uid)
+          .where('caseId', '==', caseId)
+          .where('isCompleted', '==', true)
+          .limit(5)
+          .get();
+
+        const sessions = snapshot.docs
+          .map((doc) => doc.data())
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return NextResponse.json({ sessions });
+      }
+
       const snapshot = await adminDb
         .collection('gameSessions')
         .where('userId', '==', uid)

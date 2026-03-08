@@ -6,7 +6,8 @@ import { CaseData } from '@/types/game';
 export function buildCriminalAIPrompt(
   caseData: CaseData,
   coherence: number,
-  conversationHistory: { role: 'player' | 'criminal'; content: string }[]
+  conversationHistory: { role: 'player' | 'criminal'; content: string }[],
+  previousTestimony: string[] = []
 ): { systemPrompt: string; history: { role: string; parts: { text: string }[] }[] } {
   const { criminal } = caseData;
 
@@ -42,7 +43,10 @@ ${criminal.knowledge.knows.map((k, i) => `${i + 1}. ${k}`).join('\n')}
 【本当に知らない事実（これだけが「知りません」と言ってよい唯一の理由）】
 ${criminal.knowledge.doesnt_know.map((k, i) => `${i + 1}. ${k}`).join('\n')}
 
-【演技のルール】
+${previousTestimony.length > 0 ? `【前回の尋問であなたが言ったこと（今回も一貫した証言をすること。矛盾すると追及される）】
+${previousTestimony.map((t, i) => `${i + 1}. ${t}`).join('\n')}
+
+` : ''}【演技のルール】
 - 返答は120文字以内にすること
 - 日本語で返答すること
 - 「思い出せない」「動揺していたので」という逃げは【本当に知らない事実】以外では絶対に使わない。カバーストーリーの範囲で具体的に答えること

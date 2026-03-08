@@ -38,8 +38,8 @@ const CASE_DATA: Record<string, {
 
 function CrimeSceneContent({ caseId }: { caseId: string }) {
   const router = useRouter();
-  const { startSession, isLoading } = useGame();
-  const [phase, setPhase] = useState<'intro' | 'evidence' | 'criminal'>('intro');
+  const { startSession, isLoading, previousTestimony } = useGame();
+  const [phase, setPhase] = useState<'intro' | 'evidence' | 'criminal' | 'previous'>('intro');
 
   const data = CASE_DATA[caseId];
   if (!data) {
@@ -116,6 +116,30 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
             <div className="rounded-2xl border border-cyan-900/50 bg-cyan-950/20 p-5">
               <p className="mb-3 text-xs font-semibold text-cyan-500 uppercase tracking-wider">容疑者登場</p>
               <p className="text-sm leading-relaxed text-gray-300 whitespace-pre-line">{data.criminalIntro}</p>
+            </div>
+            <button
+              onClick={() => previousTestimony.length > 0 ? setPhase('previous') : handleStartInterrogation()}
+              disabled={isLoading}
+              className="w-full rounded-xl bg-cyan-600 py-4 font-bold text-white transition-colors hover:bg-cyan-500 disabled:opacity-50"
+            >
+              {isLoading ? '準備中...' : previousTestimony.length > 0 ? '前回の証言を確認する →' : '尋問を開始する'}
+            </button>
+          </div>
+        )}
+
+        {phase === 'previous' && (
+          <div className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-yellow-900/50 bg-yellow-950/20 p-5">
+              <p className="mb-1 text-xs font-semibold text-yellow-400 uppercase tracking-wider">前回の尋問記録</p>
+              <p className="mb-4 text-xs text-gray-500">容疑者が前回の尋問で述べた証言。今回と食い違いがあれば矛盾として突ける。</p>
+              <ul className="space-y-2">
+                {previousTestimony.map((t, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                    <span className="mt-0.5 shrink-0 text-yellow-500">▸</span>
+                    <span>「{t}」</span>
+                  </li>
+                ))}
+              </ul>
             </div>
             <button
               onClick={handleStartInterrogation}

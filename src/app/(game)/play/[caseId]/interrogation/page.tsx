@@ -157,11 +157,14 @@ function EvidenceModal({
 // 証言記録モーダル
 function LogModal({
   messages,
+  previousTestimony,
   onClose,
 }: {
   messages: { role: string; content: string }[];
+  previousTestimony: string[];
   onClose: () => void;
 }) {
+  const [tab, setTab] = useState<'current' | 'previous'>('current');
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center"
@@ -173,22 +176,49 @@ function LogModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-700 px-4 py-3">
-          <h3 className="font-semibold text-cyan-400">証言記録</h3>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setTab('current')}
+              className={`text-sm font-semibold ${tab === 'current' ? 'text-cyan-400' : 'text-gray-500'}`}
+            >
+              今回の証言
+            </button>
+            {previousTestimony.length > 0 && (
+              <button
+                onClick={() => setTab('previous')}
+                className={`text-sm font-semibold ${tab === 'previous' ? 'text-yellow-400' : 'text-gray-500'}`}
+              >
+                前回の証言
+              </button>
+            )}
+          </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
         </div>
         <div className="overflow-y-auto p-4">
-          {messages.length === 0 ? (
-            <p className="text-center text-sm text-gray-500">まだ発言はありません</p>
-          ) : (
-            <div className="space-y-3">
-              {messages.map((m, i) => (
-                <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
-                  <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-gray-400'}`}>
-                    {m.role === 'player' ? 'あなた' : '容疑者'}
-                  </span>
-                  <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
-                    m.role === 'player' ? 'bg-cyan-900/50' : 'bg-gray-800'
-                  }`}>{m.content}</p>
+          {tab === 'current' && (
+            messages.length === 0 ? (
+              <p className="text-center text-sm text-gray-500">まだ発言はありません</p>
+            ) : (
+              <div className="space-y-3">
+                {messages.map((m, i) => (
+                  <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
+                    <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-gray-400'}`}>
+                      {m.role === 'player' ? 'あなた' : '容疑者'}
+                    </span>
+                    <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
+                      m.role === 'player' ? 'bg-cyan-900/50' : 'bg-gray-800'
+                    }`}>{m.content}</p>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+          {tab === 'previous' && (
+            <div className="space-y-2">
+              <p className="mb-3 text-xs text-gray-500">前回の尋問で容疑者が述べた証言。今回と食い違いがあれば矛盾として突ける。</p>
+              {previousTestimony.map((t, i) => (
+                <div key={i} className="rounded-xl bg-yellow-950/30 border border-yellow-900/40 px-3 py-2">
+                  <p className="text-sm text-gray-300">「{t}」</p>
                 </div>
               ))}
             </div>
@@ -201,7 +231,7 @@ function LogModal({
 
 function InterrogationContent({ caseId }: { caseId: string }) {
   const router = useRouter();
-  const { session, isCriminalThinking, sendMessage, arrestChallenge } = useGame();
+  const { session, previousTestimony, isCriminalThinking, sendMessage, arrestChallenge } = useGame();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showEvidence, setShowEvidence] = useState(false);
   const [showLog, setShowLog] = useState(false);
@@ -385,6 +415,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       {showLog && (
         <LogModal
           messages={session.messages.map((m) => ({ role: m.role, content: m.content }))}
+          previousTestimony={previousTestimony}
           onClose={() => setShowLog(false)}
         />
       )}

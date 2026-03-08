@@ -6,6 +6,7 @@ import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
 interface GameContextType {
   session: GameSession | null;
+  previousTestimony: string[];
   isLoading: boolean;
   isCriminalThinking: boolean;
   startSession: (caseId: string) => Promise<GameSession>;
@@ -16,6 +17,7 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType>({
   session: null,
+  previousTestimony: [],
   isLoading: false,
   isCriminalThinking: false,
   startSession: async () => { throw new Error('Not initialized'); },
@@ -34,12 +36,36 @@ export const useGame = () => {
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<GameSession | null>(null);
+  const [previousTestimony, setPreviousTestimony] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCriminalThinking, setIsCriminalThinking] = useState(false);
 
   const startSession = useCallback(async (caseId: string): Promise<GameSession> => {
     setIsLoading(true);
     try {
+      // 過去の完了セッションから犯人の証言を取得
+      try {
+        const prevRes = await authenticatedFetch(`/api/get-session?caseId=${caseId}`);
+        if (prevRes.ok) {
+          const prevData = await prevRes.json();
+          const prevSessions = prevData.sessions ?? [];
+          if (prevSessions.length > 0) {
+            // 最新の失敗セッションから犯人発言を抽出（最大10件）
+            const criminalMessages: string[] = (prevSessions[0].messages ?? [])
+              .filter((m: { role: string }) => m.role === 'criminal')
+              .slice(1) // 最初の挨拶は除外
+              .map((m: { content: string }) => m.content)
+              .slice(-10);
+            setPreviousTestimony(criminalMessages);
+          } else {
+            setPreviousTestimony([]);
+          }
+        }
+      } catch {
+        // 過去データ取得失敗は無視
+        setPreviousTestimony([]);
+      }
+
       // セッション作成
       const res = await authenticatedFetch('/api/save-session', {
         method: 'POST',
@@ -137,6 +163,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           caseId: session.caseId,
           coherence: session.coherence,
           conversationHistory: conversationHistory.slice(0, -1),
+          previousTestimony,
         }),
       });
 
@@ -156,6 +183,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           playerMessage: message,
           criminalResponse,
           conversationHistory,
+          previousTestimony,
         }),
       });
 
@@ -284,7 +312,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <GameContext.Provider value={{ session, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession }}>
+    <GameContext.Provider value={{ session, previousTestimony, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession }}>
       {children}
     </GameContext.Provider>
   );

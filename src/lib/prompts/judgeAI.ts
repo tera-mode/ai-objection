@@ -13,7 +13,8 @@ export function buildJudgeAIPrompt(
   caseData: CaseData,
   playerMessage: string,
   criminalResponse: string,
-  conversationHistory: { role: 'player' | 'criminal'; content: string }[]
+  conversationHistory: { role: 'player' | 'criminal'; content: string }[],
+  previousTestimony: string[] = []
 ): string {
   const { timeline, evidence, criminal } = caseData;
 
@@ -54,7 +55,10 @@ ${historyText}
 プレイヤーの発言: ${playerMessage}
 犯人の返答: ${criminalResponse}
 
-【最重要ルール】
+${previousTestimony.length > 0 ? `【前回の尋問での容疑者の証言（今回の返答がこれと矛盾していれば、プレイヤーが指摘していなくても矛盾と判定してよい）】
+${previousTestimony.map((t, i) => `${i + 1}. ${t}`).join('\n')}
+
+` : ''}【最重要ルール】
 - 判定対象は「プレイヤーの発言」のみ。犯人の返答に矛盾が含まれていても、プレイヤーがそれを指摘していなければ has_contradiction: false にすること
 - 犯人が自分でボロを出した場合でも、プレイヤーが指摘していなければ矛盾判定しない
 

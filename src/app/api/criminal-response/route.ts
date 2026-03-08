@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { message, caseId, coherence, conversationHistory } = body;
+    const { message, caseId, coherence, conversationHistory, previousTestimony } = body;
 
     if (!message || !caseId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
     const { systemPrompt, history } = buildCriminalAIPrompt(
       caseData,
       coherence ?? 100,
-      conversationHistory ?? []
+      conversationHistory ?? [],
+      previousTestimony ?? []
     );
 
     const ai = getGenAI();
