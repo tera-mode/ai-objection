@@ -18,7 +18,7 @@ export function loadCase(caseId: string): CaseData {
   return JSON.parse(raw) as CaseData;
 }
 
-export function listCases(): { id: string; title: string; difficulty: string }[] {
+export function listCases(): { id: string; title: string; difficulty: string; description: string }[] {
   if (!fs.existsSync(CASES_DIR)) {
     return [];
   }
@@ -33,6 +33,7 @@ export function listCases(): { id: string; title: string; difficulty: string }[]
       id: data.id,
       title: data.title,
       difficulty: data.difficulty,
+      description: data.description,
     };
   });
 }

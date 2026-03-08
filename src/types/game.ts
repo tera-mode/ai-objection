@@ -26,6 +26,7 @@ export interface CaseData {
   id: string;
   title: string;
   difficulty: 'easy' | 'medium' | 'hard';
+  description: string;
   storyText: {
     intro: string;
     criminalIntro: string;

@@ -1,23 +1,26 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
+import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
-const STORY_TEXTS: Record<string, { victory: string; defeat: string }> = {
-  case_001: {
-    victory: '山城星也は法廷で崩れ落ちた。「…俺がやった。あの女に仕事を見られて…カッとなって…」真犯人の自白により、矢上正人の無罪が確定した。',
-    defeat: '弁護に失敗した。矢上正人には有罪判決が下された。真犯人は、今も街のどこかで笑っている──。',
-  },
-  case_002: {
-    victory: '永瀬が連行されていく。その夜、バックヤードに戻った。電気を消した後の水槽の前で、カムに話しかけた。返事はなかった。体の色だけが、ゆっくりと変わった。「タコはね、実は色を認識できないのに、体の色を変えられるんですよ」',
-    defeat: '制限時間が来た。永瀬が会見場を後にしていく。また足りなかった。もう一度だけ。もう一度だけやり直せば——',
-  },
-};
+interface StoryText {
+  victory: string;
+  defeat: string;
+}
 
 function ResultContent({ caseId }: { caseId: string }) {
   const router = useRouter();
   const { session } = useGame();
+  const [storyText, setStoryText] = useState<StoryText | null>(null);
+
+  useEffect(() => {
+    authenticatedFetch(`/api/get-case?caseId=${caseId}`)
+      .then((res) => res.json())
+      .then((data) => setStoryText(data.storyText))
+      .catch(console.error);
+  }, [caseId]);
 
   if (!session) {
     router.push('/play');
@@ -25,7 +28,6 @@ function ResultContent({ caseId }: { caseId: string }) {
   }
 
   const isArrest = session.verdict === 'arrest';
-  const storyText = STORY_TEXTS[caseId];
 
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-8">
@@ -55,7 +57,7 @@ function ResultContent({ caseId }: { caseId: string }) {
         {/* ストーリーテキスト */}
         {storyText && (
           <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5 w-full">
-            <p className="text-sm leading-relaxed text-gray-300">
+            <p className="text-sm leading-relaxed text-gray-300 whitespace-pre-line">
               {isArrest ? storyText.victory : storyText.defeat}
             </p>
           </div>

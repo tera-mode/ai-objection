@@ -1,22 +1,16 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
-const CASES = [
-  {
-    id: 'case_001',
-    title: '最初の逆転',
-    difficulty: 'easy',
-    description: '親友の無実を証明せよ。証言の矛盾を突いて真犯人を暴け。',
-  },
-  {
-    id: 'case_002',
-    title: '水族館の閉館後に',
-    difficulty: 'hard',
-    description: '水族館の飼育員が死んだ。転落事故か、殺人か。証人の嘘を見抜け。',
-  },
-];
+interface CaseItem {
+  id: string;
+  title: string;
+  difficulty: string;
+  description: string;
+}
 
 const difficultyLabel: Record<string, string> = {
   easy: '初級',
@@ -33,6 +27,14 @@ const difficultyColor: Record<string, string> = {
 export default function PlayPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const [cases, setCases] = useState<CaseItem[]>([]);
+
+  useEffect(() => {
+    authenticatedFetch('/api/list-cases')
+      .then((res) => res.json())
+      .then((data) => setCases(data.cases ?? []))
+      .catch(console.error);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-8">
@@ -45,7 +47,7 @@ export default function PlayPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {CASES.map((c) => (
+          {cases.map((c) => (
             <button
               key={c.id}
               onClick={() => router.push(`/play/${c.id}/crime-scene`)}
@@ -55,8 +57,8 @@ export default function PlayPage() {
                 <h2 className="text-lg font-bold text-white group-hover:text-cyan-300">
                   {c.title}
                 </h2>
-                <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold ${difficultyColor[c.difficulty]}`}>
-                  {difficultyLabel[c.difficulty]}
+                <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold ${difficultyColor[c.difficulty] ?? ''}`}>
+                  {difficultyLabel[c.difficulty] ?? c.difficulty}
                 </span>
               </div>
               <p className="text-sm text-gray-400">{c.description}</p>

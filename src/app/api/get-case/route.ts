@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       id: caseData.id,
       title: caseData.title,
+      difficulty: caseData.difficulty,
+      description: caseData.description,
+      storyText: caseData.storyText,
       evidence: caseData.evidence,
       criminalName: caseData.criminal.name,
     });

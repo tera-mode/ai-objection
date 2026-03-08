@@ -5,11 +5,6 @@ import { useRouter } from 'next/navigation';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 import { GameSessionData } from '@/types/game';
 
-const CASE_TITLES: Record<string, string> = {
-  case_001: '最初の逆転',
-  case_002: '水族館の閉館後に',
-};
-
 const verdictLabel: Record<string, string> = {
   arrest: '逮捕成功',
   escape: '証拠不十分',
@@ -23,16 +18,28 @@ const verdictColor: Record<string, string> = {
 export default function HistoryPage() {
   const router = useRouter();
   const [sessions, setSessions] = useState<GameSessionData[]>([]);
+  const [caseTitles, setCaseTitles] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await authenticatedFetch('/api/get-session');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setSessions(data.sessions ?? []);
+        const [sessionRes, caseRes] = await Promise.all([
+          authenticatedFetch('/api/get-session'),
+          authenticatedFetch('/api/list-cases'),
+        ]);
+        if (!sessionRes.ok) throw new Error('Failed to fetch');
+        const sessionData = await sessionRes.json();
+        setSessions(sessionData.sessions ?? []);
+        if (caseRes.ok) {
+          const caseData = await caseRes.json();
+          const titles: Record<string, string> = {};
+          for (const c of caseData.cases ?? []) {
+            titles[c.id] = c.title;
+          }
+          setCaseTitles(titles);
+        }
       } catch {
         setError('履歴の取得に失敗しました');
       } finally {
@@ -81,7 +88,7 @@ export default function HistoryPage() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="font-semibold text-white">
-                    {CASE_TITLES[session.caseId] ?? session.caseId}
+                    {caseTitles[session.caseId] ?? session.caseId}
                   </p>
                   <p className="text-xs text-gray-500">
                     {new Date(session.createdAt).toLocaleDateString('ja-JP', {
