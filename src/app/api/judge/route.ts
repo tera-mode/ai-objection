@@ -30,6 +30,10 @@ export async function POST(request: NextRequest) {
     const result = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
+      config: {
+        maxOutputTokens: 300,
+        thinkingConfig: { thinkingBudget: 0 },
+      },
     });
 
     const rawResponse = result.text ?? '';

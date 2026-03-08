@@ -28,7 +28,11 @@ export async function POST(request: NextRequest) {
     const ai = getGenAI();
     const chat = ai.chats.create({
       model: 'gemini-2.5-flash',
-      config: { systemInstruction: systemPrompt },
+      config: {
+        systemInstruction: systemPrompt,
+        maxOutputTokens: 200,
+        thinkingConfig: { thinkingBudget: 0 },
+      },
       history,
     });
 
