@@ -136,11 +136,11 @@ function EvidenceModal({
 // 証言記録モーダル
 function LogModal({
   messages,
-  previousTestimony,
+  previousConversation,
   onClose,
 }: {
   messages: { role: string; content: string }[];
-  previousTestimony: string[];
+  previousConversation: { role: 'player' | 'criminal'; content: string }[];
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<'current' | 'previous'>('current');
@@ -162,7 +162,7 @@ function LogModal({
             >
               今回の証言
             </button>
-            {previousTestimony.length > 0 && (
+            {previousConversation.length > 0 && (
               <button
                 onClick={() => setTab('previous')}
                 className={`text-sm font-semibold ${tab === 'previous' ? 'text-yellow-400' : 'text-gray-500'}`}
@@ -193,11 +193,16 @@ function LogModal({
             )
           )}
           {tab === 'previous' && (
-            <div className="space-y-2">
-              <p className="mb-3 text-xs text-gray-500">前回の尋問で容疑者が述べた証言。今回と食い違いがあれば矛盾として突ける。</p>
-              {previousTestimony.map((t, i) => (
-                <div key={i} className="rounded-xl bg-yellow-950/30 border border-yellow-900/40 px-3 py-2">
-                  <p className="text-sm text-gray-300">「{t}」</p>
+            <div className="space-y-3">
+              <p className="mb-1 text-xs text-gray-500">前回の尋問の記録。今回と食い違いがあれば矛盾として突ける。</p>
+              {previousConversation.map((m, i) => (
+                <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
+                  <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-yellow-500'}`}>
+                    {m.role === 'player' ? 'あなた' : '容疑者'}
+                  </span>
+                  <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
+                    m.role === 'player' ? 'bg-cyan-900/30' : 'bg-yellow-950/40 border border-yellow-900/40'
+                  }`}>{m.content}</p>
                 </div>
               ))}
             </div>
@@ -210,7 +215,7 @@ function LogModal({
 
 function InterrogationContent({ caseId }: { caseId: string }) {
   const router = useRouter();
-  const { session, previousTestimony, isCriminalThinking, sendMessage, arrestChallenge } = useGame();
+  const { session, previousTestimony, previousConversation, isCriminalThinking, sendMessage, arrestChallenge } = useGame();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showEvidence, setShowEvidence] = useState(false);
   const [showLog, setShowLog] = useState(false);
@@ -400,7 +405,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       {showLog && (
         <LogModal
           messages={session.messages.map((m) => ({ role: m.role, content: m.content }))}
-          previousTestimony={previousTestimony}
+          previousConversation={previousConversation}
           onClose={() => setShowLog(false)}
         />
       )}

@@ -4,9 +4,15 @@ import { createContext, useContext, useState, useCallback } from 'react';
 import { GameSession, ChatMessage } from '@/types/game';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
+interface PreviousMessage {
+  role: 'player' | 'criminal';
+  content: string;
+}
+
 interface GameContextType {
   session: GameSession | null;
   previousTestimony: string[];
+  previousConversation: PreviousMessage[];
   isLoading: boolean;
   isCriminalThinking: boolean;
   startSession: (caseId: string) => Promise<GameSession>;
@@ -18,6 +24,7 @@ interface GameContextType {
 const GameContext = createContext<GameContextType>({
   session: null,
   previousTestimony: [],
+  previousConversation: [],
   isLoading: false,
   isCriminalThinking: false,
   startSession: async () => { throw new Error('Not initialized'); },
@@ -37,6 +44,7 @@ export const useGame = () => {
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<GameSession | null>(null);
   const [previousTestimony, setPreviousTestimony] = useState<string[]>([]);
+  const [previousConversation, setPreviousConversation] = useState<PreviousMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCriminalThinking, setIsCriminalThinking] = useState(false);
 
@@ -50,20 +58,29 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           const prevData = await prevRes.json();
           const prevSessions = prevData.sessions ?? [];
           if (prevSessions.length > 0) {
-            // 最新の失敗セッションから犯人発言を抽出（最大10件）
-            const criminalMessages: string[] = (prevSessions[0].messages ?? [])
-              .filter((m: { role: string }) => m.role === 'criminal')
-              .slice(1) // 最初の挨拶は除外
-              .map((m: { content: string }) => m.content)
+            const allMessages: { role: string; content: string }[] = prevSessions[0].messages ?? [];
+            // AI用：犯人発言のみ（最初の挨拶を除外、最大10件）
+            const criminalMessages: string[] = allMessages
+              .filter((m) => m.role === 'criminal')
+              .slice(1)
+              .map((m) => m.content)
               .slice(-10);
             setPreviousTestimony(criminalMessages);
+            // 表示用：プレイヤーと犯人の会話（最初の犯人挨拶を除外、最大20件）
+            const conversation: PreviousMessage[] = allMessages
+              .slice(1)
+              .slice(-20)
+              .map((m) => ({ role: m.role as 'player' | 'criminal', content: m.content }));
+            setPreviousConversation(conversation);
           } else {
             setPreviousTestimony([]);
+            setPreviousConversation([]);
           }
         }
       } catch {
         // 過去データ取得失敗は無視
         setPreviousTestimony([]);
+        setPreviousConversation([]);
       }
 
       // セッション作成
@@ -312,7 +329,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <GameContext.Provider value={{ session, previousTestimony, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession }}>
+    <GameContext.Provider value={{ session, previousTestimony, previousConversation, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession }}>
       {children}
     </GameContext.Provider>
   );
