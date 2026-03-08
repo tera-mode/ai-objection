@@ -39,3 +39,8 @@ next-env.d.ts
 
 # firebase admin key
 firebase-admin-key.json
+
+# Claude Code local settings
+.claude/
+
+.vercel
