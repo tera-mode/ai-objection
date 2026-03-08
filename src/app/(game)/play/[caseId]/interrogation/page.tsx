@@ -9,6 +9,7 @@ import { CoherenceMeter } from '@/components/game/CoherenceMeter';
 import { TurnCounter } from '@/components/game/TurnCounter';
 import { InputArea } from '@/components/game/InputArea';
 import { Evidence } from '@/types/game';
+import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
 // コヒーレンスに応じた画像バリアントを返す
 // 画像ファイル命名規則: public/images/characters/{caseId}_{emotion}.png
@@ -31,32 +32,10 @@ function getCharacterImage(caseId: string, coherence: number): string | null {
   return null;
 }
 
-// ケース別データ（証拠・容疑者名）
-const CASE_META: Record<string, {
+interface CaseMeta {
   criminalName: string;
   evidence: Evidence[];
-}> = {
-  case_001: {
-    criminalName: '山城 星也',
-    evidence: [
-      { id: 'ev_autopsy', name: '司法解剖報告書', content: '死亡推定時刻：午後4時〜5時。死因：後頭部への鈍器による強打。即死と推定。' },
-      { id: 'ev_clock_statue', name: '「考える人」の置物', content: '凶器。高さ約25cm。被害者の血痕付着。首を傾けると内蔵スピーカーから現在時刻を読み上げる。外見からは時計とわからない。' },
-      { id: 'ev_blackout', name: '停電の記録', content: '事件当日、午前11時〜午後3時まで計画停電。電力会社発行の公式記録。' },
-      { id: 'ev_passport', name: '被害者のパスポート', content: '先週ニューヨークから帰国。日本との時差は-14時間。置物の時計はNY時刻に設定されていた。' },
-      { id: 'ev_receipt', name: 'コンビニのレシート', content: '矢上が午後4時30分にコンビニで買い物をした記録。マンションから徒歩15分の場所。' },
-    ],
-  },
-  case_002: {
-    criminalName: '永瀬 達也',
-    evidence: [
-      { id: 'ev_checklist', name: '夜間給餌チェックリスト', content: '海老原浩二の手書きチェックリスト。A水槽（イワシ）とB水槽（サメ・エイ）の確認欄に記入あり。C水槽（熱帯魚）以降は空白。B〜C水槽間の通路床に落ちた状態で発見された' },
-      { id: 'ev_id_log', name: 'バックヤード入退室記録', content: 'バックヤード入口電子錠の入退室ログ。17:35：海老原浩二のIDカードで開錠の記録。17:35以降の永瀬の退館ログは存在しない' },
-      { id: 'ev_director', name: '館長・富岡の証言記録', content: '館長・富岡義明の証言：「永瀬氏からバックヤード見学や面会の許可申請は受けていない。昨日は17時から18時30分まで施工会社の担当者と会議室で打ち合わせをしており、その間は誰とも会っていない」' },
-      { id: 'ev_bribery', name: '収賄関連書類コピー', content: '永瀬達也と館長・富岡義明の不正契約書コピー。新館建設費42億円のうち3000万円を水増しし、富岡個人口座に振り込む内容。永瀬の直筆サインと押印あり。' },
-      { id: 'ev_autopsy', name: '司法解剖報告書', content: '死亡推定時刻18:00〜19:00。後頭部左側に鈍器による打撲痕（転落による傷とは角度が一致しない）。遺体発見時の体の向きは入口方向（北向き）。' },
-    ],
-  },
-};
+}
 
 // ゲーム専用フッター
 function GameFooter({
@@ -237,8 +216,14 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const [showLog, setShowLog] = useState(false);
   const [showObjection, setShowObjection] = useState(false);
   const prevMessageCountRef = useRef(0);
+  const [meta, setMeta] = useState<CaseMeta | null>(null);
 
-  const meta = CASE_META[caseId];
+  useEffect(() => {
+    authenticatedFetch(`/api/get-case?caseId=${caseId}`)
+      .then((res) => res.json())
+      .then((data) => setMeta({ criminalName: data.criminalName, evidence: data.evidence }))
+      .catch(console.error);
+  }, [caseId]);
 
   useEffect(() => {
     if (!session) {
