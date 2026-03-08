@@ -13,23 +13,31 @@ import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
 // コヒーレンスに応じた画像バリアントを返す
 // 画像ファイル命名規則: public/images/characters/{caseId}_{emotion}.png
-// emotion: normal | nervous | cornered | breaking
+// emotion: normal | nervous | cornered | breaking | collapsed
 function getCharacterImage(caseId: string, coherence: number): string | null {
   const emotion =
     coherence >= 60 ? 'normal' :
     coherence >= 40 ? 'nervous' :
-    coherence >= 20 ? 'cornered' : 'breaking';
+    coherence >= 20 ? 'cornered' :
+    coherence >= 10 ? 'breaking' : 'collapsed';
 
-  // 存在する画像だけを返す（未定義のものはnull → プレースホルダー表示）
   const available: Record<string, string[]> = {
     case_001: [],
-    case_002: ['normal'],
+    case_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
   };
 
   const list = available[caseId] ?? [];
   if (list.includes(emotion)) return `/images/characters/${caseId}_${emotion}.png`;
   if (list.includes('normal')) return `/images/characters/${caseId}_normal.png`;
   return null;
+}
+
+// ケース別の尋問背景画像
+function getInterrogationBg(caseId: string): string | null {
+  const bgs: Record<string, string> = {
+    case_002: '/images/backgrounds/case_002_interrogation.png',
+  };
+  return bgs[caseId] ?? null;
 }
 
 interface CaseMeta {
@@ -347,18 +355,24 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         {/* キャラクター画像: 横幅いっぱい */}
         {(() => {
           const imgSrc = getCharacterImage(caseId, session.coherence);
+          const bgSrc = getInterrogationBg(caseId);
           return imgSrc ? (
-            <div className="relative mx-auto w-full max-w-md">
+            <div
+              className="relative mx-auto w-full max-w-md overflow-hidden"
+              style={bgSrc ? { backgroundImage: `url(${bgSrc})`, backgroundSize: 'cover', backgroundPosition: 'center top' } : {}}
+            >
+              {/* 背景オーバーレイ（暗め） */}
+              {bgSrc && <div className="absolute inset-0 bg-gray-950/40" />}
               <Image
                 src={imgSrc}
                 alt={meta.criminalName}
                 width={1024}
                 height={1024}
-                className="w-full h-auto"
+                className="relative w-full h-auto"
                 priority
               />
-              {/* 下部グラデーション: 白背景をダーク背景に馴染ませる */}
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-950 to-transparent" />
+              {/* 下部グラデーション */}
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-950 to-transparent" />
               {/* 思考中スピナー */}
               {isCriminalThinking && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-950/40">

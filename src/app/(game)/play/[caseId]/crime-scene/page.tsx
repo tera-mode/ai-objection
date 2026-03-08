@@ -2,9 +2,15 @@
 
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useGame } from '@/contexts/GameContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 import { Evidence } from '@/types/game';
+
+// ケース別イントロ画像
+const INTRO_IMAGES: Record<string, string> = {
+  case_002: '/images/intro/case_002_intro.png',
+};
 
 interface CasePageData {
   title: string;
@@ -62,6 +68,18 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
         {/* フェーズ表示 */}
         {phase === 'intro' && (
           <div className="flex flex-col gap-6">
+            {INTRO_IMAGES[caseId] && (
+              <div className="overflow-hidden rounded-2xl border border-gray-800">
+                <Image
+                  src={INTRO_IMAGES[caseId]}
+                  alt="事件現場"
+                  width={800}
+                  height={450}
+                  className="w-full h-auto object-cover"
+                  priority
+                />
+              </div>
+            )}
             <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
               <p className="mb-3 text-xs font-semibold text-cyan-500 uppercase tracking-wider">事件概要</p>
               <p className="text-sm leading-relaxed text-gray-300 whitespace-pre-line">{data.storyText.intro}</p>
