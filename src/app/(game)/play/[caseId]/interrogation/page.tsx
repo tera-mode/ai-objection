@@ -16,9 +16,9 @@ import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 // emotion: normal | nervous | cornered | breaking | collapsed
 function getCharacterImage(caseId: string, coherence: number): string | null {
   const emotion =
-    coherence >= 60 ? 'normal' :
-    coherence >= 40 ? 'nervous' :
-    coherence >= 20 ? 'cornered' :
+    coherence >= 80 ? 'normal' :
+    coherence >= 55 ? 'nervous' :
+    coherence >= 30 ? 'cornered' :
     coherence >= 10 ? 'breaking' : 'collapsed';
 
   const available: Record<string, string[]> = {
@@ -404,9 +404,9 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           <p className="font-bold text-white">{meta.criminalName}</p>
           <p className="text-xs text-gray-400">
             {session.coherence >= 80 ? '冷静' :
-             session.coherence >= 60 ? 'やや動揺' :
-             session.coherence >= 40 ? '動揺' :
-             session.coherence >= 20 ? '取り乱し中' : '崩壊寸前'}
+             session.coherence >= 55 ? 'やや動揺' :
+             session.coherence >= 30 ? '動揺' :
+             session.coherence >= 10 ? '取り乱し中' : '崩壊寸前'}
           </p>
         </div>
       </div>
