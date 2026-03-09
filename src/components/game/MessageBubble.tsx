@@ -4,9 +4,10 @@ import { ChatMessage } from '@/types/game';
 
 interface MessageBubbleProps {
   message: ChatMessage;
+  criminalName?: string;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({ message, criminalName }: MessageBubbleProps) {
   const isPlayer = message.role === 'player';
 
   return (
@@ -19,7 +20,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         }`}
       >
         {!isPlayer && (
-          <p className="mb-1 text-xs font-semibold text-cyan-400">容疑者</p>
+          <p className="mb-1 text-xs font-semibold text-cyan-400">{criminalName ?? '容疑者'}</p>
         )}
         <p>{message.content}</p>
       </div>

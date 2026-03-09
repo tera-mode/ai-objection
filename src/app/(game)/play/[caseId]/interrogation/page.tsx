@@ -35,8 +35,8 @@ function getCharacterImage(caseId: string, coherence: number): string | null {
 // ケース別の尋問背景画像
 function getInterrogationBg(caseId: string): string | null {
   const bgs: Record<string, string> = {
-    case_001: '/images/backgrounds/case_001_interrogation.png',
-    case_002: '/images/backgrounds/case_002_interrogation.png',
+    case_001: '/images/backgrounds/case_001_interrogation.jpg',
+    case_002: '/images/backgrounds/case_002_interrogation.jpg',
   };
   return bgs[caseId] ?? null;
 }
@@ -94,8 +94,8 @@ function GameFooter({
   );
 }
 
-// 証拠アイコン（/images/evidence/{evId}.png、なければプレースホルダー）
-function EvidenceIcon({ evId, size }: { evId: string; size: number }) {
+// 証拠アイコン（/images/evidence/{caseId}/{evId}.png、なければプレースホルダー）
+function EvidenceIcon({ evId, caseId, size }: { evId: string; caseId: string; size: number }) {
   const [failed, setFailed] = useState(false);
   if (failed) {
     return (
@@ -112,7 +112,7 @@ function EvidenceIcon({ evId, size }: { evId: string; size: number }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`/images/evidence/${evId}.png`}
+      src={`/images/evidence/${caseId}/${evId}.png`}
       alt=""
       width={size}
       height={size}
@@ -126,9 +126,11 @@ function EvidenceIcon({ evId, size }: { evId: string; size: number }) {
 // 証拠モーダル
 function EvidenceModal({
   evidence,
+  caseId,
   onClose,
 }: {
   evidence: Evidence[];
+  caseId: string;
   onClose: () => void;
 }) {
   const [selected, setSelected] = useState<Evidence | null>(null);
@@ -151,7 +153,7 @@ function EvidenceModal({
           <div>
             <button onClick={() => setSelected(null)} className="mb-3 text-xs text-cyan-400 hover:underline">← 一覧に戻る</button>
             <div className="mb-4 flex items-center gap-4">
-              <EvidenceIcon evId={selected.id} size={64} />
+              <EvidenceIcon evId={selected.id} caseId={caseId} size={64} />
               <p className="font-semibold text-white">{selected.name}</p>
             </div>
             <p className="text-sm leading-relaxed text-gray-300">{selected.content}</p>
@@ -164,7 +166,7 @@ function EvidenceModal({
                   onClick={() => setSelected(ev)}
                   className="flex w-full items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-left transition-colors hover:border-cyan-500 hover:text-white"
                 >
-                  <EvidenceIcon evId={ev.id} size={96} />
+                  <EvidenceIcon evId={ev.id} caseId={caseId} size={96} />
                   <span className="text-sm text-gray-300">{ev.name}</span>
                 </button>
               </li>
@@ -180,10 +182,12 @@ function EvidenceModal({
 function LogModal({
   messages,
   previousConversation,
+  criminalName,
   onClose,
 }: {
   messages: { role: string; content: string }[];
   previousConversation: { role: 'player' | 'criminal' | 'divider'; content: string }[];
+  criminalName: string;
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<'current' | 'previous'>('current');
@@ -225,7 +229,7 @@ function LogModal({
                 {messages.map((m, i) => (
                   <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
                     <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-gray-400'}`}>
-                      {m.role === 'player' ? 'あなた' : '容疑者'}
+                      {m.role === 'player' ? 'あなた' : criminalName}
                     </span>
                     <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
                       m.role === 'player' ? 'bg-cyan-900/50' : 'bg-gray-800'
@@ -358,7 +362,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           const imgSrc = getCharacterImage(caseId, session.coherence);
           const bgSrc = getInterrogationBg(caseId);
           return imgSrc ? (
-            <div className="relative mx-auto w-full max-w-md overflow-hidden">
+            <div className="relative mx-auto w-full max-w-md overflow-hidden h-[35vh]">
               {/* 背景画像 */}
               {bgSrc && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -399,16 +403,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           );
         })()}
 
-        {/* 名前・状態: 画像の下に縦並び */}
-        <div className="border-b border-gray-800 px-4 py-2">
-          <p className="font-bold text-white">{meta.criminalName}</p>
-          <p className="text-xs text-gray-400">
-            {session.coherence >= 80 ? '冷静' :
-             session.coherence >= 55 ? 'やや動揺' :
-             session.coherence >= 30 ? '動揺' :
-             session.coherence >= 10 ? '取り乱し中' : '崩壊寸前'}
-          </p>
-        </div>
       </div>
 
       {/* メッセージエリア */}
@@ -420,12 +414,12 @@ function InterrogationContent({ caseId }: { caseId: string }) {
             </div>
           )}
           {session.messages.map((msg, i) => (
-            <MessageBubble key={i} message={msg} />
+            <MessageBubble key={i} message={msg} criminalName={meta.criminalName} />
           ))}
           {isCriminalThinking && (
             <div className="flex items-start gap-2">
               <div className="rounded-2xl rounded-bl-sm border border-gray-700 bg-gray-800 px-4 py-3">
-                <p className="mb-1 text-xs font-semibold text-cyan-400">容疑者</p>
+                <p className="mb-1 text-xs font-semibold text-cyan-400">{meta.criminalName}</p>
                 <div className="flex gap-1">
                   {[0, 150, 300].map((delay) => (
                     <span
@@ -464,12 +458,13 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
       {/* モーダル */}
       {showEvidence && (
-        <EvidenceModal evidence={meta.evidence} onClose={() => setShowEvidence(false)} />
+        <EvidenceModal evidence={meta.evidence} caseId={caseId} onClose={() => setShowEvidence(false)} />
       )}
       {showLog && (
         <LogModal
           messages={session.messages.map((m) => ({ role: m.role, content: m.content }))}
           previousConversation={previousConversation}
+          criminalName={meta.criminalName}
           onClose={() => setShowLog(false)}
         />
       )}

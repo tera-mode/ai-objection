@@ -9,8 +9,8 @@ import { Evidence } from '@/types/game';
 
 // ケース別イントロ画像
 const INTRO_IMAGES: Record<string, string> = {
-  case_001: '/images/intro/case_001_intro.png',
-  case_002: '/images/intro/case_002_intro.png',
+  case_001: '/images/intro/case_001_intro.jpg',
+  case_002: '/images/intro/case_002_intro.jpg',
 };
 
 interface CasePageData {
