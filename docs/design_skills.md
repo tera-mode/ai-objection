@@ -14,10 +14,27 @@
 
 ### ⚠️ 重要：文字を絶対に入れない
 Gemini Image は指示なしに謎の文字・ロゴ・ラベルを描き込む場合がある。
-すべてのプロンプトに必ず以下を含めること：
+**看板・衣装・書類・背景の装飾にも無断で文字を入れる。** すべてのプロンプトに必ず以下を含めること：
 
 ```
 absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana
+```
+
+### ⚠️ 重要：キャラクター5感情は「同一人物」として生成する
+5つの emotion（normal / nervous / cornered / breaking / collapsed）は、**同一のキャラクター設定文を基盤にして、感情部分だけを変える**こと。
+プロンプトを感情ごとにバラバラに書くと、別人が出力される。
+
+**正しい構成：**
+```
+[共通キャラクター設定] + EMOTION: [感情の説明]
+```
+
+例：霧隠煙太郎の場合、以下をすべての感情で共通して使用する
+```
+Japanese male age 35 medium build slightly slouched, oval face upward-slanting eyes tsurime,
+black hair with bangs peeking out from under black ninja hood cowl,
+wearing complete black ninja uniform costume with hood,
+special utility belt at waist with three small rectangular metal box devices clipped on
 ```
 
 ### UIレイアウトとの対応（スマホ基準）
@@ -41,8 +58,17 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 | 生成サイズ | **1024 × 1024 px**（正方形） |
 | フォーマット | PNG（背景透過） |
 | 切り取り範囲 | **上半身のみ**（頭頂〜胸〜腰あたりまで。足は不要） |
-| 背景除去 | **必須**：remove.bg で白抜き → PNG透過保存 |
+| 背景 | **白背景**で生成（透過処理のため） |
+| 背景除去 | **必須**：remove-white-bg スクリプト or remove.bg |
 | 感情バリアント | normal / nervous / cornered / breaking / collapsed（5種） |
+
+#### ⚠️ 上半身のみ・フレーミング指定
+全身（足まで）が出力されるとキャラクターが小さくなり、ゲーム画面での表示インパクトが失われる。
+プロンプトに必ず以下を含めること：
+
+```
+UPPER BODY ONLY tightly framed from head to chest NO legs NO feet
+```
 
 #### 感情ごとの表情ガイド
 | emotion | 状態 | 表情・仕草のヒント |
@@ -55,26 +81,26 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 
 #### 背景除去ワークフロー
 
-**ステップ1: Gemini edit_image で除去（Claude Code 内で完結）**
-```
-edit_image prompt: "Remove the white background completely and make it fully transparent. Keep only the character illustration with clean edges. Output as PNG with transparency."
-```
-- 入力: `characters/raw/{caseId}_{emotion}_raw.png`
-- 出力: `characters/{caseId}_{emotion}.png`
+> ⛔ **`edit_image` で背景除去する方法は使用禁止**
+> `edit_image` は一部ピクセルを alpha=0 / RGB=0,0,0 に変換するが、`remove-white-bg.js` の BFS は alpha=0 の黒ピクセルを「背景ではない」と判断してしまい、背景残渣（白や灰色のチェック模様）が残る原因になる。
 
-⚠️ **edit_image は `hasAlpha:false`（透過なし）の PNG を出力する場合がある。**
-
-**ステップ2: remove-white-bg スクリプトで確実に透過化**
+**正しい手順: raw から直接 remove-white-bg スクリプトを実行**
 ```bash
+# characters/ に raw ファイルをコピーしてからスクリプトを適用
+cp public/images/characters/raw/case_003_normal_raw.png public/images/characters/case_003_normal.png
+# …全感情分コピー後…
+
 # 特定ケースの全感情を一括処理
 node scripts/remove-white-bg.js --all-case001
+node scripts/remove-white-bg.js --all-case002
+node scripts/remove-white-bg.js --all-case003
 
 # 単一ファイル
 node scripts/remove-white-bg.js public/images/characters/case_001_normal.png
 ```
 - 画像エッジから白・近似白ピクセルをフラッドフィルで検出し透過にする
 - キャラクター本体内の白（目・歯など）は端に接触しないため保持される
-- 処理後に `hasAlpha:true` であることを確認すること
+- スクリプトは alpha=0 のピクセルも「背景として通過可能」と扱うため、事前の partial 透過化があっても正しく動作する
 
 **方法B: remove.bg（最高精度が必要な場合）**
 1. `characters/raw/{caseId}_{emotion}_raw.png` を [remove.bg](https://www.remove.bg/) にアップロード
@@ -84,8 +110,10 @@ node scripts/remove-white-bg.js public/images/characters/case_001_normal.png
 #### キャラクター生成プロンプトテンプレート
 ```
 Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration,
-bold black outlines, flat vibrant colors, upper body only (head to waist),
-[CHARACTER_DESCRIPTION], [EMOTION_DESCRIPTION],
+bold black outlines, flat vibrant colors,
+UPPER BODY ONLY tightly framed from head to chest NO legs NO feet,
+[CHARACTER_BASE_DESCRIPTION（全感情で共通）],
+EMOTION: [EMOTION_DESCRIPTION（感情ごとに変える）],
 plain white background (for background removal),
 absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
 1024x1024, clean illustration
@@ -112,12 +140,19 @@ full frame edge-to-edge illustration filling entire canvas including all corners
 absolutely NO letterbox NO black bars NO borders NO vignette on edges
 ```
 
+#### ⚠️ 透過背景（チェック柄）が出力された場合
+ビューワーでグレー/白のチェック柄に見える場合、Gemini が透明背景で出力している。
+背景画像は必ず**不透明なソリッドな画像**が必要。以下を対処する：
+- プロンプトに `solid opaque background, no transparency` を追加して再生成
+- または `edit_image` で `"Fill the transparent/checkered background with the appropriate environment colors. Make the background fully opaque."` と指示して修正
+
 #### 背景生成プロンプトテンプレート
 ```
 Anime Ace Attorney visual novel style, Japanese courtroom drama interior,
 bold black outlines, cel-shaded, [CASE_SPECIFIC_SETTING],
 moody atmosphere, [LIGHTING_DESCRIPTION],
 wide establishing shot, no characters, only environment,
+solid opaque background,
 full frame edge-to-edge illustration filling entire canvas including all corners and edges,
 absolutely NO letterbox NO black bars NO borders NO vignette on edges,
 absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
@@ -125,9 +160,8 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 ```
 
 #### 処理フロー
-1. Gemini で 1024×1024 PNG を生成
-2. `backgrounds/raw/{caseId}_interrogation_raw.png` に保存
-3. `node scripts/compress-images.js` を実行 → 自動で 800×450 JPEG に変換・保存
+1. Gemini で 1024×1024 PNG を生成 → `backgrounds/raw/{caseId}_interrogation_raw.png` に保存
+2. `node scripts/compress-images.js` を実行 → 自動で 800×450 JPEG に変換・保存
 
 ---
 
@@ -161,6 +195,10 @@ centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO h
 | ゲーム用サイズ | **480px幅 JPEG**（compress-images.js が自動生成） |
 | フォーマット | 原画: PNG → ゲーム用: **JPEG** |
 
+#### イントロ画像プロンプトのポイント
+- 背景と同様に `full frame edge-to-edge` と `solid opaque background` を含めること
+- 看板・のぼり・掲示物に文字が入りやすいので NO text フレーズを必ず入れること
+
 ---
 
 ## 2. raw/ フォルダ規則
@@ -174,7 +212,7 @@ public/images/
 │       ├── case_001_normal_raw.png    ← remove_bg前の原画（編集禁止）
 │       └── case_001_nervous_raw.png
 ├── backgrounds/
-│   ├── case_001_interrogation.png ← ゲーム用（圧縮済み）
+│   ├── case_001_interrogation.jpg ← ゲーム用（圧縮済み）
 │   └── raw/
 │       └── case_001_interrogation_raw.png ← 生成原画（編集禁止）
 ├── evidence/
@@ -188,7 +226,7 @@ public/images/
 │       └── case_002/
 │           └── ev_checklist_raw.png
 └── intro/
-    ├── case_001_intro.png         ← ゲーム用（圧縮済み）
+    ├── case_001_intro.jpg         ← ゲーム用（圧縮済み）
     └── raw/
         └── case_001_intro_raw.png ← 生成原画（編集禁止）
 ```
@@ -204,19 +242,19 @@ public/images/
 node scripts/compress-images.js
 ```
 
-圧縮ターゲット（現状の約1/3サイズ）：
+圧縮ターゲット：
 
 | 種別 | 出力形式 | 出力サイズ | 実測ファイルサイズ |
 |------|----------|-----------|------------------|
-| キャラクター | PNG透過 512px | 512×512 | 約250〜330KB |
-| 背景 | **JPEG** 800px | 800×450（16:9） | **約60〜70KB** |
+| キャラクター | PNG透過 512px | 512×512 | 約160〜400KB |
+| 背景 | **JPEG** 800px | 800×450（16:9） | **約30〜70KB** |
 | 証拠アイコン | PNG 300px | 300×300 | 約60〜160KB |
-| イントロ | **JPEG** 480px | 480px幅 | **約30〜45KB** |
+| イントロ | **JPEG** 480px | 480px幅 | **約30〜55KB** |
 
 ### 手順
-1. 画像を生成・加工してゲーム用フォルダに配置
-2. `node scripts/compress-images.js` を実行
-3. raw/ へのバックアップと圧縮が自動で行われる
+1. 画像を生成・背景除去してゲーム用フォルダに配置
+2. 証拠画像は `raw/case_XXX/` から `evidence/case_XXX/` にコピー
+3. `node scripts/compress-images.js` を実行
 4. ブラウザで確認
 5. `git add public/images/ && git commit -m "assets: ..."` でコミット
 
@@ -233,33 +271,35 @@ node scripts/compress-images.js
 - 整った顔立ち、切れ長の目、通った鼻筋、薄い唇
 - 笑顔は好印象だが、目の奥が暗い
 - ⚠️ 白衣は使わない（白背景で背景除去処理すると服ごと抜けるため）
-- ⚠️ プロンプトに必ず `UPPER BODY ONLY tightly framed from head to chest NO legs NO feet` を含める
 
 **各感情のプロンプト：**
 
 | emotion | プロンプト |
 |---------|-----------|
-| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair with soft fringe covering eyebrows (messy undercut style), sharp almond eyes, clean handsome face, confident gentle smile with slight unease deep in eyes, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair with soft fringe, sharp eyes slightly averted and darting, sweat drop on forehead, forced smile starting to crack, slight blush on cheeks, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair, wide alarmed eyes pupils dilated, jaw clenched, face visibly paler, mouth twisted, clearly shaken expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), young Japanese male age 27, lean build, dark navy blue veterinary scrubs top wrinkled and disheveled, short black hair messy and disheveled, eyes wild and unhinged, teeth gritted, red scratch mark on left forearm visible, emotional breakdown expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), young Japanese male age 27, lean build, dark navy blue veterinary scrubs top completely disheveled, short black hair very messy, tears streaming down face, eyes hollow and distant, mouth open in anguish, complete mental collapse expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair with soft fringe covering eyebrows (messy undercut style), sharp almond eyes, clean handsome face, EMOTION: confident gentle smile with slight unease deep in eyes, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair with soft fringe covering eyebrows, sharp almond eyes, EMOTION: eyes slightly averted and darting, sweat drop on forehead, forced smile starting to crack, slight blush on cheeks, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair, EMOTION: wide alarmed eyes pupils dilated, jaw clenched, face visibly paler, mouth twisted, clearly shaken expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top wrinkled and disheveled, short black hair messy and disheveled, EMOTION: eyes wild and unhinged, teeth gritted, red scratch mark on left forearm visible, emotional breakdown expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top completely disheveled, short black hair very messy, EMOTION: tears streaming down face, eyes hollow and distant, mouth open in anguish, complete mental collapse expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
 
 **背景（尋問室）プロンプト：**
 ```
-"Anime Ace Attorney visual novel style, Japanese courtroom drama, bold black outlines, cel-shaded,
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
 animal hospital waiting room repurposed as interrogation space,
-warm orange practical lamp light, wooden furniture, pet drawings on wall visible,
+warm orange practical lamp light, wooden furniture, dark shadowy corners,
 moody night atmosphere, dark shadows with orange warm light accents,
-wide establishing shot, no characters, only environment,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
 absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
-1024x640, clean illustration"
+1024x1024, clean illustration"
 ```
 
 **証拠アイコン（case_001）：**
 
 | evidence_id | プロンプト |
 |-------------|-----------|
+| `ev_camera` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, security camera surveillance monitor showing grainy footage, dark hospital night atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_diary` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, old brown leather diary journal with worn corners, warm amber interior lighting atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_letters` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, stack of anonymous white envelopes sealed and tied together, mysterious threatening atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_scratch` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, close-up of a forearm with red claw scratch marks, forensic medical illustration style, plain background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
@@ -269,7 +309,7 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 
 ### case_002「碧海水族館の夜」
 
-#### 容疑者：永瀬 達也（ながせ たつや）
+#### 容疑者：永瀬 達也（ながせ たつや）40代
 
 **キャラクター基本設定：**
 - ネイビースーツ、黒縁眼鏡、清潔感のあるビジネスマン
@@ -279,21 +319,23 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 
 | emotion | プロンプト |
 |---------|-----------|
-| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), Japanese male businessman in his 40s, neat navy blue suit with white shirt and dark tie, black-framed rectangular glasses, short tidy dark hair, composed polite expression with confident businessman smile, slightly too smooth and rehearsed manner, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), Japanese businessman in navy suit and black-framed glasses, hand raised to adjust glasses on nose, slight nervous sweat, maintaining overly formal smile that is starting to crack, eyes avoiding direct gaze, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), Japanese businessman in disheveled navy suit, glasses askew, visible flop sweat, clenched teeth behind maintained professional facade, eyes darting nervously, pale face, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), Japanese businessman in very disheveled suit tie loosened, glasses cracked or hanging off, wild desperate eyes, trembling shoulders, mask slipping showing rage underneath, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, upper body only (head to waist), Japanese businessman completely fallen apart, suit jacket open and wrinkled, glasses removed and holding them limply, dead hollow eyes with dark circles, jaw slack, defeated broken expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male businessman in his 40s, neat navy blue suit with white shirt and dark tie, black-framed rectangular glasses, short tidy dark hair, EMOTION: composed polite expression with confident businessman smile, slightly too smooth and rehearsed manner, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male businessman in his 40s, navy blue suit with white shirt and dark tie, black-framed rectangular glasses, short tidy dark hair, EMOTION: hand raised to adjust glasses on nose, slight nervous sweat, maintaining overly formal smile that is starting to crack, eyes avoiding direct gaze, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male businessman in his 40s, disheveled navy suit, glasses askew, short dark hair, EMOTION: visible flop sweat, clenched teeth behind maintained professional facade, eyes darting nervously, pale face, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male businessman in his 40s, very disheveled suit tie loosened, glasses cracked or hanging off, dark hair slightly messed, EMOTION: wild desperate eyes, trembling shoulders, mask slipping showing rage underneath, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male businessman in his 40s, suit jacket open and wrinkled, glasses removed and holding them limply, dark hair disheveled, EMOTION: dead hollow eyes with dark circles, jaw slack, defeated broken expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
 
 **背景（尋問室）プロンプト：**
 ```
-"Anime Ace Attorney visual novel style, Japanese courtroom drama, bold black outlines, cel-shaded,
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
 police interrogation room with dark teal aquarium-like glass panel in background,
 deep blue atmospheric lighting reminiscent of aquarium depths,
-steel desk chair visible, minimal sparse setting, oppressive atmosphere,
-wide establishing shot, no characters, only environment,
+steel desk and chair visible, minimal sparse setting, oppressive atmosphere,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
 absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
-1024x640, clean illustration"
+1024x1024, clean illustration"
 ```
 
 **証拠アイコン（case_002）：**
@@ -304,31 +346,140 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 | `ev_id_log` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, electronic keycard swipe terminal screen glowing cyan, dark aquarium corridor atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_camera` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, security camera surveillance monitor showing grainy static footage, dark atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_director` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, folded official document with large red ink stamp circle, dark moody background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
-| `ev_bribery` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, contract paper with signature handwriting marks and wax seal, partially in shadow, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_bribery` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, contract paper with handwriting marks and wax seal, partially in shadow, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_autopsy` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, autopsy report clipboard with simple body silhouette outline diagram drawn on paper, dark background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 | `ev_emergency_exit` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, emergency exit door sensor panel with glowing red warning light and green indicator, dark aquarium corridor, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
 
 ---
 
+### case_003「忍びの里の閉園後に」
+
+#### 容疑者：霧隠 煙太郎（きりがくれ えんたろう）35歳
+
+**キャラクター基本設定（全感情共通）：**
+- 35歳、中肉中背・やや猫背
+- 面長、つり目（tsurime）、口元がよく動く
+- 黒髪やや長め、前髪が目にかかる（頭巾からはみ出す）
+- 黒の忍者装束（頭巾つき）、腰に煙幕装置ベルト（金属製小型ボックス3つ）
+- ⚠️ 衣装に「霧」の一文字などを描かせないよう NO text を必ず入れること
+
+**各感情のプロンプト：**
+
+| emotion | プロンプト |
+|---------|-----------|
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male age 35 medium build slightly slouched, oval face upward-slanting eyes tsurime, black hair with bangs peeking out from under black ninja hood cowl, wearing complete black ninja uniform costume with hood, special utility belt at waist with three small rectangular metal box devices clipped on, EMOTION: confident smug grin showing visible canine teeth, relaxed self-assured mischievous look, eyes narrowed in pleased expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male age 35 medium build slightly slouched, oval face upward-slanting eyes tsurime, black hair with bangs peeking out from under black ninja hood cowl, wearing complete black ninja uniform costume with hood, special utility belt at waist with three small rectangular metal box devices clipped on, EMOTION: forced strained smile starting to crack, eyes darting sideways avoiding direct gaze, small sweat drop on forehead, visible nervousness behind maintained composure, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male age 35 medium build slightly slouched, oval face upward-slanting eyes tsurime, black hair with bangs peeking out from under black ninja hood cowl, wearing complete black ninja uniform costume with hood, special utility belt at waist with three small rectangular metal box devices clipped on, EMOTION: cornered alarmed wide eyes pupils dilated, smile completely gone, jaw clenched, face visibly paler, mouth twisted in distress, clearly shaken and panicked, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male age 35 medium build slightly slouched, oval face upward-slanting eyes tsurime, black hair with bangs now more visible as ninja hood is askew and partially fallen back, wearing disheveled black ninja uniform costume with hood pushed back revealing more hair, special utility belt at waist with three small rectangular metal box devices, EMOTION: breaking down wild desperate eyes gritted teeth emotional turmoil mask slipping, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Japanese male age 35 medium build slightly slouched, oval face upward-slanting eyes tsurime, messy black hair with bangs fully exposed as ninja hood is completely off and hanging, wearing very disheveled black ninja uniform costume with right sleeve showing reddish-brown dirt stain, special utility belt at waist with three small rectangular metal box devices, EMOTION: completely collapsed hollow vacant stare dark circles under eyes jaw slack total defeat tears in eyes all pretense gone exhausted broken, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+
+**背景（尋問室）プロンプト：**
+```
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
+interior of a dark wooden Japanese ninja theme park secret passage corridor after closing hours,
+wooden plank walls and ceiling, rubber mat floor,
+unlit paper lantern torches on walls, dim eerie atmosphere with deep shadows,
+wooden suspension bridge structure visible in mid-background,
+display of decorative ninja prop weapons on wall,
+moody dark shadows with faint purple and red color tint from unlit spotlights,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+1024x1024, clean illustration"
+```
+
+**イントロ画像プロンプト：**
+```
+"Anime cel-shaded scene illustration, Ace Attorney visual novel style,
+bold black outlines, flat vibrant colors,
+Japanese ninja theme park stone courtyard at early morning dawn,
+wooden torii-style gate arch entrance, paving stones,
+center of plaza stands a large 2-meter wooden karakuri automaton puppet
+in chibi cute ninja style with big round cheerful carved eyes smiling wooden face,
+red cloth headband tied around its head, gold ornament on chest,
+right wooden arm raised holding wooden shuriken star frozen stuck mid-throw pose, lonely melancholy mood,
+young male staff member in black ninja uniform stands nearby looking up at the frozen puppet
+holding an open notebook manual,
+soft warm golden dawn light long dramatic shadows,
+solid opaque background, full frame edge-to-edge filling entire canvas,
+absolutely NO letterbox NO black bars NO borders,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+1024x1024, clean anime illustration"
+```
+
+**証拠アイコン（case_003）：**
+
+| evidence_id | プロンプト |
+|-------------|-----------|
+| `ev_camera` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, security surveillance CCTV monitor screen showing grainy night-vision footage of a wooden gate entrance with a dark figure in ninja costume exiting, dark ninja theme park atmosphere background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_witness` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, small child's crayon drawing style artwork showing a stick figure with white smoke puffs coming from their waist running towards a dark building, innocent childlike illustration on white paper, dark ninja theme park atmosphere border, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_weapon` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, ornate Japanese replica katana sword with bamboo sheath resting on a display stand, glowing dramatic lighting revealing a cross-section cut showing the hollow interior filled with a dark iron metal rod insert, dark atmospheric background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_repair_log` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, open spiral-bound maintenance work log notebook lying flat, pages showing handwritten wavy lines as entries with a pen resting across it, small ink signature mark at bottom of page, warm desk lamp light illuminating the notebook, dark background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+
+---
+
 ## 5. 生成手順（標準フロー）
 
-### キャラクター画像
-1. 上記プロンプトで `mcp__gemini-image__generate_image` を実行
-2. `public/images/characters/raw/{caseId}_{emotion}_raw.png` に保存
-3. [remove.bg](https://www.remove.bg/) で背景除去
-4. `public/images/characters/{caseId}_{emotion}.png` に保存
-5. `node scripts/compress-images.js` で圧縮
+### キャラクター画像（全感情セット）
+
+```bash
+# 1. generate_image で5枚生成（raw/に保存）
+#    → _1サフィックスがついた場合はリネーム
+for emo in normal nervous cornered breaking collapsed; do
+  mv "public/images/characters/raw/case_003_${emo}_raw_1.png" \
+     "public/images/characters/raw/case_003_${emo}_raw.png" 2>/dev/null || true
+done
+
+# 2. raw → characters/ にコピー（edit_image は使わない！）
+for emo in normal nervous cornered breaking collapsed; do
+  cp "public/images/characters/raw/case_003_${emo}_raw.png" \
+     "public/images/characters/case_003_${emo}.png"
+done
+
+# 3. remove-white-bg で透過化（rawから直接処理するためチェック模様残渣が出ない）
+node scripts/remove-white-bg.js --all-case003
+
+# 4. 圧縮
+node scripts/compress-images.js
+```
 
 ### 背景・証拠・イントロ画像
-1. 上記プロンプトで `mcp__gemini-image__generate_image` を実行
-2. 該当フォルダに配置
-3. `node scripts/compress-images.js` で圧縮（自動で raw/ バックアップ作成）
 
-### ツールのファイル名注意
-Gemini Image ツールが `_1` サフィックスを付けて保存することがある：
 ```bash
-mv public/images/characters/case_001_normal_1.png public/images/characters/raw/case_001_normal_raw.png
+# 1. generate_image で生成 → raw/ に保存
+#    _1サフィックスがついた場合はリネーム
+mv public/images/backgrounds/raw/case_003_interrogation_raw_1.png \
+   public/images/backgrounds/raw/case_003_interrogation_raw.png 2>/dev/null || true
+
+mv public/images/intro/raw/case_003_intro_raw_1.png \
+   public/images/intro/raw/case_003_intro_raw.png 2>/dev/null || true
+
+for ev in ev_camera ev_witness ev_weapon ev_repair_log; do
+  mv "public/images/evidence/raw/case_003/${ev}_raw_1.png" \
+     "public/images/evidence/raw/case_003/${ev}_raw.png" 2>/dev/null || true
+done
+
+# 2. 証拠画像を evidence/case_003/ にコピー
+for ev in ev_camera ev_witness ev_weapon ev_repair_log; do
+  cp "public/images/evidence/raw/case_003/${ev}_raw.png" \
+     "public/images/evidence/case_003/${ev}.png"
+done
+
+# 3. 圧縮（背景・イントロは raw/ から自動変換）
+node scripts/compress-images.js
 ```
+
+### ⚠️ Gemini Image ツールのよくある罠
+
+| 現象 | 原因 | 対処 |
+|------|------|------|
+| ファイルが `case_003_normal_raw_1.png` で保存される | ツールが自動でサフィックスを付ける | 上記リネームコマンドを実行 |
+| 背景がグレー/白のチェック柄に見える | Gemini が透明背景で出力した | プロンプトに `solid opaque background` を追加して再生成 |
+| キャラに謎の文字・漢字が入る | NO text フレーズ不足 | `absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana` を追加 |
+| 感情5枚が別人に見える | キャラ設定が感情ごとにバラバラ | 共通キャラ設定文を5枚すべてに入れる |
+| 全身（足まで）が出力される | フレーミング指定不足 | `UPPER BODY ONLY tightly framed from head to chest NO legs NO feet` を追加 |
+| 看板・衣装に漢字が描かれる | NO text フレーズは入れても看板・記号は別扱いされる場合がある | 再生成。または edit_image で文字部分を消す |
 
 ---
 
@@ -341,6 +492,7 @@ mv public/images/characters/case_001_normal_1.png public/images/characters/raw/c
 | 証拠背景（デフォルト） | `#1a1f2e` |
 | case_001（病院・夜） | 暗いオレンジ、ブルーグレー、黒 |
 | case_002（水族館） | 深海ブルー、水中照明シアン |
+| case_003（忍者テーマパーク） | 朱赤・木の茶色・夏の緑（昼）／灰がかった茶・深い影（閉園後） |
 
 ---
 

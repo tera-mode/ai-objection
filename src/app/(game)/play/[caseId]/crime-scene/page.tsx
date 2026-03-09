@@ -11,6 +11,7 @@ import { Evidence } from '@/types/game';
 const INTRO_IMAGES: Record<string, string> = {
   case_001: '/images/intro/case_001_intro.jpg',
   case_002: '/images/intro/case_002_intro.jpg',
+  case_003: '/images/intro/case_003_intro.jpg',
 };
 
 interface CasePageData {

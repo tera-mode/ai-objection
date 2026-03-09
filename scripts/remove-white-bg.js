@@ -25,8 +25,12 @@ async function removeWhiteBg(inputPath, outputPath) {
   const channels = 4;
   const visited = new Uint8Array(width * height);
 
-  const isWhite = (x, y) => {
+  // 白ピクセル OR すでに透過済みピクセルを「背景」とみなす。
+  // edit_image で一部透過化された画像では透過ピクセルのRGBが 0,0,0 になっており、
+  // isWhite だけでは BFS がその先に進めず背景残渣が生じる。
+  const isBg = (x, y) => {
     const i = (y * width + x) * channels;
+    if (data[i + 3] === 0) return true; // 既に透過 → 背景として通過
     return data[i] >= THRESHOLD && data[i+1] >= THRESHOLD && data[i+2] >= THRESHOLD;
   };
 
@@ -38,7 +42,7 @@ async function removeWhiteBg(inputPath, outputPath) {
     const idx = y * width + x;
     if (x < 0 || x >= width || y < 0 || y >= height) return;
     if (visited[idx]) return;
-    if (!isWhite(x, y)) return;
+    if (!isBg(x, y)) return;
     visited[idx] = 1;
     data[idx * channels + 3] = 0; // 透明化
     queue[tail++] = x;
@@ -72,13 +76,16 @@ async function removeWhiteBg(inputPath, outputPath) {
 async function main() {
   const args = process.argv.slice(2);
 
-  if (args.includes('--all-case001')) {
+  const allCaseMatch = args.find(a => /^--all-case\d{3}$/.test(a));
+  if (allCaseMatch) {
+    // "--all-case001" → "case_001"（アンダースコアを補完）
+    const caseId = allCaseMatch.replace('--all-case', 'case_');
     const dir = path.join(__dirname, '..', 'public', 'images', 'characters');
     const emotions = ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'];
     for (const e of emotions) {
-      const p = path.join(dir, `case_001_${e}.png`);
+      const p = path.join(dir, `${caseId}_${e}.png`);
       if (fs.existsSync(p)) await removeWhiteBg(p, p);
-      else console.log(`⚠️  見つかりません: case_001_${e}.png`);
+      else console.log(`⚠️  見つかりません: ${caseId}_${e}.png`);
     }
     return;
   }
@@ -86,6 +93,8 @@ async function main() {
   if (args.length === 0) {
     console.log('使い方: node scripts/remove-white-bg.js <input.png> [output.png]');
     console.log('        node scripts/remove-white-bg.js --all-case001');
+    console.log('        node scripts/remove-white-bg.js --all-case002');
+    console.log('        node scripts/remove-white-bg.js --all-case003');
     process.exit(1);
   }
 
