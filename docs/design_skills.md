@@ -7,13 +7,29 @@
 
 ## 0. 全体方針
 
+### 画像生成ツール
+
+| 用途 | ツール | 理由 |
+|------|--------|------|
+| キャラクター normal 画像 | **Stability AI** `generate_image` | 高品質な初期デザイン生成 |
+| キャラクター variation（nervous/cornered/breaking/collapsed） | **Gemini** `edit_image` | normal を下敷きにすることで造詣・衣装・体型を維持できる |
+| イントロ画像 | **Stability AI** `generate_image` | 背景シーンの高品質生成 |
+| 背景画像（尋問室） | **Stability AI** `generate_image` | 同上 |
+| 証拠アイコン | **Stability AI** `generate_image` | 同上 |
+| 背景除去 | **Stability AI** `remove_background` | 精度が高くエッジが綺麗 |
+
+**Gemini `edit_image` を variation に使う理由：**
+Stability AI で感情ごとに別々にテキスト生成すると毎回顔つき・体型・目の色がブレ、5枚が別人になる。
+Gemini `edit_image` は元画像のスタイル・構造を参照して編集するため、同一人物感を維持しやすい。
+表情だけでなくポーズ変更も可能（手を上げる、後ずさりする等）。
+
 ### スタイル
 - **逆転裁判風・日本アニメコミック調**：太い黒縁、セルシェーディング、フラットな鮮やかな色使い
 - **コミカルで誇張された表情**：リアル寄りではなく、感情が分かりやすい漫画的デフォルメ
 - **ハイコントラスト**：縮小表示でも内容が識別できること
 
 ### ⚠️ 重要：文字を絶対に入れない
-Gemini Image は指示なしに謎の文字・ロゴ・ラベルを描き込む場合がある。
+画像生成 AI は指示なしに謎の文字・ロゴ・ラベルを描き込む場合がある。
 **看板・衣装・書類・背景の装飾にも無断で文字を入れる。** すべてのプロンプトに必ず以下を含めること：
 
 ```
@@ -81,18 +97,20 @@ UPPER BODY ONLY tightly framed from head to chest NO legs NO feet
 
 #### 背景除去ワークフロー
 
-> ⛔ **`edit_image` で背景除去する方法は使用禁止**
-> `edit_image` は一部ピクセルを alpha=0 / RGB=0,0,0 に変換するが、`remove-white-bg.js` の BFS は alpha=0 の黒ピクセルを「背景ではない」と判断してしまい、背景残渣（白や灰色のチェック模様）が残る原因になる。
+**方法A（推奨）: Stability AI `remove_background`**
+- Stability AI MCP サーバーの `remove_background` を使う
+- 入力: `characters/raw/{caseId}_{emotion}_raw.png`
+- 出力先: `characters/{caseId}_{emotion}.png`
+- 白背景で生成した raw を渡すだけで OK。精度が高く、エッジが綺麗
+- **Gemini の `edit_image` よりも圧倒的に品質が良い**
 
-**正しい手順: raw から直接 remove-white-bg スクリプトを実行**
+**方法B: remove-white-bg スクリプト（Stability AI が使えない場合）**
 ```bash
 # characters/ に raw ファイルをコピーしてからスクリプトを適用
 cp public/images/characters/raw/case_003_normal_raw.png public/images/characters/case_003_normal.png
 # …全感情分コピー後…
 
 # 特定ケースの全感情を一括処理
-node scripts/remove-white-bg.js --all-case001
-node scripts/remove-white-bg.js --all-case002
 node scripts/remove-white-bg.js --all-case003
 
 # 単一ファイル
@@ -100,12 +118,13 @@ node scripts/remove-white-bg.js public/images/characters/case_001_normal.png
 ```
 - 画像エッジから白・近似白ピクセルをフラッドフィルで検出し透過にする
 - キャラクター本体内の白（目・歯など）は端に接触しないため保持される
-- スクリプトは alpha=0 のピクセルも「背景として通過可能」と扱うため、事前の partial 透過化があっても正しく動作する
 
-**方法B: remove.bg（最高精度が必要な場合）**
+**方法C: remove.bg（最高精度が必要な場合）**
 1. `characters/raw/{caseId}_{emotion}_raw.png` を [remove.bg](https://www.remove.bg/) にアップロード
 2. 透過PNGでダウンロード → `characters/{caseId}_{emotion}.png` に配置
-3. `node scripts/remove-white-bg.js` は不要
+
+> ⛔ **Gemini `edit_image` での背景除去は使用禁止**
+> alpha=0 / RGB=0,0,0 変換による残渣が remove-white-bg.js と相性が悪い。
 
 #### キャラクター生成プロンプトテンプレート
 ```
@@ -423,63 +442,88 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 
 ### キャラクター画像（全感情セット）
 
-```bash
-# 1. generate_image で5枚生成（raw/に保存）
-#    → _1サフィックスがついた場合はリネーム
-for emo in normal nervous cornered breaking collapsed; do
-  mv "public/images/characters/raw/case_003_${emo}_raw_1.png" \
-     "public/images/characters/raw/case_003_${emo}_raw.png" 2>/dev/null || true
-done
+**Step 1: normal を Stability AI で生成**
+```
+stability-ai: generate_image
+→ 保存先: public/images/characters/raw/case_XXX_normal_raw.png
+```
 
-# 2. raw → characters/ にコピー（edit_image は使わない！）
-for emo in normal nervous cornered breaking collapsed; do
-  cp "public/images/characters/raw/case_003_${emo}_raw.png" \
-     "public/images/characters/case_003_${emo}.png"
-done
+**Step 2: variation 4枚を Gemini edit_image で生成**
+normal_raw.png を入力画像として、表情・ポーズだけ変えて生成。
+```
+gemini: edit_image
+  image.path: public/images/characters/raw/case_XXX_normal_raw.png
+  prompt: "Keep character design identical. Change ONLY expression/pose: [感情の説明]"
+  saveToFilePath: public/images/characters/raw/case_XXX_{emotion}_raw.png
+```
+※ Gemini はファイル名に `_1` サフィックスを付ける場合があるのでリネームすること
 
-# 3. remove-white-bg で透過化（rawから直接処理するためチェック模様残渣が出ない）
-node scripts/remove-white-bg.js --all-case003
+**Step 3: 全5枚の背景除去**
+```
+stability-ai: remove_background
+  imageFileUri: file://...raw/case_XXX_{emotion}_raw.png
+→ 保存先（手動コピー）: public/images/characters/case_XXX_{emotion}.png
+```
 
-# 4. 圧縮
+**Step 4: 圧縮**
+```
 node scripts/compress-images.js
 ```
 
-### 背景・証拠・イントロ画像
+### 背景・証拠・イントロ画像 — Stability AI 版
 
-```bash
-# 1. generate_image で生成 → raw/ に保存
-#    _1サフィックスがついた場合はリネーム
-mv public/images/backgrounds/raw/case_003_interrogation_raw_1.png \
-   public/images/backgrounds/raw/case_003_interrogation_raw.png 2>/dev/null || true
+```
+1. stability-ai: generate_image で生成
+   → 背景: public/images/backgrounds/raw/case_003_interrogation_raw.png
+   → イントロ: public/images/intro/raw/case_003_intro_raw.png
+   → 証拠: public/images/evidence/raw/case_003/{ev_id}_raw.png
 
-mv public/images/intro/raw/case_003_intro_raw_1.png \
-   public/images/intro/raw/case_003_intro_raw.png 2>/dev/null || true
+2. 証拠画像を evidence/case_003/ にコピー（背景・イントロはコピー不要）
+   for ev in ev_camera ev_witness ev_weapon ev_repair_log; do
+     cp "public/images/evidence/raw/case_003/${ev}_raw.png" \
+        "public/images/evidence/case_003/${ev}.png"
+   done
 
-for ev in ev_camera ev_witness ev_weapon ev_repair_log; do
-  mv "public/images/evidence/raw/case_003/${ev}_raw_1.png" \
-     "public/images/evidence/raw/case_003/${ev}_raw.png" 2>/dev/null || true
-done
-
-# 2. 証拠画像を evidence/case_003/ にコピー
-for ev in ev_camera ev_witness ev_weapon ev_repair_log; do
-  cp "public/images/evidence/raw/case_003/${ev}_raw.png" \
-     "public/images/evidence/case_003/${ev}.png"
-done
-
-# 3. 圧縮（背景・イントロは raw/ から自動変換）
-node scripts/compress-images.js
+3. node scripts/compress-images.js（背景→JPEG 800×450、イントロ→JPEG 480px）
 ```
 
-### ⚠️ Gemini Image ツールのよくある罠
+### ⚠️ 画像生成ツールのよくある罠
 
 | 現象 | 原因 | 対処 |
 |------|------|------|
-| ファイルが `case_003_normal_raw_1.png` で保存される | ツールが自動でサフィックスを付ける | 上記リネームコマンドを実行 |
-| 背景がグレー/白のチェック柄に見える | Gemini が透明背景で出力した | プロンプトに `solid opaque background` を追加して再生成 |
 | キャラに謎の文字・漢字が入る | NO text フレーズ不足 | `absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana` を追加 |
 | 感情5枚が別人に見える | キャラ設定が感情ごとにバラバラ | 共通キャラ設定文を5枚すべてに入れる |
-| 全身（足まで）が出力される | フレーミング指定不足 | `UPPER BODY ONLY tightly framed from head to chest NO legs NO feet` を追加 |
-| 看板・衣装に漢字が描かれる | NO text フレーズは入れても看板・記号は別扱いされる場合がある | 再生成。または edit_image で文字部分を消す |
+| 全身（足まで）が出力される | フレーミング指定不足 **or プロンプトに `full body` が含まれている** | `UPPER BODY ONLY tightly framed from head to chest NO legs NO feet` を追加し、**プロンプト中に `full body` を絶対に書かない** |
+| 縦横比が意図と異なる（横長・縦長） | プロンプト内の `1024x1024` はヒントにすぎない | **MCP ツールの `aspectRatio` パラメータを必ず明示する**（例: `"1:1"`）。プロンプト内サイズ記述は参考にならない |
+| 看板・衣装に漢字が描かれる | NO text フレーズは入れても看板・記号は別扱いされる場合がある | 再生成 |
+| 【Gemini限定】ファイルが `_raw_1.png` で保存される | ツールが自動でサフィックスを付ける | 上記リネームコマンドを実行 |
+| 【Gemini限定】背景がグレー/白のチェック柄に見える | Gemini が透明背景で出力した | プロンプトに `solid opaque background` を追加して再生成 |
+| 【Stability AI】出力先が固定される | MCP サーバーが `C:/Windows/Temp/mcp-server-stability-ai/` に保存する仕様 | 生成後に `cp` でプロジェクトの所定パスへ手動コピーが必要 |
+
+### Stability AI MCP ツール使用時の必須ルール
+
+1. **`aspectRatio` を必ず指定する**
+   - キャラクター・証拠・イントロ: `"1:1"`
+   - 背景（尋問室）: `"1:1"`（compress-images.js が 16:9 にトリミング）
+   - プロンプト内の `1024x1024` は無視されることがある — ツールパラメータが最優先
+
+2. **キャラクタープロンプトに `full body` を書かない**
+   - `full body` が1箇所でもあると `UPPER BODY ONLY` が無効化される
+   - 正: `UPPER BODY ONLY tightly framed from head to chest NO legs NO feet`
+   - 誤: `full body portrait, UPPER BODY ONLY ...`（矛盾→全身が優先される）
+
+3. **モデル選択とクレジット消費**
+   - `sd3.5-large`: 高品質・高コスト（本番用）
+   - `sd3.5-large-turbo`: やや低品質・低コスト（プロトタイプ・確認用）
+   - `sd3.5-medium`: バランス型
+   - 複数枚を並列生成するとクレジットを一気に消費するため、試し生成は `turbo` で行い本番のみ `large` を使う
+
+4. **出力ファイルのコピーフロー**
+   ```bash
+   # 生成後は必ずプロジェクトへコピー
+   cp "C:/Windows/Temp/mcp-server-stability-ai/{filename}.png" \
+      "C:/Users/User/Documents/ai-objection/public/images/{dest}/{filename}.png"
+   ```
 
 ---
 

@@ -11,6 +11,18 @@ const nextConfig: NextConfig = {
     '/api/save-session': ['./data/**/*'],
     '/api/get-session': ['./data/**/*'],
   },
+  async headers() {
+    return [
+      {
+        // public/images/ 配下の静的画像ファイルを毎回再検証させる
+        // 同じファイル名で画像を差し替えたときにブラウザキャッシュに古い画像が残らないようにする
+        source: '/images/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, must-revalidate' },
+        ],
+      },
+    ];
+  },
   async rewrites() {
     const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
     if (!authDomain) return [];
