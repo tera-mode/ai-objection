@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
       storyText: caseData.storyText,
       evidence: caseData.evidence,
       criminalName: caseData.criminal.name,
+      criminalGender: caseData.criminal.gender,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

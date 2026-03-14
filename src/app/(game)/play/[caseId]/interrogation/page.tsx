@@ -1,13 +1,16 @@
 'use client';
 
-import { use, useEffect, useRef, useState } from 'react';
+import { use, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { Volume2, VolumeX } from 'lucide-react';
 import { useGame } from '@/contexts/GameContext';
 import { MessageBubble } from '@/components/game/MessageBubble';
 import { CoherenceMeter } from '@/components/game/CoherenceMeter';
 import { TurnCounter } from '@/components/game/TurnCounter';
 import { InputArea } from '@/components/game/InputArea';
+import { VoiceButton } from '@/components/game/VoiceButton';
+import { useVoiceChat } from '@/hooks/useVoiceChat';
 import { Evidence } from '@/types/game';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
@@ -45,6 +48,7 @@ function getInterrogationBg(caseId: string): string | null {
 
 interface CaseMeta {
   criminalName: string;
+  criminalGender: 'male' | 'female';
   evidence: Evidence[];
 }
 
@@ -280,10 +284,20 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const prevMessageCountRef = useRef(0);
   const [meta, setMeta] = useState<CaseMeta | null>(null);
 
+  const handleTranscript = useCallback((text: string) => {
+    sendMessage(text);
+  }, [sendMessage]);
+
+  const { voiceState, isVoiceModeOn, setIsVoiceModeOn, startRecording, stopRecording, speakText } =
+    useVoiceChat({
+      criminalGender: meta?.criminalGender ?? 'male',
+      onTranscript: handleTranscript,
+    });
+
   useEffect(() => {
     authenticatedFetch(`/api/get-case?caseId=${caseId}`)
       .then((res) => res.json())
-      .then((data) => setMeta({ criminalName: data.criminalName, evidence: data.evidence }))
+      .then((data) => setMeta({ criminalName: data.criminalName, criminalGender: data.criminalGender ?? 'male', evidence: data.evidence }))
       .catch(console.error);
   }, [caseId]);
 
@@ -302,6 +316,18 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       router.push(`/play/${caseId}/result`);
     }
   }, [session?.phase, caseId, router]);
+
+  // 犯人の新しいメッセージ → TTS再生
+  useEffect(() => {
+    if (!session || !isVoiceModeOn) return;
+    const messages = session.messages;
+    const latest = messages[messages.length - 1];
+    if (latest?.role === 'criminal') {
+      speakText(latest.content);
+    }
+  // speakTextはメモ化済みだが無限ループ防止のため session.messages の長さで検知
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.messages.length, isVoiceModeOn]);
 
   // 矛盾検知 → 「異議あり！」演出
   useEffect(() => {
@@ -351,7 +377,21 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         <div className="mx-auto flex max-w-md flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <TurnCounter turn={session.turn} />
-            <span className="text-xs text-gray-500">コヒーレンス</span>
+            <div className="flex items-center gap-2">
+              {/* 音声モードトグル */}
+              <button
+                onClick={() => setIsVoiceModeOn(!isVoiceModeOn)}
+                className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  isVoiceModeOn
+                    ? 'bg-cyan-900/60 text-cyan-400'
+                    : 'bg-gray-800 text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                {isVoiceModeOn ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
+                {isVoiceModeOn ? '音声ON' : '音声OFF'}
+              </button>
+              <span className="text-xs text-gray-500">コヒーレンス</span>
+            </div>
           </div>
           <CoherenceMeter coherence={session.coherence} />
         </div>
@@ -441,11 +481,25 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       {/* 入力エリア */}
       <div className="shrink-0 border-t border-gray-800">
         <div className="mx-auto max-w-md">
-          <InputArea
-            onSend={sendMessage}
-            disabled={isCriminalThinking || isGameOver}
-            placeholder={isGameOver ? 'ゲーム終了' : '容疑者に質問する...'}
-          />
+          <div className="flex items-end gap-2 px-2 py-2">
+            <div className="flex-1">
+              <InputArea
+                onSend={sendMessage}
+                disabled={isCriminalThinking || isGameOver || voiceState === 'recording' || voiceState === 'processing'}
+                placeholder={isGameOver ? 'ゲーム終了' : '容疑者に質問する...'}
+              />
+            </div>
+            {isVoiceModeOn && (
+              <div className="mb-3 shrink-0">
+                <VoiceButton
+                  voiceState={voiceState}
+                  onStart={startRecording}
+                  onStop={stopRecording}
+                  disabled={isCriminalThinking || isGameOver}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

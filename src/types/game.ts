@@ -46,6 +46,7 @@ export interface TimelineEvent {
 
 export interface CharacterData {
   name: string;
+  gender: 'male' | 'female';
   personality: {
     surface: string;
     underPressure: string;
