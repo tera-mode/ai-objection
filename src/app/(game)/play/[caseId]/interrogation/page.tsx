@@ -362,57 +362,19 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               height: '28%',
               animation: 'cutinPanel 1.8s ease-out forwards',
               clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
-              backgroundImage: 'url(/images/nano_base.png)',
-              backgroundSize: '500%',
-              backgroundPosition: '48% 16%',
+              backgroundImage: 'url(/images/cutin_nande.webp)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               backgroundColor: '#ddd8cc',
             }}
           />
-          {/* 暗めグラデーションオーバーレイ */}
-          <div
-            className="absolute left-0 right-0"
-            style={{
-              top: '38%',
-              height: '28%',
-              animation: 'cutinPanel 1.8s ease-out forwards',
-              clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
-              background: 'linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 45%, rgba(0,0,0,0.1) 100%)',
-            }}
-          />
-          {/* 「なんで？」テキスト */}
-          <div
-            className="absolute left-0 right-0 flex items-center justify-end pr-6"
-            style={{
-              top: '38%',
-              height: '28%',
-              animation: 'cutinText 1.8s ease-out forwards',
-            }}
-          >
-            <p
-              className="select-none font-black leading-none tracking-tight"
-              style={{
-                fontSize: 'clamp(2rem, 10vw, 4rem)',
-                color: '#fff',
-                textShadow: '3px 3px 0 #dc2626, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000',
-                transform: 'rotate(-2deg)',
-              }}
-            >
-              なんで？
-            </p>
-          </div>
           <style>{`
             @keyframes cutinPanel {
               0%   { transform: translateX(105%); opacity: 1; }
               12%  { transform: translateX(0); opacity: 1; }
               68%  { transform: translateX(0); opacity: 1; }
               100% { transform: translateX(-5%); opacity: 0; }
-            }
-            @keyframes cutinText {
-              0%   { opacity: 0; transform: scale(1.3) rotate(-2deg); }
-              22%  { opacity: 1; transform: scale(1.0) rotate(-2deg); }
-              68%  { opacity: 1; }
-              100% { opacity: 0; }
             }
           `}</style>
         </div>
