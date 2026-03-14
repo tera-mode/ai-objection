@@ -351,22 +351,71 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
   return (
     <div className="flex h-dvh flex-col bg-gray-950">
-      {/* 異議あり！オーバーレイ */}
+      {/* 「なんで？」カットイン演出 */}
       {showObjection && (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
-          <p
-            className="select-none text-6xl font-black tracking-tight text-red-500 drop-shadow-[0_0_24px_rgba(239,68,68,0.8)]"
-            style={{ animation: 'objection 1.8s ease-out forwards' }}
+        <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+          {/* 背景フラッシュ */}
+          <div
+            className="absolute inset-0 bg-black"
+            style={{ animation: 'cutinBg 1.8s ease-out forwards' }}
+          />
+          {/* 斜め切りパネル：なのの顔アップ */}
+          <div
+            className="absolute inset-0"
+            style={{
+              animation: 'cutinPanel 1.8s ease-out forwards',
+              clipPath: 'polygon(0 10%, 100% 0%, 100% 90%, 0% 100%)',
+              backgroundImage: 'url(/images/nano_base.png)',
+              backgroundSize: '320%',
+              backgroundPosition: '48% 4%',
+              backgroundRepeat: 'no-repeat',
+              backgroundColor: '#e8e0d0',
+            }}
+          />
+          {/* 集中線オーバーレイ */}
+          <div
+            className="absolute inset-0"
+            style={{
+              animation: 'cutinPanel 1.8s ease-out forwards',
+              clipPath: 'polygon(0 10%, 100% 0%, 100% 90%, 0% 100%)',
+              background: 'radial-gradient(ellipse 60% 50% at 45% 40%, transparent 25%, rgba(0,0,0,0.25) 100%)',
+            }}
+          />
+          {/* 「なんで？」テキスト */}
+          <div
+            className="absolute inset-0 flex items-center justify-end pr-8"
+            style={{ animation: 'cutinText 1.8s ease-out forwards' }}
           >
-            異議あり！
-          </p>
+            <p
+              className="select-none font-black leading-none tracking-tight"
+              style={{
+                fontSize: 'clamp(3.5rem, 18vw, 8rem)',
+                color: '#fff',
+                textShadow: '4px 4px 0 #dc2626, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000',
+                transform: 'rotate(-4deg)',
+              }}
+            >
+              なんで？
+            </p>
+          </div>
           <style>{`
-            @keyframes objection {
-              0%   { opacity: 0; transform: scale(0.4) rotate(-6deg); }
-              15%  { opacity: 1; transform: scale(1.15) rotate(2deg); }
-              30%  { transform: scale(1.0) rotate(0deg); }
-              70%  { opacity: 1; }
-              100% { opacity: 0; transform: scale(1.05); }
+            @keyframes cutinBg {
+              0%   { opacity: 0; }
+              8%   { opacity: 0.75; }
+              65%  { opacity: 0.75; }
+              100% { opacity: 0; }
+            }
+            @keyframes cutinPanel {
+              0%   { transform: translateX(110%); opacity: 1; }
+              12%  { transform: translateX(0); opacity: 1; }
+              68%  { transform: translateX(0); opacity: 1; }
+              100% { transform: translateX(-8%); opacity: 0; }
+            }
+            @keyframes cutinText {
+              0%   { opacity: 0; transform: scale(1.4) rotate(-4deg); }
+              20%  { opacity: 1; transform: scale(1.0) rotate(-4deg); }
+              68%  { opacity: 1; transform: scale(1.0) rotate(-4deg); }
+              100% { opacity: 0; transform: scale(0.95) rotate(-4deg); }
             }
           `}</style>
         </div>
