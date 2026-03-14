@@ -363,8 +363,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               animation: 'cutinPanel 1.8s ease-out forwards',
               clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
               backgroundImage: 'url(/images/nano_base.png)',
-              backgroundSize: '700%',
-              backgroundPosition: '47% 7%',
+              backgroundSize: '500%',
+              backgroundPosition: '48% 16%',
               backgroundRepeat: 'no-repeat',
               backgroundColor: '#ddd8cc',
             }}
@@ -377,7 +377,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               height: '28%',
               animation: 'cutinPanel 1.8s ease-out forwards',
               clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
-              background: 'linear-gradient(90deg, rgba(0,0,0,0.35) 0%, transparent 40%, rgba(0,0,0,0.1) 100%)',
+              background: 'linear-gradient(90deg, rgba(0,0,0,0.4) 0%, transparent 45%, rgba(0,0,0,0.1) 100%)',
             }}
           />
           {/* 「なんで？」テキスト */}
