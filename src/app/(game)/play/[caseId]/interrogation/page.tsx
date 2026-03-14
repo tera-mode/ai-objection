@@ -288,7 +288,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     sendMessage(text);
   }, [sendMessage]);
 
-  const { voiceState, isVoiceModeOn, setIsVoiceModeOn, startRecording, stopRecording, speakText } =
+  const { voiceState, isVoiceModeOn, setIsVoiceModeOn, startRecording, stopRecording, cancelRecording, speakText } =
     useVoiceChat({
       criminalGender: meta?.criminalGender ?? 'male',
       onTranscript: handleTranscript,
@@ -495,6 +495,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                   voiceState={voiceState}
                   onStart={startRecording}
                   onStop={stopRecording}
+                  onCancel={cancelRecording}
                   disabled={isCriminalThinking || isGameOver}
                 />
               </div>

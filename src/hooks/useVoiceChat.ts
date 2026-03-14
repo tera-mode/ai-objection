@@ -14,6 +14,7 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const mimeTypeRef = useRef<string>('audio/webm;codecs=opus');
+  const cancelledRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
@@ -48,10 +49,18 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
 
       const mediaRecorder = new MediaRecorder(stream, { mimeType });
       chunksRef.current = [];
+      cancelledRef.current = false;
 
       mediaRecorder.ondataavailable = (e) => chunksRef.current.push(e.data);
       mediaRecorder.onstop = async () => {
         stream.getTracks().forEach((t) => t.stop());
+
+        if (cancelledRef.current) {
+          chunksRef.current = [];
+          setVoiceState('idle');
+          return;
+        }
+
         setVoiceState('processing');
 
         const blob = new Blob(chunksRef.current, { type: mimeType });
@@ -92,6 +101,12 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
   }, [voiceState, onTranscript, ensureAudioContext]);
 
   const stopRecording = useCallback(() => {
+    mediaRecorderRef.current?.stop();
+    mediaRecorderRef.current = null;
+  }, []);
+
+  const cancelRecording = useCallback(() => {
+    cancelledRef.current = true;
     mediaRecorderRef.current?.stop();
     mediaRecorderRef.current = null;
   }, []);
@@ -159,6 +174,7 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
     setIsVoiceModeOn: toggleVoiceMode,
     startRecording,
     stopRecording,
+    cancelRecording,
     speakText,
     stopSpeaking,
   };
