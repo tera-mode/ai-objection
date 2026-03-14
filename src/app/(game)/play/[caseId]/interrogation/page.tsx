@@ -16,7 +16,7 @@ import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 // emotion: normal | nervous | cornered | breaking | collapsed
 function getCharacterImage(caseId: string, coherence: number): string | null {
   const emotion =
-    coherence >= 80 ? 'normal' :
+    coherence > 85 ? 'normal' :
     coherence >= 55 ? 'nervous' :
     coherence >= 30 ? 'cornered' :
     coherence >= 10 ? 'breaking' : 'collapsed';
