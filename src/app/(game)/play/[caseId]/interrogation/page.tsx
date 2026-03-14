@@ -353,22 +353,47 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     <div className="flex h-dvh flex-col bg-gray-950">
       {/* 「なんで？」カットイン演出 */}
       {showObjection && (
-        <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
-          {/* 斜め切りパネル：なのの目元アップ（画面下部・横断帯） */}
+        <>
+          {/* 斜め切りパネル（overflow-hiddenで横スライドをクリップ） */}
+          <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+            <div
+              className="absolute left-0 right-0"
+              style={{
+                top: '38%',
+                height: '28%',
+                animation: 'cutinPanel 1.8s ease-out forwards',
+                clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
+                backgroundImage: 'url(/images/cutin_nande.webp)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: '#ddd8cc',
+              }}
+            />
+          </div>
+          {/* 「なんで？」テキスト（clipPathの外に独立配置） */}
           <div
-            className="absolute left-0 right-0"
+            className="pointer-events-none fixed z-51 flex items-center justify-end pr-5"
             style={{
               top: '38%',
+              left: 0,
+              right: 0,
               height: '28%',
-              animation: 'cutinPanel 1.8s ease-out forwards',
-              clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
-              backgroundImage: 'url(/images/cutin_nande.webp)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              backgroundColor: '#ddd8cc',
+              animation: 'cutinText 1.8s ease-out forwards',
             }}
-          />
+          >
+            <p
+              className="select-none font-black leading-none"
+              style={{
+                fontSize: 'clamp(2rem, 10vw, 4rem)',
+                color: '#fff',
+                textShadow: '3px 3px 0 #dc2626, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000',
+                transform: 'rotate(-3deg)',
+              }}
+            >
+              なんで？
+            </p>
+          </div>
           <style>{`
             @keyframes cutinPanel {
               0%   { transform: translateX(105%); opacity: 1; }
@@ -376,8 +401,14 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               68%  { transform: translateX(0); opacity: 1; }
               100% { transform: translateX(-5%); opacity: 0; }
             }
+            @keyframes cutinText {
+              0%   { opacity: 0; transform: scale(1.3) rotate(-3deg); }
+              22%  { opacity: 1; transform: scale(1.0) rotate(-3deg); }
+              68%  { opacity: 1; transform: scale(1.0) rotate(-3deg); }
+              100% { opacity: 0; transform: scale(0.95) rotate(-3deg); }
+            }
           `}</style>
-        </div>
+        </>
       )}
 
       {/* ヘッダー: ターン数・コヒーレンス */}
