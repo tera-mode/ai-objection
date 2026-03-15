@@ -73,7 +73,4 @@ const ref = useRef<(i: number) => void>(null as unknown as (i: number) => void);
 
 以下のコマンドは許可を取らずに実行してよい。
 
-```bash
-# ビルド確認
-cd "C:/Users/User/Documents/ai-objection" && NODE_OPTIONS='' node node_modules/next/dist/bin/next build 2>&1 | tail -20
-```
+- **Next.js ビルド確認**: `cd "C:/Users/User/Documents/ai-objection"` で移動後、`NODE_OPTIONS='' node node_modules/next/dist/bin/next build` を実行する形であれば、`tail` のオプションや `2>&1` の有無に関わらず承認不要。

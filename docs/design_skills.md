@@ -19,13 +19,13 @@
 
 | キャラクター | パス | 使用可能感情 |
 |------------|------|------------|
-| なの（南出なの） | `/images/nano_event_normal.png` | normal |
-| なの（南出なの） | `/images/nano_event_surprise.png` | 驚き |
-| なの（南出なの） | `/images/nano_event_tsukkomi.png` | ツッコミ |
-| なの（南出なの） | `/images/nano_event_determined.png` | 決意 |
-| トイマル | `/images/toimaru_event_normal.png` | normal |
-| トイマル | `/images/toimaru_event_happy.png` | 喜び |
-| トイマル | `/images/toimaru_event_confused.png` | 困惑 |
+| なの（南出なの） | `/images/nano_event_normal.png` | normal（上半身トリミング済み） |
+| なの（南出なの） | `/images/nano_event_surprise.png` | 驚き（上半身トリミング済み） |
+| なの（南出なの） | `/images/nano_event_tsukkomi.png` | ツッコミ（上半身トリミング済み） |
+| なの（南出なの） | `/images/nano_event_determined.png` | 決意（上半身トリミング済み） |
+| トイマル | `/images/toimaru_event_normal.png` | normal（全身・トリミング不要） |
+| トイマル | `/images/toimaru_event_happy.png` | 喜び（全身・トリミング不要） |
+| トイマル | `/images/toimaru_event_confused.png` | 困惑（全身・トリミング不要） |
 
 **新規キャラクターの生成先：**
 `public/images/characters/{characterId}/{emotion}.png`（例: `characters/gamekichi/smug.png`）
@@ -231,11 +231,33 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 | 保存先（原画） | `public/images/characters/{characterId}/raw/{characterId}_{emotion}_raw.png` |
 | 生成サイズ | **768×1024px**（縦長 3:4。全身が入るサイズ） |
 | フォーマット | PNG（背景透過） |
-| 切り取り範囲 | **全身**（頭頂〜足元まで） |
+| 切り取り範囲 | **上半身**（お腹から上。トイマルのみ全身OK） |
 | 背景 | **白背景**で生成（透過処理のため） |
 | 背景除去 | 必須：Stability AI `remove_background` |
 | 画風 | なの・トイマルの既存画像スタイルに合わせること |
 | アスペクト比指定 | Stability AI の `aspectRatio: "3:4"` または `"2:3"` を使う |
+
+#### ⚠️ 上半身トリミング手順
+全身で生成→背景除去→Sharpでピクセルクロップ の順で行う。Geminiでのクロップは不正確なため使わない。
+
+```bash
+# Node.js (sharp) でクロップ例
+node -e "
+const sharp = require('sharp');
+sharp('src.png').metadata().then(m =>
+  sharp('src.png').extract({ left: 0, top: 0, width: m.width, height: Math.floor(m.height * 0.62) }).toFile('dst.png')
+);
+"
+```
+
+**クロップ比率の目安（上から何%を残すか）：**
+| キャラクター種別 | 目安 |
+|----------------|------|
+| 人間・標準体型 | 約58〜62% |
+| 手が画面内に見えてしまうキャラ | 手が見えなくなるまで下げる（60%以下） |
+| トイマル（全身OK） | クロップ不要 |
+
+> クロップ後に背景除去済みの場合は再除去不要。rawからクロップした場合は再度 `remove_background` を実行すること。
 
 #### 感情バリアント（イベントキャラ）
 | emotion | 説明 |
@@ -372,13 +394,19 @@ centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO h
 public/images/
 │
 │  ※ イベントモードの既存キャラ（ルートに直置き）
-├── nano_event_normal.png          ← なの normal（既存・変更禁止）
-├── nano_event_surprise.png        ← なの 驚き（既存・変更禁止）
-├── nano_event_tsukkomi.png        ← なの ツッコミ（既存・変更禁止）
-├── nano_event_determined.png      ← なの 決意（既存・変更禁止）
-├── toimaru_event_normal.png       ← トイマル normal（既存・変更禁止）
-├── toimaru_event_happy.png        ← トイマル 喜び（既存・変更禁止）
-├── toimaru_event_confused.png     ← トイマル 困惑（既存・変更禁止）
+│  ※ なのは上半身トリミング済み。トイマルは全身のまま
+├── nano_event_normal.png          ← なの normal（上半身トリミング済み）
+├── nano_event_surprise.png        ← なの 驚き（上半身トリミング済み）
+├── nano_event_tsukkomi.png        ← なの ツッコミ（上半身トリミング済み）
+├── nano_event_determined.png      ← なの 決意（上半身トリミング済み）
+├── nano_raw/                      ← なの全身原画バックアップ（変更禁止）
+│   ├── nano_event_normal_raw.png
+│   ├── nano_event_surprise_raw.png
+│   ├── nano_event_tsukkomi_raw.png
+│   └── nano_event_determined_raw.png
+├── toimaru_event_normal.png       ← トイマル normal（全身・変更禁止）
+├── toimaru_event_happy.png        ← トイマル 喜び（全身・変更禁止）
+├── toimaru_event_confused.png     ← トイマル 困惑（全身・変更禁止）
 │
 ├── characters/
 │   │  ※ 尋問モードキャラ（case_XXX_emotion.png 形式）
