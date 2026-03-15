@@ -20,7 +20,8 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
   }, [value]);
 
   useEffect(() => {
-    if (!disabled) {
+    // スマホでは自動フォーカスしない（iOSの自動ズーム防止）
+    if (!disabled && window.matchMedia('(pointer: fine)').matches) {
       textareaRef.current?.focus();
     }
   }, [disabled]);
@@ -49,7 +50,7 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
         disabled={disabled}
         placeholder={placeholder ?? '容疑者に質問する...'}
         rows={1}
-        className="flex-1 resize-none rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:border-amber-400 focus:outline-none disabled:opacity-50"
+        className="flex-1 resize-none rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-base text-stone-900 placeholder-stone-400 focus:border-amber-400 focus:outline-none disabled:opacity-50"
         style={{ maxHeight: '120px' }}
       />
       <button
