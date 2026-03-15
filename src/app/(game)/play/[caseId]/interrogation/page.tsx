@@ -63,45 +63,6 @@ interface CaseMeta {
   evidence: Evidence[];
 }
 
-// 証拠スロット（?またはアイコン）
-function EvidenceSlot({ ev, caseId, unlocked, newlyUnlocked }: {
-  ev: Evidence;
-  caseId: string;
-  unlocked: boolean;
-  newlyUnlocked: boolean;
-}) {
-  const [imgFailed, setImgFailed] = useState(false);
-
-  if (!unlocked) {
-    return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-stone-300 bg-stone-100 text-stone-400 text-xs font-bold">
-        ？
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`relative flex h-10 w-10 items-center justify-center rounded-lg border border-amber-400 bg-amber-50 text-amber-600 text-xs font-bold transition-all ${
-        newlyUnlocked ? 'animate-pulse ring-2 ring-amber-400' : ''
-      }`}
-      title={ev.name}
-    >
-      {!imgFailed ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={`/images/evidence/${caseId}/${ev.id}.png`}
-          alt={ev.name}
-          className="h-full w-full rounded-lg object-cover"
-          onError={() => setImgFailed(true)}
-        />
-      ) : (
-        <span className="text-base">🔓</span>
-      )}
-    </div>
-  );
-}
-
 // 証拠アイコン（/images/evidence/{caseId}/{evId}.png、なければプレースホルダー）
 function EvidenceIcon({ evId, caseId, size }: { evId: string; caseId: string; size: number }) {
   const [failed, setFailed] = useState(false);
@@ -486,7 +447,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const [chips, setChips] = useState<string[]>([]);
   const [toimaruComment, setToimaruComment] = useState<string>('');
   const [unlockBanner, setUnlockBanner] = useState<{ evId: string; name: string } | null>(null);
-  const [newlyUnlockedIds, setNewlyUnlockedIds] = useState<string[]>([]);
   const [showToimaruCutin, setShowToimaruCutin] = useState(false);
 
   const handleTranscript = useCallback((text: string) => {
@@ -616,10 +576,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         const ev = meta?.evidence.find((e) => e.id === data.unlockedEvidenceId);
         if (ev) {
           setUnlockBanner({ evId: data.unlockedEvidenceId, name: ev.name });
-          setNewlyUnlockedIds((prev) => [...prev, data.unlockedEvidenceId]);
-          setTimeout(() => {
-            setNewlyUnlockedIds((prev) => prev.filter((id) => id !== data.unlockedEvidenceId));
-          }, 3000);
         }
         // パネルを閉じてからカットイン（モーダルの上に表示するため）
         setShowToimaru(false);
@@ -849,25 +805,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           );
         })()}
 
-        {/* 証拠スロット（犯人立ち絵の下） */}
-        {meta.evidence.length > 0 && (
-          <div className="mx-auto max-w-md px-4 py-2">
-            <div className="flex items-center gap-2">
-              <p className="text-xs text-stone-400 shrink-0">証拠:</p>
-              <div className="flex gap-1.5 flex-wrap">
-                {meta.evidence.map((ev) => (
-                  <EvidenceSlot
-                    key={ev.id}
-                    ev={ev}
-                    caseId={caseId}
-                    unlocked={unlockedEvidenceIds.includes(ev.id)}
-                    newlyUnlocked={newlyUnlockedIds.includes(ev.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* メッセージエリア */}
