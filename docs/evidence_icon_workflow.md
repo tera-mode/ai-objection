@@ -39,7 +39,7 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 ### ケース別トーン
 | ケース | イメージ |
 |---|---|
-| case_001（法廷・室内） | 深い茶・照明のある室内 |
+| case_001（流行通り） | カラフルな市場・暖かい蝋燭の光 |
 | case_002（水族館） | 深海ブルー・水中照明 |
 
 ---
@@ -63,7 +63,16 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 512x512, clean illustration"
 ```
 
-### 各証拠のプロンプト例
+### case_001（流行通りの色水）各証拠のプロンプト
+
+| evidence_id | プロンプト |
+|---|---|
+| `ev_analysis` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single open notebook lying flat with blank empty pages showing only wavy pencil scribble marks, a brass magnifying glass resting on top of it, warm candlelight atmosphere, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+| `ev_poison` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single rolled parchment scroll unrolled to show a botanical illustration of a dark purple thorny vine with small flowers and a simple skull-and-crossbones symbol, fantasy medieval apothecary, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+| `ev_garden_log` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single old brown leather-bound closed book with pressed dried green leaves tucked between the pages as bookmarks, botanical garden atmosphere, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+| `ev_bottle` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single elegant glass potion bottle with glowing blue sparkling liquid inside and a cork stopper, bottom of bottle has a small X scratch mark visible, fantasy market atmosphere, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+
+### case_002（碧海水族館の夜）各証拠のプロンプト
 
 | evidence_id | プロンプト |
 |---|---|

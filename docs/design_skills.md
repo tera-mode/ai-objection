@@ -41,7 +41,7 @@
 | イントロ画像 | **Stability AI** `generate_image` | 背景シーンの高品質生成 |
 | 背景画像（尋問室） | **Stability AI** `generate_image` | 同上 |
 | イベント背景画像 | **Stability AI** `generate_image` | 同上 |
-| 証拠アイコン | **Stability AI** `generate_image` | 同上 |
+| 証拠アイコン | **Gemini** `generate_image` | Stability AI より文字混入が少なく、オブジェクト中心の小さいアイコンに向いている |
 | 背景除去 | **Stability AI** `remove_background` | 精度が高くエッジが綺麗 |
 
 **Gemini `edit_image` を variation に使う理由：**
@@ -483,32 +483,33 @@ node scripts/compress-images.js
 
 ## 4. ケース別プロンプト集
 
-### case_001「ひだまり動物病院の夜」
+### case_001「流行通りの色水」
 
-#### 容疑者：遊上 蓮（ゆがみ れん）27歳
+#### 容疑者：モリエル（24歳・女性）
 
-**キャラクター基本設定：**
-- 細身・175cm、**ダークネイビーのスクラブ（獣医助手の作業着・Vネック）**、黒髪マッシュショート（前髪が眉にかかる）
-- 整った顔立ち、切れ長の目、通った鼻筋、薄い唇
-- 笑顔は好印象だが、目の奥が暗い
-- ⚠️ 白衣は使わない（白背景で背景除去処理すると服ごと抜けるため）
+**キャラクター基本設定（全感情共通）：**
+- 24歳女性、中肉中背
+- プラチナピンクの髪をサイドポニーにまとめている
+- カラフルなベスト（明るい色・柄）、キラキラのアクセサリー多数
+- 元気で華やかな外見。笑顔が崩れない
+- ⚠️ 衣装・アクセサリーに文字や記号が描かれないよう NO text を必ず入れること
 
 **各感情のプロンプト：**
 
 | emotion | プロンプト |
 |---------|-----------|
-| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair with soft fringe covering eyebrows (messy undercut style), sharp almond eyes, clean handsome face, EMOTION: confident gentle smile with slight unease deep in eyes, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair with soft fringe covering eyebrows, sharp almond eyes, EMOTION: eyes slightly averted and darting, sweat drop on forehead, forced smile starting to crack, slight blush on cheeks, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top (V-neck medical scrub shirt), short black hair, EMOTION: wide alarmed eyes pupils dilated, jaw clenched, face visibly paler, mouth twisted, clearly shaken expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top wrinkled and disheveled, short black hair messy and disheveled, EMOTION: eyes wild and unhinged, teeth gritted, red scratch mark on left forearm visible, emotional breakdown expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
-| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese male age 27, lean build, dark navy blue veterinary scrubs top completely disheveled, short black hair very messy, EMOTION: tears streaming down face, eyes hollow and distant, mouth open in anguish, complete mental collapse expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese female age 24, medium build, platinum pink hair in a high side ponytail, colorful patterned vest over bright shirt, multiple sparkling accessories and earrings, EMOTION: bright energetic smile, confident self-assured expression, eyes full of enthusiasm, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese female age 24, medium build, platinum pink hair in a high side ponytail, colorful patterned vest, multiple sparkling accessories, EMOTION: forced over-bright smile starting to twitch, eyes darting sideways, small sweat bead on forehead, laugh becoming strained, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese female age 24, medium build, platinum pink hair in a high side ponytail slightly disheveled, colorful patterned vest, multiple accessories, EMOTION: wide alarmed eyes pupils dilated, fake smile cracking apart, face visibly paler, mouth twisted in panic, cornered expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese female age 24, medium build, platinum pink hair in a disheveled loose ponytail with strands falling out, colorful vest wrinkled, accessories askew, EMOTION: breaking down wild desperate eyes gritted teeth emotional turmoil all composure gone, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold black outlines, flat vibrant colors, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, young Japanese female age 24, medium build, platinum pink hair completely loose and messy, colorful vest disheveled, EMOTION: tears streaming down face, hollow empty half-closed eyes with dark circles, mouth slightly open in silence, complete emotional collapse defeated expression, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 1024x1024, clean illustration"` |
 
 **背景（尋問室）プロンプト：**
 ```
 "Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
-animal hospital waiting room repurposed as interrogation space,
-warm orange practical lamp light, wooden furniture, dark shadowy corners,
-moody night atmosphere, dark shadows with orange warm light accents,
+fantasy medieval market district guard post interior, colorful merchant banners visible through window,
+wooden desk with candles, stone walls with posted notices,
+moody warm lighting from candles and window,
 wide establishing shot, no characters, only environment, solid opaque background,
 full frame edge-to-edge illustration filling entire canvas including all corners and edges,
 absolutely NO letterbox NO black bars NO borders NO vignette on edges,
@@ -516,15 +517,14 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 1024x1024, clean illustration"
 ```
 
-**証拠アイコン（case_001）：**
+**証拠アイコン（case_001）— Gemini `generate_image` で生成：**
 
 | evidence_id | プロンプト |
 |-------------|-----------|
-| `ev_camera` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, security camera surveillance monitor showing grainy footage, dark hospital night atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
-| `ev_diary` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, old brown leather diary journal with worn corners, warm amber interior lighting atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
-| `ev_letters` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, stack of anonymous white envelopes sealed and tied together, mysterious threatening atmosphere, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
-| `ev_scratch` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, close-up of a forearm with red claw scratch marks, forensic medical illustration style, plain background, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
-| `ev_neighbor` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, residential house window at night with warm interior light silhouette of elderly person looking out, witness testimony theme, centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, 512x512, clean illustration"` |
+| `ev_analysis` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single open notebook lying flat with blank empty pages showing only wavy pencil scribble marks, a brass magnifying glass resting on top of it, warm candlelight atmosphere, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+| `ev_poison` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single rolled parchment scroll unrolled to show a botanical illustration of a dark purple thorny vine with small flowers and a simple skull-and-crossbones symbol, fantasy medieval apothecary, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+| `ev_garden_log` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single old brown leather-bound closed book with pressed dried green leaves tucked between the pages as bookmarks, botanical garden atmosphere, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
+| `ev_bottle` | `"Anime cel-shaded evidence icon, Ace Attorney visual novel style, bold black outlines, flat vibrant colors, a single elegant glass potion bottle with glowing blue sparkling liquid inside and a cork stopper, bottom of bottle has a small X scratch mark visible, fantasy market atmosphere, centered object on dark background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana NO person NO human, 512x512, clean illustration"` |
 
 ---
 
