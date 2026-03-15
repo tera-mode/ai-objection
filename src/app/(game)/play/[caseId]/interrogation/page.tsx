@@ -631,6 +631,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                   transform: 'translateX(-50%)',
                   height: '300%',
                   width: 'auto',
+                  maxWidth: 'none',
                   opacity: 0.9,
                 }}
               />
