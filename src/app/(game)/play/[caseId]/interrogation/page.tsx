@@ -31,6 +31,7 @@ function getCharacterImage(caseId: string, coherence: number, maxCoherence: numb
     pct >= 0.10 ? 'breaking' : 'collapsed';
 
   const available: Record<string, string[]> = {
+    case_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_003: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
