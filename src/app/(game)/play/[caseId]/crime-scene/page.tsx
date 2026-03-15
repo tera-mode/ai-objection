@@ -126,6 +126,7 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
             <button
               onClick={() => previousTestimony.length > 0 ? setPhase('previous') : handleStartInterrogation()}
               disabled={isLoading}
+              data-testid="start-interrogation"
               className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400 disabled:opacity-50"
             >
               {isLoading ? '準備中...' : previousTestimony.length > 0 ? '前回の証言を確認する →' : '尋問を開始する'}
@@ -150,6 +151,7 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
             <button
               onClick={handleStartInterrogation}
               disabled={isLoading}
+              data-testid="start-interrogation"
               className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400 disabled:opacity-50"
             >
               {isLoading ? '準備中...' : '尋問を開始する'}

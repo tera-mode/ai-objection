@@ -85,6 +85,7 @@ export default function LandingPage() {
         <div className="flex w-full flex-col gap-3">
           <button
             onClick={handleGuestPlay}
+            data-testid="guest-login"
             className="w-full rounded-xl bg-amber-500 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-amber-400"
           >
             ゲストで試す（無料）

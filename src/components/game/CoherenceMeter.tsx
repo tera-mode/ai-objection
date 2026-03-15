@@ -25,10 +25,10 @@ export function CoherenceMeter({ coherence, maxCoherence = 100 }: CoherenceMeter
   const isLow = pct < 0.3;
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1" data-testid="coherence-meter">
       <div className="flex items-center justify-between text-xs">
         <span className="font-semibold text-stone-500">容疑者の動揺度</span>
-        <span className={`font-bold ${isLow ? 'animate-pulse text-red-500' : 'text-stone-700'}`}>
+        <span data-testid="coherence-value" className={`font-bold ${isLow ? 'animate-pulse text-red-500' : 'text-stone-700'}`}>
           {getLabel()} ({coherence})
         </span>
       </div>

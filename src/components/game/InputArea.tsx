@@ -41,7 +41,7 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
   };
 
   return (
-    <div className="flex items-end gap-2 border-t border-stone-200 bg-white p-3">
+    <div className="flex items-end gap-2 border-t border-stone-200 bg-white p-3" data-testid="player-input">
       <textarea
         ref={textareaRef}
         value={value}
@@ -56,6 +56,7 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
       <button
         onClick={handleSend}
         disabled={disabled || !value.trim()}
+        data-testid="send-button"
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white transition-colors hover:bg-amber-400 disabled:opacity-40"
       >
         {disabled ? (

@@ -80,6 +80,7 @@ export default function PlayPage() {
             <button
               key={c.id}
               onClick={() => router.push(`/play/${c.id}/crime-scene`)}
+              data-testid={`case-select-${c.id}`}
               className="group flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-5 text-left shadow-sm transition-all hover:border-amber-400 hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-3">
@@ -107,6 +108,7 @@ export default function PlayPage() {
                 <button
                   key={c.id}
                   onClick={() => router.push(`/play/${c.id}/crime-scene`)}
+                  data-testid={`case-select-${c.id}`}
                   className="text-left text-xs text-stone-400 underline-offset-2 hover:text-stone-600 hover:underline"
                 >
                   {c.title}（{difficultyLabel[c.difficulty] ?? c.difficulty}）→

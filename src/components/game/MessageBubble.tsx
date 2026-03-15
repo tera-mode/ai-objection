@@ -11,7 +11,7 @@ export function MessageBubble({ message, criminalName }: MessageBubbleProps) {
   const isPlayer = message.role === 'player';
 
   return (
-    <div className={`flex flex-col gap-1 ${isPlayer ? 'items-end' : 'items-start'}`}>
+    <div className={`flex flex-col gap-1 ${isPlayer ? 'items-end' : 'items-start'}`} data-testid={isPlayer ? 'player-message' : 'criminal-message'}>
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
           isPlayer

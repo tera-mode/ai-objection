@@ -10,7 +10,7 @@ export function TurnCounter({ turn, maxTurns = 15 }: TurnCounterProps) {
   const isLow = remaining <= 3;
 
   return (
-    <div className="flex items-center gap-1 text-xs">
+    <div className="flex items-center gap-1 text-xs" data-testid="turn-counter">
       <span className="text-stone-500">残り</span>
       <span className={`font-bold ${isLow ? 'animate-pulse text-red-500' : 'text-amber-600'}`}>
         {remaining}
