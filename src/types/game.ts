@@ -4,8 +4,9 @@ export interface GameSession {
   userId: string;
   caseId: string;
   phase: 'crime_scene' | 'interrogation' | 'result';
-  turn: number;             // 0〜15
-  coherence: number;        // 0〜100（100=完全に冷静、0=完全に崩壊）
+  turn: number;
+  coherence: number;        // 0〜maxCoherence
+  maxCoherence: number;     // 容疑者ごとの動揺度上限（デフォルト100）
   messages: ChatMessage[];
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
@@ -76,6 +77,7 @@ export interface GameSessionData {
   phase: 'crime_scene' | 'interrogation' | 'result';
   turn: number;
   coherence: number;
+  maxCoherence: number;
   messages: ChatMessageData[];
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;

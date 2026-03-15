@@ -1,0 +1,35 @@
+{
+  "id": "prologue_a",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/dark_alley.webp" },
+    { "type": "character", "position": "left", "image": "/images/nano_event_normal.png" },
+    { "type": "dialogue", "speaker": null, "text": "——聞き慣れない喧騒。石畳の冷たさ。知らない匂い。" },
+    { "type": "dialogue", "speaker": "なの", "text": "…………ここ、どこ？" },
+    { "type": "dialogue", "speaker": null, "text": "中世の映画みたいな街並み。木組みの建物。馬車の音。何が起きたのかわからない。でも——すぐ近くで、もっとわからないことが起きていた。" },
+    { "type": "scene", "background": "/images/events/market_square.webp", "transition": "fade", "duration": 900 },
+    { "type": "character", "position": "left", "image": "/images/characters/momobaa/distressed.png" },
+    { "type": "dialogue", "speaker": "老婆", "text": "あたしのリンゴが箱ごとない！ さっきまであったのに！" },
+    { "type": "dialogue", "speaker": null, "text": "衛兵が来た。近くにいたガタイのいい男に声をかける。" },
+    { "type": "character", "position": "left", "image": "/images/characters/guard/neutral.png" },
+    { "type": "character", "position": "right", "image": "/images/characters/gamekichi/smug.png" },
+    { "type": "dialogue", "speaker": "衛兵", "text": "おい、お前、何か見なかったか" },
+    { "type": "dialogue", "speaker": "ガメ吉", "text": "俺はずっとこの通りで荷運びしてましたよ。あの果物屋には近づいてもいません" },
+    { "type": "character", "position": "left", "image": null },
+    { "type": "dialogue", "speaker": "衛兵", "text": "そうか。……他に目撃者は？　いないか。では仕方ない" },
+    { "type": "dialogue", "speaker": null, "text": "衛兵がそのまま帰ろうとする。老婆が泣きそうな顔をしている。男がニヤッと笑う。" },
+    { "type": "dialogue", "speaker": null, "text": "——男の荷車から、赤いリンゴがはみ出ている。手には果汁のシミ。どう見ても怪しい。なのに、誰も何も言わない。" },
+    { "type": "character", "position": "right", "image": null },
+    { "type": "character", "position": "left", "image": "/images/nano_event_normal.png" },
+    { "type": "dialogue", "speaker": "なの", "text": "（……え？ 見えてるよね？ なんで誰も何も言わないの？）" },
+    { "type": "dialogue", "speaker": "なの", "text": "——あの、すみません！" },
+    { "type": "dialogue", "speaker": null, "text": "全員がこちらを見る。" },
+    { "type": "character", "position": "right", "image": "/images/characters/gamekichi/smug.png" },
+    { "type": "dialogue", "speaker": "ガメ吉", "text": "……あぁ？ なんだガキ" },
+    { "type": "dialogue", "speaker": "なの", "text": "その人、荷車の中にリンゴ入ってません？ あと、手にシミついてますけど" }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play/mini_prologue/crime-scene"
+  }
+}

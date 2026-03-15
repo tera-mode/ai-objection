@@ -1,27 +1,37 @@
-export interface EventScene {
-  id: string;
-  background?: string;         // 背景画像パス
-  character?: {
-    image: string;             // キャラクター画像パス
-    position: 'left' | 'center' | 'right';
-    flip?: boolean;            // 左右反転
-  } | null;
-  character2?: {               // 2人目キャラクター（右側）
-    image: string;
-    position: 'left' | 'center' | 'right';
-    flip?: boolean;
-  } | null;
-  speaker?: string | null;     // 話者名（nullはナレーション）
-  text: string;                // テキスト
-  effect?: 'fade_in' | 'fade_out'; // 演出
-}
+export type EventStep =
+  | {
+      type: 'scene';
+      background: string;
+      transition?: 'fade' | 'cut';
+      duration?: number;
+    }
+  | {
+      type: 'character';
+      position: 'left' | 'right';
+      image: string | null;
+      transition?: 'fadeIn' | 'fadeOut' | 'cut';
+    }
+  | {
+      type: 'dialogue';
+      speaker: string | null;
+      text: string;
+      speakerStyle?: 'protagonist' | 'companion' | 'npc' | 'narrator';
+    }
+  | {
+      type: 'effect';
+      name: 'shake' | 'flash' | 'fadeToBlack' | 'fadeFromBlack';
+      duration?: number;
+    }
+  | {
+      type: 'wait';
+      duration: number;
+    };
 
 export interface EventData {
   id: string;
-  title: string;
-  scenes: EventScene[];
+  steps: EventStep[];
   onComplete: {
-    type: 'navigate';
+    action: 'navigate';
     path: string;
   };
 }

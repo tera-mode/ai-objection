@@ -10,15 +10,24 @@ interface StoryText {
   defeat: string;
 }
 
+interface EventAfter {
+  victory?: string;
+  defeat?: string;
+}
+
 function ResultContent({ caseId }: { caseId: string }) {
   const router = useRouter();
   const { session } = useGame();
   const [storyText, setStoryText] = useState<StoryText | null>(null);
+  const [eventAfter, setEventAfter] = useState<EventAfter | null>(null);
 
   useEffect(() => {
     authenticatedFetch(`/api/get-case?caseId=${caseId}`)
       .then((res) => res.json())
-      .then((data) => setStoryText(data.storyText))
+      .then((data) => {
+        setStoryText(data.storyText);
+        setEventAfter(data.eventAfter ?? null);
+      })
       .catch(console.error);
   }, [caseId]);
 
@@ -45,11 +54,11 @@ function ResultContent({ caseId }: { caseId: string }) {
           <div className="flex gap-6 text-sm text-stone-500">
             <div>
               <span className="font-bold text-stone-900">{session.turn}</span>
-              <span> / 15 ターン</span>
+              <span> ターン</span>
             </div>
             <div>
               <span className="font-bold text-stone-900">{session.coherence}</span>
-              <span> / 100 コヒーレンス</span>
+              <span> / {session.maxCoherence} 動揺度</span>
             </div>
           </div>
         </div>
@@ -65,24 +74,48 @@ function ResultContent({ caseId }: { caseId: string }) {
 
         {/* アクション */}
         <div className="flex w-full flex-col gap-3">
-          <button
-            onClick={() => router.push(`/play/${caseId}/crime-scene`)}
-            className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400"
-          >
-            もう一度挑戦する
-          </button>
-          <button
-            onClick={() => router.push('/play')}
-            className="w-full rounded-xl border border-stone-300 bg-white py-4 font-semibold text-stone-700 transition-colors hover:border-amber-400 hover:text-stone-900"
-          >
-            ケース選択に戻る
-          </button>
-          <button
-            onClick={() => router.push('/history')}
-            className="text-sm text-stone-400 hover:text-stone-600"
-          >
-            プレイ履歴を見る
-          </button>
+          {/* eventAfter がある場合（mini_prologue 等）は専用ボタン */}
+          {eventAfter ? (
+            <>
+              {isArrest && eventAfter.victory && (
+                <button
+                  onClick={() => router.push(eventAfter.victory!)}
+                  className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400"
+                >
+                  つづきへ →
+                </button>
+              )}
+              {!isArrest && (
+                <button
+                  onClick={() => router.push(`/play/${caseId}/crime-scene`)}
+                  className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400"
+                >
+                  もう一度挑戦する
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => router.push(`/play/${caseId}/crime-scene`)}
+                className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400"
+              >
+                もう一度挑戦する
+              </button>
+              <button
+                onClick={() => router.push('/play')}
+                className="w-full rounded-xl border border-stone-300 bg-white py-4 font-semibold text-stone-700 transition-colors hover:border-amber-400 hover:text-stone-900"
+              >
+                ケース選択に戻る
+              </button>
+              <button
+                onClick={() => router.push('/history')}
+                className="text-sm text-stone-400 hover:text-stone-600"
+              >
+                プレイ履歴を見る
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

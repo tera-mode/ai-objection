@@ -6,6 +6,8 @@ import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 import { EventData } from '@/types/event';
 import EventPlayer from '@/components/event/EventPlayer';
 
+const PROLOGUE_SEEN_KEY = 'event_prologue_b_seen';
+
 export default function EventPage() {
   const router = useRouter();
   const params = useParams();
@@ -34,13 +36,17 @@ export default function EventPage() {
   }, [eventId]);
 
   const handleComplete = () => {
-    // 閲覧済みフラグを localStorage に保存
     if (typeof window !== 'undefined') {
       localStorage.setItem(`event_${eventId}_seen`, '1');
+      // プロローグB完了時はメインの「見た」フラグも立てる
+      if (eventId === 'prologue_b') {
+        localStorage.setItem(PROLOGUE_SEEN_KEY, '1');
+      }
     }
 
-    if (eventData?.onComplete.type === 'navigate') {
-      router.push(eventData.onComplete.path);
+    const oc = eventData?.onComplete;
+    if (oc?.action === 'navigate') {
+      router.push(oc.path);
     }
   };
 

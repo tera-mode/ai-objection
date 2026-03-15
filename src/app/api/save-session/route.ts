@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth/verifyAuth';
 import { adminDb } from '@/lib/firebase/admin';
+import { loadCase } from '@/lib/cases/caseLoader';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: NextRequest) {
@@ -22,13 +23,23 @@ export async function POST(request: NextRequest) {
       const newSessionId = uuidv4();
       const now = new Date().toISOString();
 
+      // ケースデータから初期値を取得（なければデフォルト100）
+      let initialCoherence = 100;
+      let maxCoherence = 100;
+      try {
+        const caseData = loadCase(caseId) as { initialCoherence?: number; maxCoherence?: number };
+        initialCoherence = caseData.initialCoherence ?? 100;
+        maxCoherence = caseData.maxCoherence ?? 100;
+      } catch { /* ケースが見つからなくてもセッション作成は続行 */ }
+
       const newSession = {
         sessionId: newSessionId,
         userId: auth.uid,
         caseId,
         phase: 'crime_scene',
         turn: 0,
-        coherence: 100,
+        coherence: initialCoherence,
+        maxCoherence,
         messages: [],
         isCompleted: false,
         verdict: null,

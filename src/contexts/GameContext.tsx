@@ -121,7 +121,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
             sessionId: newSession.sessionId,
             message: '__opening__',
             caseId,
-            coherence: 100,
+            coherence: newSession.coherence,
             conversationHistory: [],
           }),
         });
@@ -131,7 +131,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           const openingMsg: ChatMessage = {
             role: 'criminal',
             content: response,
-            coherenceAfter: 100,
+            coherenceAfter: newSession.coherence,
             timestamp: new Date(),
           };
           const sessionWithOpening: GameSession = {
@@ -222,7 +222,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { response: criminalResponse } = await criminalRes.json();
 
-      const newCoherence = Math.max(0, Math.min(100, session.coherence + coherenceChange));
+      const newCoherence = Math.max(0, Math.min(session.maxCoherence, session.coherence + coherenceChange));
 
       const criminalMsg: ChatMessage = {
         role: 'criminal',
@@ -327,6 +327,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const data = await res.json();
       setSession({
         ...data.session,
+        maxCoherence: data.session.maxCoherence ?? 100,
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
         messages: data.session.messages.map((m: { timestamp: string; role: 'player' | 'criminal'; content: string; coherenceAfter?: number; contradiction?: string }) => ({

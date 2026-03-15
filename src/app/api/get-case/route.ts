@@ -27,6 +27,9 @@ export async function GET(request: NextRequest) {
       evidence: caseData.evidence,
       criminalName: caseData.criminal.name,
       criminalGender: caseData.criminal.gender,
+      eventAfter: (caseData as { eventAfter?: unknown }).eventAfter ?? null,
+      initialCoherence: (caseData as { initialCoherence?: number }).initialCoherence ?? 100,
+      maxCoherence: (caseData as { maxCoherence?: number }).maxCoherence ?? 100,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

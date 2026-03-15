@@ -14,15 +14,21 @@ import { useVoiceChat } from '@/hooks/useVoiceChat';
 import { Evidence } from '@/types/game';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
-// コヒーレンスに応じた画像バリアントを返す
-// 画像ファイル命名規則: public/images/characters/{caseId}_{emotion}.png
-// emotion: normal | nervous | cornered | breaking | collapsed
-function getCharacterImage(caseId: string, coherence: number): string | null {
+// コヒーレンスに応じた画像バリアントを返す（パーセンテージ基準）
+function getCharacterImage(caseId: string, coherence: number, maxCoherence: number = 100): string | null {
+  const pct = maxCoherence > 0 ? coherence / maxCoherence : 0;
+
+  // mini_prologue → ガメ吉（3表情）
+  if (caseId === 'mini_prologue') {
+    const emotion = pct > 0.5 ? 'smug' : pct > 0.15 ? 'shaken' : 'defeated';
+    return `/images/characters/gamekichi/${emotion}.png`;
+  }
+
   const emotion =
-    coherence > 85 ? 'normal' :
-    coherence >= 55 ? 'nervous' :
-    coherence >= 30 ? 'cornered' :
-    coherence >= 10 ? 'breaking' : 'collapsed';
+    pct > 0.85 ? 'normal' :
+    pct >= 0.55 ? 'nervous' :
+    pct >= 0.30 ? 'cornered' :
+    pct >= 0.10 ? 'breaking' : 'collapsed';
 
   const available: Record<string, string[]> = {
     case_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
@@ -42,6 +48,7 @@ function getInterrogationBg(caseId: string): string | null {
     case_001: '/images/backgrounds/case_001_interrogation.jpg',
     case_002: '/images/backgrounds/case_002_interrogation.jpg',
     case_003: '/images/backgrounds/case_003_interrogation.jpg',
+    mini_prologue: '/images/events/market_square.webp',
   };
   return bgs[caseId] ?? null;
 }
@@ -432,7 +439,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               <span className="text-xs text-stone-500">コヒーレンス</span>
             </div>
           </div>
-          <CoherenceMeter coherence={session.coherence} />
+          <CoherenceMeter coherence={session.coherence} maxCoherence={session.maxCoherence} />
         </div>
       </div>
 
@@ -440,7 +447,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       <div className="relative shrink-0 bg-amber-50">
         {/* キャラクター画像: 横幅いっぱい */}
         {(() => {
-          const imgSrc = getCharacterImage(caseId, session.coherence);
+          const imgSrc = getCharacterImage(caseId, session.coherence, session.maxCoherence);
           const bgSrc = getInterrogationBg(caseId);
           return imgSrc ? (
             <div className="relative mx-auto w-full max-w-md overflow-hidden h-[35vh]">

@@ -36,7 +36,8 @@ export function listCases(): { cases: CaseSummary[]; sampleCases: CaseSummary[] 
     const summary = { id: data.id, title: data.title, difficulty: data.difficulty, description: data.description };
     if (data.id.startsWith('case_sample')) {
       sampleCases.push(summary);
-    } else {
+    } else if (!data.id.startsWith('mini_')) {
+      // mini_* ケースはイベントフロー専用。通常リストには表示しない
       cases.push(summary);
     }
   });

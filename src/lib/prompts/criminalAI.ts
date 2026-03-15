@@ -90,6 +90,12 @@ ${previousTestimony.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 - コヒーレンスが低いほど言葉が乱れ、感情的になること
 - メッセージが「__opening__」の場合のみ：尋問室に通されたばかりの自然な第一声を1〜2文で言うこと。カバーストーリーを読み上げてはいけない。「よろしくお願いします」「何でもお答えします」程度の短い挨拶にすること。質問への返答ではない`;
 
+  // ミニケース専用ルールがある場合は末尾に追加
+  const miniRules = (caseData as { miniCaseRules?: string }).miniCaseRules;
+  const finalSystemPrompt = miniRules
+    ? `${systemPrompt}\n\n${miniRules}`
+    : systemPrompt;
+
   // 会話履歴を整形（最新8ターン分）
   const recentHistory = conversationHistory.slice(-16); // 8往復 = 16メッセージ
   const history = recentHistory.map((msg) => ({
@@ -97,5 +103,5 @@ ${previousTestimony.map((t, i) => `${i + 1}. ${t}`).join('\n')}
     parts: [{ text: msg.content }],
   }));
 
-  return { systemPrompt, history };
+  return { systemPrompt: finalSystemPrompt, history };
 }
