@@ -45,9 +45,9 @@ function getCharacterImage(caseId: string, coherence: number, maxCoherence: numb
 // ケース別の尋問背景画像
 function getInterrogationBg(caseId: string): string | null {
   const bgs: Record<string, string> = {
-    case_sample_001: '/images/backgrounds/case_001_interrogation.jpg',
-    case_sample_002: '/images/backgrounds/case_002_interrogation.jpg',
-    case_sample_003: '/images/backgrounds/case_003_interrogation.jpg',
+    case_sample_001: '/images/backgrounds/case_sample_001_interrogation.jpg',
+    case_sample_002: '/images/backgrounds/case_sample_002_interrogation.jpg',
+    case_sample_003: '/images/backgrounds/case_sample_003_interrogation.jpg',
     mini_prologue: '/images/fantasy_bg.png',
   };
   return bgs[caseId] ?? null;
