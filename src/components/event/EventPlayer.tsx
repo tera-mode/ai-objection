@@ -235,12 +235,13 @@ export default function EventPlayer({
 
       {/* キャラクター（1人・中央大きめ） */}
       {!hasBothChars && singleChar && (
-        <div className="absolute bottom-[180px] left-1/2 -translate-x-1/2 z-20">
+        <div className="absolute bottom-[180px] left-0 right-0 z-20 flex justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={singleChar}
             alt=""
-            className="h-[65vh] max-h-[500px] w-auto object-contain drop-shadow-xl"
+            style={{ height: '45vh' }}
+            className="w-auto drop-shadow-xl"
             draggable={false}
           />
         </div>
