@@ -740,6 +740,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                   if (confirm('尋問をやり直しますか？')) {
                     setToimaruComment('');
                     setChips([]);
+                    prevMessageCountRef.current = 0;
                     startSession(caseId);
                   }
                 }}
