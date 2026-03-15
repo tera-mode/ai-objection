@@ -13,14 +13,16 @@ export function buildCriminalAIPrompt(
   unlockedEvidenceIds: string[] = []
 ): { systemPrompt: string; history: { role: string; parts: { text: string }[] }[] } {
   const { criminal } = caseData;
+  const maxCoherence = (caseData as { maxCoherence?: number }).maxCoherence ?? 100;
+  const pct = maxCoherence > 0 ? coherence / maxCoherence : 0;
 
-  // コヒーレンス値に応じた応答スタイル
+  // コヒーレンス値に応じた応答スタイル（パーセンテージ基準）
   let emotionalState: string;
   let personalityDesc: string;
-  if (coherence >= 80) {
+  if (pct >= 0.8) {
     emotionalState = '冷静で自信に満ちている。余裕がある。';
     personalityDesc = criminal.personality.surface;
-  } else if (coherence >= 40) {
+  } else if (pct >= 0.4) {
     emotionalState = 'やや動揺している。防御的になっている。言葉を選ぶ。';
     personalityDesc = criminal.personality.underPressure;
   } else {
@@ -45,7 +47,7 @@ export function buildCriminalAIPrompt(
 ${personalityDesc}
 
 【現在の精神状態】
-コヒーレンス: ${coherence}/100
+コヒーレンス: ${coherence}/${maxCoherence}
 状態: ${emotionalState}
 
 【事件当日の真実（あなたが実際にやったこと）】
