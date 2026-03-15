@@ -36,7 +36,7 @@ export default function LandingPage() {
         {/* キービジュアル */}
         <div className="w-full">
           <Image
-            src="/images/key_visual.webp"
+            src="/images/ui/key_visual.webp"
             alt="問わない異世界の探偵少女"
             width={800}
             height={800}

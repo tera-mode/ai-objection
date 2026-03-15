@@ -37,8 +37,8 @@ function getCharacterImage(caseId: string, coherence: number, maxCoherence: numb
   };
 
   const list = available[caseId] ?? [];
-  if (list.includes(emotion)) return `/images/characters/${caseId}_${emotion}.png`;
-  if (list.includes('normal')) return `/images/characters/${caseId}_normal.png`;
+  if (list.includes(emotion)) return `/images/characters/${caseId}/${emotion}.png`;
+  if (list.includes('normal')) return `/images/characters/${caseId}/normal.png`;
   return null;
 }
 
@@ -48,7 +48,7 @@ function getInterrogationBg(caseId: string): string | null {
     case_sample_001: '/images/backgrounds/case_sample_001_interrogation.jpg',
     case_sample_002: '/images/backgrounds/case_sample_002_interrogation.jpg',
     case_sample_003: '/images/backgrounds/case_sample_003_interrogation.jpg',
-    mini_prologue: '/images/fantasy_bg.png',
+    mini_prologue: '/images/backgrounds/fantasy_bg.png',
   };
   return bgs[caseId] ?? null;
 }
@@ -370,7 +370,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 height: '28%',
                 animation: 'cutinPanel 1.8s ease-out forwards',
                 clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
-                backgroundImage: 'url(/images/cutin_nande.webp)',
+                backgroundImage: 'url(/images/ui/cutin_nande.webp)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
