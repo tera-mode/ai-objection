@@ -235,7 +235,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const finalMessages = [...updatedMessages, criminalMsg];
 
       // ゲーム終了判定
-      const isGameOver = currentTurn >= 15 || newCoherence <= 0;
+      const isGameOver = currentTurn >= (session.maxTurns ?? 15) || newCoherence <= 0;
       const verdict = isGameOver
         ? (newCoherence <= 0 ? 'arrest' : 'escape')
         : null;
@@ -286,7 +286,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const arrestChallenge = useCallback(() => {
     if (!session) return;
 
-    const isArrested = session.coherence <= 50;
+    const isArrested = session.coherence / session.maxCoherence <= 0.5;
     const verdict = isArrested ? 'arrest' : 'escape';
 
     const updatedSession: GameSession = {
@@ -328,6 +328,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       setSession({
         ...data.session,
         maxCoherence: data.session.maxCoherence ?? 100,
+        maxTurns: data.session.maxTurns ?? 15,
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
         messages: data.session.messages.map((m: { timestamp: string; role: 'player' | 'criminal'; content: string; coherenceAfter?: number; contradiction?: string }) => ({

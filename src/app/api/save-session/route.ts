@@ -26,10 +26,12 @@ export async function POST(request: NextRequest) {
       // ケースデータから初期値を取得（なければデフォルト100）
       let initialCoherence = 100;
       let maxCoherence = 100;
+      let maxTurns = 15;
       try {
-        const caseData = loadCase(caseId) as { initialCoherence?: number; maxCoherence?: number };
+        const caseData = loadCase(caseId) as { initialCoherence?: number; maxCoherence?: number; maxTurns?: number };
         initialCoherence = caseData.initialCoherence ?? 100;
         maxCoherence = caseData.maxCoherence ?? 100;
+        maxTurns = caseData.maxTurns ?? 15;
       } catch { /* ケースが見つからなくてもセッション作成は続行 */ }
 
       const newSession = {
@@ -40,6 +42,7 @@ export async function POST(request: NextRequest) {
         turn: 0,
         coherence: initialCoherence,
         maxCoherence,
+        maxTurns,
         messages: [],
         isCompleted: false,
         verdict: null,

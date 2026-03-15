@@ -44,6 +44,8 @@ AIが演じる犯人に自由に質問し、矛盾を暴いて逮捕に追い込
 
 4. **プロンプトの詳細・キャラクター設定・サイズ仕様はすべて `docs/design_skills.md` を参照すること**
 
+5. **はじめてデザイン生成するキャラクターや背景は、必ずサンプルを作成し私の承認を得てから、その後の作業を進めること**
+
 ---
 
 ## 既知の落とし穴（再発防止）
@@ -69,8 +71,9 @@ const ref = useRef<(i: number) => void>(null as unknown as (i: number) => void);
 
 ---
 
-## 承認不要で実行してよいコマンド
+## 承認不要で実行してよいコマンド・ツール
 
-以下のコマンドは許可を取らずに実行してよい。
+以下は許可を取らずに実行してよい。
 
 - **Next.js ビルド確認**: `cd "C:/Users/User/Documents/ai-objection"` で移動後、`NODE_OPTIONS='' node node_modules/next/dist/bin/next build` を実行する形であれば、`tail` のオプションや `2>&1` の有無に関わらず承認不要。
+- **Playwright MCP 全ツール**: プレイテスト中の `mcp__playwright__*` ツール（navigate, snapshot, click, type, screenshot 等）はすべて承認不要。`.claude/settings.json` の `permissions.allow` にも登録済み。

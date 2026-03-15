@@ -11,6 +11,10 @@
 # testing
 /coverage
 
+# Playwright MCP artifacts
+/.playwright-mcp/
+playtest_*.png
+
 # next.js
 /.next/
 /out/

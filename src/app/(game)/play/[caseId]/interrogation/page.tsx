@@ -353,8 +353,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
   if (!session || !meta) return null;
 
-  const isGameOver = session.isCompleted || session.turn >= 15;
-  const canArrest = session.turn >= 3 && !isGameOver;
+  const isGameOver = session.isCompleted || session.turn >= (session.maxTurns ?? 15);
+  const canArrest = session.coherence < session.maxCoherence && !isGameOver;
 
   return (
     <div className="flex h-dvh flex-col bg-amber-50">
@@ -422,7 +422,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       <div className="shrink-0 border-b border-stone-200 bg-white px-4 py-2">
         <div className="mx-auto flex max-w-md flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <TurnCounter turn={session.turn} />
+            <TurnCounter turn={session.turn} maxTurns={session.maxTurns} />
             <div className="flex items-center gap-2">
               {/* 音声モードトグル */}
               <button

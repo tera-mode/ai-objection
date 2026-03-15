@@ -7,6 +7,7 @@ export interface GameSession {
   turn: number;
   coherence: number;        // 0〜maxCoherence
   maxCoherence: number;     // 容疑者ごとの動揺度上限（デフォルト100）
+  maxTurns: number;         // ケースごとのターン上限（デフォルト15）
   messages: ChatMessage[];
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
@@ -78,6 +79,7 @@ export interface GameSessionData {
   turn: number;
   coherence: number;
   maxCoherence: number;
+  maxTurns: number;
   messages: ChatMessageData[];
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
