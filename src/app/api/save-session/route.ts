@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
       let maxTurns = 15;
       try {
         const caseData = loadCase(caseId) as { initialCoherence?: number; maxCoherence?: number; maxTurns?: number };
-        initialCoherence = caseData.initialCoherence ?? 100;
         maxCoherence = caseData.maxCoherence ?? 100;
+        initialCoherence = caseData.initialCoherence ?? maxCoherence;
         maxTurns = caseData.maxTurns ?? 15;
       } catch { /* ケースが見つからなくてもセッション作成は続行 */ }
 
