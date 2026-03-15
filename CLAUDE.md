@@ -62,6 +62,16 @@ AIが演じる犯人に自由に質問し、矛盾を暴いて逮捕に追い込
 表情切り替えや判定ロジックは `coherence / maxCoherence` で正規化してから閾値と比較すること。
 絶対値で比較すると、maxCoherence < 100 のケースで最初から「追い詰められた」表情になる。
 
+### 新しいケースの JSON に `initialCoherence` を書かないときの注意
+`save-session` の `create` アクションは `initialCoherence ?? maxCoherence` でフォールバックする。
+ケース JSON に `maxCoherence` だけ書いて `initialCoherence` を省略しても正しく動作する（省略推奨）。
+ただし **`initialCoherence` に明示的に 100 を書くと `maxCoherence` が何であっても 100 スタートになる** ので注意。
+
+### `maxCoherence` を変更しても画面に反映されないとき
+原因: Firebase に保存済みの古いセッションが `maxCoherence` の旧値を持っている。
+対処: 新規セッションを作り直す（「尋問を開始」ボタンを押し直す）。
+`loadSession` はケース JSON から `maxCoherence` を上書き取得するので、新規作成後は正しく反映される。
+
 ### useRef の型初期化
 `useRef<(i: number) => void>()` は引数なしだと TypeScript エラーになる。
 以下のパターンで初期化する：
