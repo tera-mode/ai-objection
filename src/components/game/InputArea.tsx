@@ -40,7 +40,7 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
   };
 
   return (
-    <div className="flex items-end gap-2 border-t border-gray-700 bg-gray-900 p-3">
+    <div className="flex items-end gap-2 border-t border-stone-200 bg-white p-3">
       <textarea
         ref={textareaRef}
         value={value}
@@ -49,13 +49,13 @@ export function InputArea({ onSend, disabled, placeholder }: InputAreaProps) {
         disabled={disabled}
         placeholder={placeholder ?? '容疑者に質問する...'}
         rows={1}
-        className="flex-1 resize-none rounded-xl border border-gray-600 bg-gray-800 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
+        className="flex-1 resize-none rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:border-amber-400 focus:outline-none disabled:opacity-50"
         style={{ maxHeight: '120px' }}
       />
       <button
         onClick={handleSend}
         disabled={disabled || !value.trim()}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-600 text-white transition-colors hover:bg-cyan-500 disabled:opacity-40"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white transition-colors hover:bg-amber-400 disabled:opacity-40"
       >
         {disabled ? (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

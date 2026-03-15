@@ -66,32 +66,32 @@ function LoginContent() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-amber-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-amber-500 border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-950 px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-amber-50 px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-black text-white">
-            AI<span className="text-cyan-400">Objection</span>
+          <h1 className="text-3xl font-black text-stone-900">
+            AI<span className="text-amber-500">Objection</span>
           </h1>
-          <p className="mt-2 text-sm text-gray-400">
+          <p className="mt-2 text-sm text-stone-500">
             {mode === 'login' ? 'ログイン' : '新規登録'}
           </p>
         </div>
 
         {/* タブ */}
-        <div className="mb-6 flex gap-1 rounded-xl bg-gray-800 p-1">
+        <div className="mb-6 flex gap-1 rounded-xl bg-stone-200 p-1">
           {(['login', 'signup'] as const).map((m) => (
             <button
               key={m}
               onClick={() => { setMode(m); setError(''); }}
               className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
-                mode === m ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-200'
+                mode === m ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
               }`}
             >
               {m === 'login' ? 'ログイン' : '新規登録'}
@@ -100,7 +100,7 @@ function LoginContent() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-xl border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
+          <div className="mb-4 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-600">
             {error}
           </div>
         )}
@@ -108,35 +108,35 @@ function LoginContent() {
         <form onSubmit={handleEmail} className="flex flex-col gap-4">
           {mode === 'signup' && (
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-400">ニックネーム</label>
+              <label className="mb-1 block text-xs font-medium text-stone-500">ニックネーム</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:border-amber-400 focus:outline-none"
                 placeholder="探偵"
                 required
               />
             </div>
           )}
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-400">メールアドレス</label>
+            <label className="mb-1 block text-xs font-medium text-stone-500">メールアドレス</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+              className="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:border-amber-400 focus:outline-none"
               placeholder="example@email.com"
               required
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-400">パスワード</label>
+            <label className="mb-1 block text-xs font-medium text-stone-500">パスワード</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+              className="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 placeholder-stone-400 focus:border-amber-400 focus:outline-none"
               placeholder="6文字以上"
               required
               minLength={6}
@@ -145,22 +145,22 @@ function LoginContent() {
           <button
             type="submit"
             disabled={isProcessing}
-            className="w-full rounded-xl bg-cyan-600 py-3 font-semibold text-white transition-colors hover:bg-cyan-500 disabled:opacity-50"
+            className="w-full rounded-xl bg-amber-500 py-3 font-semibold text-white transition-colors hover:bg-amber-400 disabled:opacity-50"
           >
             {isProcessing ? '処理中...' : mode === 'login' ? 'ログイン' : '新規登録'}
           </button>
         </form>
 
         <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-gray-700" />
-          <span className="text-xs text-gray-500">または</span>
-          <div className="h-px flex-1 bg-gray-700" />
+          <div className="h-px flex-1 bg-stone-300" />
+          <span className="text-xs text-stone-400">または</span>
+          <div className="h-px flex-1 bg-stone-300" />
         </div>
 
         <button
           onClick={handleGoogle}
           disabled={isProcessing}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-700 bg-gray-800 py-3 text-sm font-semibold text-gray-200 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-stone-300 bg-white py-3 text-sm font-semibold text-stone-700 transition-colors hover:border-amber-400 hover:text-stone-900 disabled:opacity-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -173,7 +173,7 @@ function LoginContent() {
 
         <button
           onClick={() => router.push('/')}
-          className="mt-6 w-full text-center text-sm text-gray-500 hover:text-gray-300"
+          className="mt-6 w-full text-center text-sm text-stone-400 hover:text-stone-700"
         >
           ← トップに戻る
         </button>
@@ -185,8 +185,8 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-gray-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-amber-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-amber-500 border-t-transparent" />
       </div>
     }>
       <LoginContent />

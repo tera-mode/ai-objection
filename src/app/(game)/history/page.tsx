@@ -11,8 +11,8 @@ const verdictLabel: Record<string, string> = {
 };
 
 const verdictColor: Record<string, string> = {
-  arrest: 'text-cyan-400',
-  escape: 'text-gray-500',
+  arrest: 'text-amber-600',
+  escape: 'text-stone-400',
 };
 
 export default function HistoryPage() {
@@ -51,28 +51,28 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-950 px-4 py-8">
+    <div className="min-h-screen bg-amber-50 px-4 py-8">
       <div className="mx-auto max-w-md">
-        <h1 className="mb-6 text-2xl font-black text-white">プレイ履歴</h1>
+        <h1 className="mb-6 text-2xl font-black text-stone-900">プレイ履歴</h1>
 
         {isLoading && (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-amber-500 border-t-transparent" />
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl border border-red-500/30 bg-red-900/20 px-4 py-3 text-sm text-red-400">
+          <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-600">
             {error}
           </div>
         )}
 
         {!isLoading && sessions.length === 0 && (
           <div className="flex flex-col items-center gap-4 py-12 text-center">
-            <p className="text-gray-500">まだプレイ履歴がありません</p>
+            <p className="text-stone-500">まだプレイ履歴がありません</p>
             <button
               onClick={() => router.push('/play')}
-              className="rounded-xl bg-cyan-600 px-6 py-3 font-semibold text-white hover:bg-cyan-500"
+              className="rounded-xl bg-amber-500 px-6 py-3 font-semibold text-white hover:bg-amber-400"
             >
               ゲームをプレイする
             </button>
@@ -83,14 +83,14 @@ export default function HistoryPage() {
           {sessions.map((session) => (
             <div
               key={session.sessionId}
-              className="rounded-2xl border border-gray-800 bg-gray-900 p-4"
+              className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-stone-900">
                     {caseTitles[session.caseId] ?? session.caseId}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-stone-400">
                     {new Date(session.createdAt).toLocaleDateString('ja-JP', {
                       year: 'numeric',
                       month: 'short',
@@ -106,7 +106,7 @@ export default function HistoryPage() {
                   </span>
                 )}
               </div>
-              <div className="mt-2 flex gap-4 text-xs text-gray-400">
+              <div className="mt-2 flex gap-4 text-xs text-stone-400">
                 <span>{session.turn} ターン</span>
                 <span>コヒーレンス {session.coherence}</span>
                 <span>{session.messages.length} メッセージ</span>

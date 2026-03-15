@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
+const PROLOGUE_SEEN_KEY = 'event_prologue_seen';
+
 interface CaseItem {
   id: string;
   title: string;
@@ -19,9 +21,9 @@ const difficultyLabel: Record<string, string> = {
 };
 
 const difficultyColor: Record<string, string> = {
-  easy: 'text-green-400 border-green-400/30 bg-green-400/10',
-  medium: 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10',
-  hard: 'text-red-400 border-red-400/30 bg-red-400/10',
+  easy: 'text-green-600 border-green-300 bg-green-50',
+  medium: 'text-yellow-600 border-yellow-300 bg-yellow-50',
+  hard: 'text-red-600 border-red-300 bg-red-50',
 };
 
 export default function PlayPage() {
@@ -29,6 +31,16 @@ export default function PlayPage() {
   const { user } = useAuth();
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [sampleCases, setSampleCases] = useState<CaseItem[]>([]);
+
+  // プロローグ未視聴の場合はリダイレクト
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const seen = localStorage.getItem(PROLOGUE_SEEN_KEY);
+      if (!seen) {
+        router.push('/event/prologue');
+      }
+    }
+  }, [router]);
 
   useEffect(() => {
     authenticatedFetch('/api/list-cases')
@@ -41,11 +53,11 @@ export default function PlayPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-950 px-4 py-8">
+    <div className="min-h-screen bg-amber-50 px-4 py-8">
       <div className="mx-auto max-w-md">
         <div className="mb-8">
-          <h1 className="text-2xl font-black text-white">ケース選択</h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <h1 className="text-2xl font-black text-stone-900">ケース選択</h1>
+          <p className="mt-1 text-sm text-stone-500">
             {user?.isAnonymous ? 'ゲストプレイ中' : user?.displayName ?? user?.email}
           </p>
         </div>
@@ -55,18 +67,18 @@ export default function PlayPage() {
             <button
               key={c.id}
               onClick={() => router.push(`/play/${c.id}/crime-scene`)}
-              className="group flex flex-col gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-5 text-left transition-all hover:border-cyan-500/50 hover:bg-gray-900/80"
+              className="group flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-5 text-left shadow-sm transition-all hover:border-amber-400 hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-3">
-                <h2 className="text-lg font-bold text-white group-hover:text-cyan-300">
+                <h2 className="text-lg font-bold text-stone-900 group-hover:text-amber-600">
                   {c.title}
                 </h2>
                 <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold ${difficultyColor[c.difficulty] ?? ''}`}>
                   {difficultyLabel[c.difficulty] ?? c.difficulty}
                 </span>
               </div>
-              <p className="text-sm text-gray-400">{c.description}</p>
-              <div className="flex items-center gap-2 text-xs text-cyan-500">
+              <p className="text-sm text-stone-500">{c.description}</p>
+              <div className="flex items-center gap-2 text-xs text-amber-600">
                 <span>プレイする</span>
                 <span>→</span>
               </div>
@@ -75,14 +87,14 @@ export default function PlayPage() {
         </div>
 
         {sampleCases.length > 0 && (
-          <div className="mt-8 border-t border-gray-800 pt-6">
-            <p className="mb-3 text-xs text-gray-600">サンプルシナリオ</p>
+          <div className="mt-8 border-t border-stone-200 pt-6">
+            <p className="mb-3 text-xs text-stone-400">サンプルシナリオ</p>
             <div className="flex flex-col gap-2">
               {sampleCases.map((c) => (
                 <button
                   key={c.id}
                   onClick={() => router.push(`/play/${c.id}/crime-scene`)}
-                  className="text-left text-xs text-gray-600 underline-offset-2 hover:text-gray-400 hover:underline"
+                  className="text-left text-xs text-stone-400 underline-offset-2 hover:text-stone-600 hover:underline"
                 >
                   {c.title}（{difficultyLabel[c.difficulty] ?? c.difficulty}）→
                 </button>

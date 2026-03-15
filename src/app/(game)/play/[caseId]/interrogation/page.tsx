@@ -67,18 +67,18 @@ function GameFooter({
   disabled: boolean;
 }) {
   return (
-    <div className="shrink-0 border-t border-gray-800 bg-gray-900">
+    <div className="shrink-0 border-t border-stone-200 bg-white">
       <div className="mx-auto flex max-w-md items-center">
         <button
           onClick={onLogOpen}
-          className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-gray-400 transition-colors hover:text-cyan-400"
+          className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-stone-500 transition-colors hover:text-amber-600"
         >
           <span className="text-lg">📜</span>
           <span>証言記録</span>
         </button>
         <button
           onClick={onEvidenceOpen}
-          className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-gray-400 transition-colors hover:text-cyan-400"
+          className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-stone-500 transition-colors hover:text-amber-600"
         >
           <span className="text-lg">📁</span>
           <span>証拠</span>
@@ -88,8 +88,8 @@ function GameFooter({
           disabled={disabled || !canArrest}
           className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs transition-colors ${
             canArrest && !disabled
-              ? 'text-red-400 hover:text-red-300'
-              : 'text-gray-600'
+              ? 'text-red-500 hover:text-red-400'
+              : 'text-stone-300'
           }`}
         >
           <span className="text-lg">⚖️</span>
@@ -106,7 +106,7 @@ function EvidenceIcon({ evId, caseId, size }: { evId: string; caseId: string; si
   if (failed) {
     return (
       <div
-        className="shrink-0 flex items-center justify-center rounded-lg bg-gray-700 text-gray-400"
+        className="shrink-0 flex items-center justify-center rounded-lg bg-stone-200 text-stone-400"
         style={{ width: size, height: size }}
       >
         <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -146,23 +146,23 @@ function EvidenceModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-2xl border border-gray-700 bg-gray-900 p-4 sm:rounded-2xl"
+        className="w-full max-w-md rounded-t-2xl border border-stone-200 bg-white p-4 sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-semibold text-cyan-400">
+          <h3 className="font-semibold text-amber-600">
             {selected ? selected.name : '証拠一覧'}
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
+          <button onClick={onClose} className="text-stone-400 hover:text-stone-700">✕</button>
         </div>
         {selected ? (
           <div>
-            <button onClick={() => setSelected(null)} className="mb-3 text-xs text-cyan-400 hover:underline">← 一覧に戻る</button>
+            <button onClick={() => setSelected(null)} className="mb-3 text-xs text-amber-600 hover:underline">← 一覧に戻る</button>
             <div className="mb-4 flex items-center gap-4">
               <EvidenceIcon evId={selected.id} caseId={caseId} size={64} />
-              <p className="font-semibold text-white">{selected.name}</p>
+              <p className="font-semibold text-stone-900">{selected.name}</p>
             </div>
-            <p className="text-sm leading-relaxed text-gray-300">{selected.content}</p>
+            <p className="text-sm leading-relaxed text-stone-700">{selected.content}</p>
           </div>
         ) : (
           <ul className="space-y-2">
@@ -170,10 +170,10 @@ function EvidenceModal({
               <li key={ev.id}>
                 <button
                   onClick={() => setSelected(ev)}
-                  className="flex w-full items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-left transition-colors hover:border-cyan-500 hover:text-white"
+                  className="flex w-full items-center gap-3 rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-left transition-colors hover:border-amber-400 hover:text-stone-900"
                 >
                   <EvidenceIcon evId={ev.id} caseId={caseId} size={96} />
-                  <span className="text-sm text-gray-300">{ev.name}</span>
+                  <span className="text-sm text-stone-700">{ev.name}</span>
                 </button>
               </li>
             ))}
@@ -203,42 +203,42 @@ function LogModal({
       onClick={onClose}
     >
       <div
-        className="flex w-full max-w-md flex-col rounded-t-2xl border border-gray-700 bg-gray-900 sm:rounded-2xl"
+        className="flex w-full max-w-md flex-col rounded-t-2xl border border-stone-200 bg-white sm:rounded-2xl"
         style={{ maxHeight: '70vh' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-gray-700 px-4 py-3">
+        <div className="flex items-center justify-between border-b border-stone-200 px-4 py-3">
           <div className="flex gap-3">
             <button
               onClick={() => setTab('current')}
-              className={`text-sm font-semibold ${tab === 'current' ? 'text-cyan-400' : 'text-gray-500'}`}
+              className={`text-sm font-semibold ${tab === 'current' ? 'text-amber-600' : 'text-stone-400'}`}
             >
               今回の証言
             </button>
             {previousConversation.length > 0 && (
               <button
                 onClick={() => setTab('previous')}
-                className={`text-sm font-semibold ${tab === 'previous' ? 'text-yellow-400' : 'text-gray-500'}`}
+                className={`text-sm font-semibold ${tab === 'previous' ? 'text-yellow-600' : 'text-stone-400'}`}
               >
                 前回の証言
               </button>
             )}
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
+          <button onClick={onClose} className="text-stone-400 hover:text-stone-700">✕</button>
         </div>
         <div className="overflow-y-auto p-4">
           {tab === 'current' && (
             messages.length === 0 ? (
-              <p className="text-center text-sm text-gray-500">まだ発言はありません</p>
+              <p className="text-center text-sm text-stone-400">まだ発言はありません</p>
             ) : (
               <div className="space-y-3">
                 {messages.map((m, i) => (
                   <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
-                    <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-gray-400'}`}>
+                    <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-amber-600' : 'text-stone-500'}`}>
                       {m.role === 'player' ? 'あなた' : criminalName}
                     </span>
-                    <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
-                      m.role === 'player' ? 'bg-cyan-900/50' : 'bg-gray-800'
+                    <p className={`mt-0.5 rounded-xl px-3 py-2 inline-block max-w-[85%] ${
+                      m.role === 'player' ? 'bg-amber-500 text-white' : 'bg-stone-100 text-stone-800'
                     }`}>{m.content}</p>
                   </div>
                 ))}
@@ -247,21 +247,21 @@ function LogModal({
           )}
           {tab === 'previous' && (
             <div className="space-y-3">
-              <p className="mb-1 text-xs text-gray-500">過去の尋問の記録。今回と食い違いがあれば矛盾として突ける。</p>
+              <p className="mb-1 text-xs text-stone-400">過去の尋問の記録。今回と食い違いがあれば矛盾として突ける。</p>
               {previousConversation.map((m, i) =>
                 m.role === 'divider' ? (
                   <div key={i} className="sticky top-0 z-10 py-2">
-                    <div className="rounded-lg bg-yellow-950/80 border border-yellow-700/60 px-3 py-1.5 text-center backdrop-blur-sm">
-                      <span className="text-xs font-bold text-yellow-400 tracking-wide">{m.content}</span>
+                    <div className="rounded-lg bg-yellow-50 border border-yellow-300 px-3 py-1.5 text-center backdrop-blur-sm">
+                      <span className="text-xs font-bold text-yellow-600 tracking-wide">{m.content}</span>
                     </div>
                   </div>
                 ) : (
                   <div key={i} className={`text-sm ${m.role === 'player' ? 'text-right' : 'text-left'}`}>
-                    <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-cyan-400' : 'text-yellow-500'}`}>
+                    <span className={`text-xs font-semibold ${m.role === 'player' ? 'text-amber-600' : 'text-yellow-600'}`}>
                       {m.role === 'player' ? 'あなた' : '容疑者'}
                     </span>
-                    <p className={`mt-0.5 rounded-xl px-3 py-2 text-gray-200 inline-block max-w-[85%] ${
-                      m.role === 'player' ? 'bg-cyan-900/30' : 'bg-yellow-950/40 border border-yellow-900/40'
+                    <p className={`mt-0.5 rounded-xl px-3 py-2 inline-block max-w-[85%] ${
+                      m.role === 'player' ? 'bg-amber-500/20 text-stone-800' : 'bg-yellow-50 border border-yellow-200 text-stone-800'
                     }`}>{m.content}</p>
                   </div>
                 )
@@ -350,7 +350,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const canArrest = session.turn >= 3 && !isGameOver;
 
   return (
-    <div className="flex h-dvh flex-col bg-gray-950">
+    <div className="flex h-dvh flex-col bg-amber-50">
       {/* 「なんで？」カットイン演出 */}
       {showObjection && (
         <>
@@ -412,7 +412,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       )}
 
       {/* ヘッダー: ターン数・コヒーレンス */}
-      <div className="shrink-0 border-b border-gray-800 bg-gray-900 px-4 py-2">
+      <div className="shrink-0 border-b border-stone-200 bg-white px-4 py-2">
         <div className="mx-auto flex max-w-md flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <TurnCounter turn={session.turn} />
@@ -422,14 +422,14 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 onClick={() => setIsVoiceModeOn(!isVoiceModeOn)}
                 className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                   isVoiceModeOn
-                    ? 'bg-cyan-900/60 text-cyan-400'
-                    : 'bg-gray-800 text-gray-500 hover:text-gray-300'
+                    ? 'bg-amber-100 text-amber-600'
+                    : 'bg-stone-100 text-stone-400 hover:text-stone-600'
                 }`}
               >
                 {isVoiceModeOn ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
                 {isVoiceModeOn ? '音声ON' : '音声OFF'}
               </button>
-              <span className="text-xs text-gray-500">コヒーレンス</span>
+              <span className="text-xs text-stone-500">コヒーレンス</span>
             </div>
           </div>
           <CoherenceMeter coherence={session.coherence} />
@@ -437,7 +437,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       </div>
 
       {/* 容疑者エリア */}
-      <div className="relative shrink-0 bg-gray-950">
+      <div className="relative shrink-0 bg-amber-50">
         {/* キャラクター画像: 横幅いっぱい */}
         {(() => {
           const imgSrc = getCharacterImage(caseId, session.coherence);
@@ -454,7 +454,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 />
               )}
               {/* 背景オーバーレイ（暗め） */}
-              {bgSrc && <div className="absolute inset-0 bg-gray-950/40" />}
+              {bgSrc && <div className="absolute inset-0 bg-stone-900/40" />}
               <Image
                 key={imgSrc}
                 src={imgSrc}
@@ -465,21 +465,21 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 priority
               />
               {/* 下部グラデーション */}
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-20 bg-gradient-to-t from-gray-950 to-transparent" />
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-20 bg-gradient-to-t from-amber-50 to-transparent" />
               {/* 思考中スピナー */}
               {isCriminalThinking && (
-                <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-950/40">
+                <div className="absolute inset-0 z-20 flex items-center justify-center bg-stone-900/40">
                   <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
                 </div>
               )}
             </div>
           ) : (
             /* 画像未定義時のプレースホルダー */
-            <div className="flex h-40 w-full flex-col items-center justify-center gap-2 border-b border-gray-800">
-              <svg className="h-16 w-16 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+            <div className="flex h-40 w-full flex-col items-center justify-center gap-2 border-b border-stone-200">
+              <svg className="h-16 w-16 text-stone-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
               </svg>
-              <p className="text-xs text-gray-600">画像準備中</p>
+              <p className="text-xs text-stone-400">画像準備中</p>
             </div>
           );
         })()}
@@ -490,7 +490,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       <div className="flex-1 overflow-y-auto px-4 py-4">
         <div className="mx-auto flex max-w-md flex-col gap-3">
           {session.messages.length === 0 && (
-            <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-4 text-center text-sm text-gray-500">
+            <div className="rounded-2xl border border-stone-200 bg-white p-4 text-center text-sm text-stone-500">
               容疑者が目の前にいる。質問してみよう。
             </div>
           )}
@@ -499,13 +499,13 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           ))}
           {isCriminalThinking && (
             <div className="flex items-start gap-2">
-              <div className="rounded-2xl rounded-bl-sm border border-gray-700 bg-gray-800 px-4 py-3">
-                <p className="mb-1 text-xs font-semibold text-cyan-400">{meta.criminalName}</p>
+              <div className="rounded-2xl rounded-bl-sm border border-stone-200 bg-white px-4 py-3">
+                <p className="mb-1 text-xs font-semibold text-amber-600">{meta.criminalName}</p>
                 <div className="flex gap-1">
                   {[0, 150, 300].map((delay) => (
                     <span
                       key={delay}
-                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-400"
+                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-stone-400"
                       style={{ animationDelay: `${delay}ms` }}
                     />
                   ))}
@@ -518,7 +518,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       </div>
 
       {/* 入力エリア */}
-      <div className="shrink-0 border-t border-gray-800">
+      <div className="shrink-0 border-t border-stone-200">
         <div className="mx-auto max-w-md">
           <div className="flex items-end gap-2 px-2 py-2">
             <div className="flex-1">

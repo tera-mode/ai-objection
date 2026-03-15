@@ -1,0 +1,195 @@
+{
+  "id": "prologue",
+  "title": "はじまりの問い",
+  "scenes": [
+    {
+      "id": "001",
+      "background": "/images/events/bg_library.webp",
+      "character": null,
+      "speaker": null,
+      "text": "2026年、秋。\n放課後の図書室——",
+      "effect": "fade_in"
+    },
+    {
+      "id": "002",
+      "background": "/images/events/bg_library.webp",
+      "character": { "image": "/images/nano_event_normal.png", "position": "center" },
+      "speaker": "なの",
+      "text": "「……むっ、この名探偵のトリック、あたし分かっちゃったかも」"
+    },
+    {
+      "id": "003",
+      "background": "/images/events/bg_library.webp",
+      "character": { "image": "/images/nano_event_normal.png", "position": "center" },
+      "speaker": null,
+      "text": "（ページをめくろうとしたその瞬間——本のページが、眩しく光り始めた）"
+    },
+    {
+      "id": "004",
+      "background": "/images/events/bg_library.webp",
+      "character": { "image": "/images/nano_event_surprise.png", "position": "center" },
+      "speaker": "なの",
+      "text": "「なっ、な、なに！？ 本が光ってる！？」",
+      "effect": "fade_out"
+    },
+    {
+      "id": "005",
+      "background": "/images/events/bg_sky.webp",
+      "character": { "image": "/images/nano_event_surprise.png", "position": "center" },
+      "speaker": "なの",
+      "text": "「ぶわっ！？ き、空！？ なんであたし空の中に——うわぁぁぁ！」",
+      "effect": "fade_in"
+    },
+    {
+      "id": "006",
+      "background": "/images/fantasy_bg.png",
+      "character": null,
+      "speaker": null,
+      "text": "——ドスン、と石畳の上に落ちた。",
+      "effect": "fade_in"
+    },
+    {
+      "id": "007",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_surprise.png", "position": "center" },
+      "speaker": "なの",
+      "text": "「いっ……た……。ど、どこここ！？ ついさっき図書室にいたんだけど！？」"
+    },
+    {
+      "id": "008",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "center" },
+      "speaker": null,
+      "text": "（見渡すと——石畳の街道、木骨造りの家、馬車。\n人……じゃないかもしれない耳の生き物もいる）"
+    },
+    {
+      "id": "009",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "???",
+      "text": "「おや！ そこのヒト、見ない顔なのだ！\nボクはトイマル！ この街の聴き役なのだ！」"
+    },
+    {
+      "id": "010",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "なの",
+      "text": "「き……聴き役？ あの、ここってどこですか。日本じゃないですよね絶対に」"
+    },
+    {
+      "id": "011",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "トイマル",
+      "text": "「ニホン？ ボクには聞いたことのない地名なのだ。\nここはマコト界、コトハの街なのだ！」"
+    },
+    {
+      "id": "012",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_happy.png", "position": "right" },
+      "speaker": "トイマル",
+      "text": "「あなたのお名前は？\nボクは一度聞いた言葉は一字一句忘れないのだ！」"
+    },
+    {
+      "id": "013",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "なの",
+      "text": "「あたしは南出なの。中学二年生、14歳です……って\nそれより帰り方を教えてほしいんだけど」"
+    },
+    {
+      "id": "014",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "トイマル",
+      "text": "「みなみで…なの？\n『なんで？なの？』 なんか面白い名前なのだ！」"
+    },
+    {
+      "id": "015",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_tsukkomi.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_happy.png", "position": "right" },
+      "speaker": "なの",
+      "text": "「……面白くないし！ ていうか帰り方は！？」"
+    },
+    {
+      "id": "016",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "トイマル",
+      "text": "「それは……ボクには、わからないのだ。\n帰り方を知っている人に出会ったことがないのだ」"
+    },
+    {
+      "id": "017",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_surprise.png", "position": "center" },
+      "speaker": null,
+      "text": "そのとき——衛兵詰所の方向から、叫び声が響いた。"
+    },
+    {
+      "id": "018",
+      "background": "/images/fantasy_bg.png",
+      "character": null,
+      "speaker": "衛兵",
+      "text": "「大変だ！ 市場の果物商・ゴランじいさんが死んでいる！\n毒殺だ！」"
+    },
+    {
+      "id": "019",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "トイマル",
+      "text": "「毒殺……！？ でも犯人が白状すれば解決なのだ。\nみんな嘘をつかないから、尋問したらすぐわかるのだ」"
+    },
+    {
+      "id": "020",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_normal.png", "position": "right" },
+      "speaker": "なの",
+      "text": "「……え？ 嘘をつかない？\nトイマル、嘘をつく人がいるって考えたことある？」"
+    },
+    {
+      "id": "021",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_confused.png", "position": "right" },
+      "speaker": "トイマル",
+      "text": "「嘘……？\n人が言ったことは本当なのだ。ボクはそう教わったのだ」"
+    },
+    {
+      "id": "022",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_normal.png", "position": "left" },
+      "character2": { "image": "/images/toimaru_event_confused.png", "position": "right" },
+      "speaker": null,
+      "text": "（……この世界の人たちは、誰も「なんで？」と聞かないんだ。\n犯人の嘘が通用するのは、巧みだからじゃなく——誰も問わないから）"
+    },
+    {
+      "id": "023",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_determined.png", "position": "center" },
+      "speaker": "なの",
+      "text": "「……あたしがいる。\n帰れるかどうかはわからないけど——今は、この事件を解決する」"
+    },
+    {
+      "id": "024",
+      "background": "/images/fantasy_bg.png",
+      "character": { "image": "/images/nano_event_determined.png", "position": "center" },
+      "speaker": "なの",
+      "text": "「——聞かせてもらっていい？」",
+      "effect": "fade_out"
+    }
+  ],
+  "onComplete": {
+    "type": "navigate",
+    "path": "/play"
+  }
+}

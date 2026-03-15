@@ -15,12 +15,12 @@ export function MessageBubble({ message, criminalName }: MessageBubbleProps) {
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
           isPlayer
-            ? 'rounded-br-sm bg-cyan-600 text-white'
-            : 'rounded-bl-sm border border-gray-700 bg-gray-800 text-gray-100'
+            ? 'rounded-br-sm bg-amber-500 text-white'
+            : 'rounded-bl-sm border border-stone-200 bg-white text-stone-800'
         }`}
       >
         {!isPlayer && (
-          <p className="mb-1 text-xs font-semibold text-cyan-400">{criminalName ?? '容疑者'}</p>
+          <p className="mb-1 text-xs font-semibold text-amber-600">{criminalName ?? '容疑者'}</p>
         )}
         <p>{message.content}</p>
       </div>

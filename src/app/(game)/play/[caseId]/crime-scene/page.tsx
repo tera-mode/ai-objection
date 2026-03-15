@@ -38,8 +38,8 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
 
   if (!data) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-amber-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-amber-500 border-t-transparent" />
       </div>
     );
   }
@@ -54,24 +54,24 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 px-4 py-8">
+    <div className="min-h-screen bg-amber-50 px-4 py-8">
       <div className="mx-auto max-w-md">
         {/* ヘッダー */}
         <div className="mb-6 flex items-center gap-3">
           <button
             onClick={() => router.push('/play')}
-            className="text-gray-400 hover:text-white"
+            className="text-stone-400 hover:text-stone-700"
           >
             ←
           </button>
-          <h1 className="text-lg font-bold text-white">{data.title}</h1>
+          <h1 className="text-lg font-bold text-stone-900">{data.title}</h1>
         </div>
 
         {/* フェーズ表示 */}
         {phase === 'intro' && (
           <div className="flex flex-col gap-6">
             {INTRO_IMAGES[caseId] && (
-              <div className="overflow-hidden rounded-2xl border border-gray-800">
+              <div className="overflow-hidden rounded-2xl border border-stone-200 shadow-sm">
                 <Image
                   src={INTRO_IMAGES[caseId]}
                   alt="事件現場"
@@ -82,13 +82,13 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
                 />
               </div>
             )}
-            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <p className="mb-3 text-xs font-semibold text-cyan-500 uppercase tracking-wider">事件概要</p>
-              <p className="text-sm leading-relaxed text-gray-300 whitespace-pre-line">{data.storyText.intro}</p>
+            <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">事件概要</p>
+              <p className="text-sm leading-relaxed text-stone-700 whitespace-pre-line">{data.storyText.intro}</p>
             </div>
             <button
               onClick={() => setPhase('evidence')}
-              className="w-full rounded-xl bg-gray-800 py-4 font-semibold text-white transition-colors hover:bg-gray-700"
+              className="w-full rounded-xl bg-stone-200 py-4 font-semibold text-stone-800 transition-colors hover:bg-stone-300"
             >
               証拠を確認する →
             </button>
@@ -97,12 +97,12 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
 
         {phase === 'evidence' && (
           <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <p className="mb-3 text-xs font-semibold text-cyan-500 uppercase tracking-wider">証拠一覧</p>
+            <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+              <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">証拠一覧</p>
               <ul className="space-y-2">
                 {data.evidence.map((ev) => (
-                  <li key={ev.id} className="flex items-start gap-2 text-sm text-gray-300">
-                    <span className="mt-0.5 text-cyan-500">▸</span>
+                  <li key={ev.id} className="flex items-start gap-2 text-sm text-stone-700">
+                    <span className="mt-0.5 text-amber-500">▸</span>
                     <span>{ev.name}</span>
                   </li>
                 ))}
@@ -110,7 +110,7 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
             </div>
             <button
               onClick={() => setPhase('criminal')}
-              className="w-full rounded-xl bg-gray-800 py-4 font-semibold text-white transition-colors hover:bg-gray-700"
+              className="w-full rounded-xl bg-stone-200 py-4 font-semibold text-stone-800 transition-colors hover:bg-stone-300"
             >
               容疑者と対峙する →
             </button>
@@ -119,14 +119,14 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
 
         {phase === 'criminal' && (
           <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-cyan-900/50 bg-cyan-950/20 p-5">
-              <p className="mb-3 text-xs font-semibold text-cyan-500 uppercase tracking-wider">容疑者登場</p>
-              <p className="text-sm leading-relaxed text-gray-300 whitespace-pre-line">{data.storyText.criminalIntro}</p>
+            <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-5">
+              <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">容疑者登場</p>
+              <p className="text-sm leading-relaxed text-stone-700 whitespace-pre-line">{data.storyText.criminalIntro}</p>
             </div>
             <button
               onClick={() => previousTestimony.length > 0 ? setPhase('previous') : handleStartInterrogation()}
               disabled={isLoading}
-              className="w-full rounded-xl bg-cyan-600 py-4 font-bold text-white transition-colors hover:bg-cyan-500 disabled:opacity-50"
+              className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400 disabled:opacity-50"
             >
               {isLoading ? '準備中...' : previousTestimony.length > 0 ? '前回の証言を確認する →' : '尋問を開始する'}
             </button>
@@ -135,12 +135,12 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
 
         {phase === 'previous' && (
           <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-yellow-900/50 bg-yellow-950/20 p-5">
-              <p className="mb-1 text-xs font-semibold text-yellow-400 uppercase tracking-wider">前回の尋問記録</p>
-              <p className="mb-4 text-xs text-gray-500">容疑者が前回の尋問で述べた証言。今回と食い違いがあれば矛盾として突ける。</p>
+            <div className="rounded-2xl border border-yellow-300 bg-yellow-50 p-5">
+              <p className="mb-1 text-xs font-semibold text-yellow-600 uppercase tracking-wider">前回の尋問記録</p>
+              <p className="mb-4 text-xs text-stone-500">容疑者が前回の尋問で述べた証言。今回と食い違いがあれば矛盾として突ける。</p>
               <ul className="space-y-2">
                 {previousTestimony.map((t, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                  <li key={i} className="flex items-start gap-2 text-sm text-stone-700">
                     <span className="mt-0.5 shrink-0 text-yellow-500">▸</span>
                     <span>「{t}」</span>
                   </li>
@@ -150,7 +150,7 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
             <button
               onClick={handleStartInterrogation}
               disabled={isLoading}
-              className="w-full rounded-xl bg-cyan-600 py-4 font-bold text-white transition-colors hover:bg-cyan-500 disabled:opacity-50"
+              className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400 disabled:opacity-50"
             >
               {isLoading ? '準備中...' : '尋問を開始する'}
             </button>

@@ -11,11 +11,11 @@ export function TurnCounter({ turn, maxTurns = 15 }: TurnCounterProps) {
 
   return (
     <div className="flex items-center gap-1 text-xs">
-      <span className="text-gray-400">残り</span>
-      <span className={`font-bold ${isLow ? 'animate-pulse text-red-400' : 'text-cyan-400'}`}>
+      <span className="text-stone-500">残り</span>
+      <span className={`font-bold ${isLow ? 'animate-pulse text-red-500' : 'text-amber-600'}`}>
         {remaining}
       </span>
-      <span className="text-gray-400">ターン</span>
+      <span className="text-stone-500">ターン</span>
     </div>
   );
 }

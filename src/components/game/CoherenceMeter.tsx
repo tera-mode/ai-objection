@@ -24,12 +24,12 @@ export function CoherenceMeter({ coherence }: CoherenceMeterProps) {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between text-xs">
-        <span className="font-semibold text-gray-400">容疑者の動揺度</span>
-        <span className={`font-bold ${isLow ? 'animate-pulse text-red-400' : 'text-gray-300'}`}>
+        <span className="font-semibold text-stone-500">容疑者の動揺度</span>
+        <span className={`font-bold ${isLow ? 'animate-pulse text-red-500' : 'text-stone-700'}`}>
           {getLabel()} ({coherence})
         </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-stone-200">
         <div
           className={`h-full rounded-full transition-all duration-500 ${getColor()} ${isLow ? 'animate-pulse' : ''}`}
           style={{ width: `${coherence}%` }}

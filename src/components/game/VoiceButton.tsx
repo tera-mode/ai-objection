@@ -31,7 +31,7 @@ export function VoiceButton({ voiceState, onStart, onStop, onCancel, disabled }:
         <button
           onClick={onCancel}
           aria-label="録音キャンセル"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-700 text-gray-300 transition-colors hover:bg-gray-600 hover:text-white"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-200 text-stone-600 transition-colors hover:bg-stone-300 hover:text-stone-900"
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -44,8 +44,8 @@ export function VoiceButton({ voiceState, onStart, onStop, onCancel, disabled }:
         className={`
           flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all
           ${isRecording ? 'animate-pulse scale-110 bg-red-500 shadow-lg shadow-red-500/40' : ''}
-          ${isProcessing || isSpeaking ? 'cursor-not-allowed bg-gray-600' : ''}
-          ${!isRecording && !isProcessing && !isSpeaking ? 'bg-cyan-600 hover:bg-cyan-500 active:scale-95' : ''}
+          ${isProcessing || isSpeaking ? 'cursor-not-allowed bg-stone-400' : ''}
+          ${!isRecording && !isProcessing && !isSpeaking ? 'bg-amber-500 hover:bg-amber-400 active:scale-95' : ''}
         `}
       >
         {isProcessing && <Loader2 className="h-4 w-4 animate-spin text-white" />}
