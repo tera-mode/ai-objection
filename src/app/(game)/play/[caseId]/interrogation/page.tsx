@@ -734,17 +734,19 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           <div className="flex items-center justify-between">
             <TurnCounter turn={session.turn} maxTurns={session.maxTurns} />
             <div className="flex items-center gap-2">
-              {/* はじめからボタン */}
+              {/* やりなおしボタン */}
               <button
                 onClick={() => {
-                  if (confirm('尋問をはじめからやり直しますか？')) {
+                  if (confirm('尋問をやり直しますか？')) {
+                    setToimaruComment('');
+                    setChips([]);
                     startSession(caseId);
                   }
                 }}
                 disabled={isCriminalThinking}
                 className="flex items-center gap-1 rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-700 disabled:opacity-40"
               >
-                ↩ はじめから
+                ↩ やりなおし
               </button>
               {/* 音声モードトグル */}
               <button
