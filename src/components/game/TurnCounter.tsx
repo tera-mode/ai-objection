@@ -2,10 +2,12 @@
 
 interface TurnCounterProps {
   turn: number;
-  maxTurns?: number;
+  maxTurns?: number | null;
 }
 
-export function TurnCounter({ turn, maxTurns = 15 }: TurnCounterProps) {
+export function TurnCounter({ turn, maxTurns }: TurnCounterProps) {
+  if (maxTurns == null) return <div data-testid="turn-counter" />;
+
   const remaining = maxTurns - turn;
   const isLow = remaining <= 3;
 

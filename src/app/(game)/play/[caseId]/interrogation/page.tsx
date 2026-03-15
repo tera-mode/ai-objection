@@ -287,7 +287,7 @@ function LogModal({
 
 function InterrogationContent({ caseId }: { caseId: string }) {
   const router = useRouter();
-  const { session, previousTestimony, previousConversation, isCriminalThinking, sendMessage, arrestChallenge } = useGame();
+  const { session, previousTestimony, previousConversation, isCriminalThinking, sendMessage, arrestChallenge, startSession } = useGame();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showEvidence, setShowEvidence] = useState(false);
   const [showLog, setShowLog] = useState(false);
@@ -357,7 +357,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
   if (!session || !meta) return null;
 
-  const isGameOver = session.isCompleted || session.turn >= (session.maxTurns ?? 15);
+  const isGameOver = session.isCompleted || (session.maxTurns !== null && session.turn >= (session.maxTurns ?? 15));
   const canArrest = session.coherence < session.maxCoherence && !isGameOver;
 
   return (
@@ -428,6 +428,18 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           <div className="flex items-center justify-between">
             <TurnCounter turn={session.turn} maxTurns={session.maxTurns} />
             <div className="flex items-center gap-2">
+              {/* はじめからボタン */}
+              <button
+                onClick={() => {
+                  if (confirm('尋問をはじめからやり直しますか？')) {
+                    startSession(caseId);
+                  }
+                }}
+                disabled={isCriminalThinking}
+                className="flex items-center gap-1 rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-700 disabled:opacity-40"
+              >
+                ↩ はじめから
+              </button>
               {/* 音声モードトグル */}
               <button
                 onClick={() => setIsVoiceModeOn(!isVoiceModeOn)}

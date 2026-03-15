@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
       eventAfter: (caseData as { eventAfter?: unknown }).eventAfter ?? null,
       initialCoherence: (caseData as { initialCoherence?: number }).initialCoherence ?? 100,
       maxCoherence: (caseData as { maxCoherence?: number }).maxCoherence ?? 100,
+      maxTurns: (caseData as { maxTurns?: number }).maxTurns ?? null,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

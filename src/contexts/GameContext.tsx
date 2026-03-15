@@ -327,20 +327,22 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const data = await res.json();
       const caseId = data.session.caseId;
 
-      // ケースJSONからmaxCoherenceを取得して上書き（Firebaseの古い値を使わない）
+      // ケースJSONからmaxCoherence・maxTurnsを取得して上書き（Firebaseの古い値を使わない）
       let maxCoherence = data.session.maxCoherence ?? 100;
+      let maxTurns: number | null = data.session.maxTurns ?? null;
       if (caseId) {
         const caseRes = await authenticatedFetch(`/api/get-case?caseId=${caseId}`);
         if (caseRes.ok) {
           const caseData = await caseRes.json();
           maxCoherence = caseData.maxCoherence ?? maxCoherence;
+          maxTurns = caseData.maxTurns ?? null;
         }
       }
 
       setSession({
         ...data.session,
         maxCoherence,
-        maxTurns: data.session.maxTurns ?? 15,
+        maxTurns,
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
         messages: data.session.messages.map((m: { timestamp: string; role: 'player' | 'criminal'; content: string; coherenceAfter?: number; contradiction?: string }) => ({
