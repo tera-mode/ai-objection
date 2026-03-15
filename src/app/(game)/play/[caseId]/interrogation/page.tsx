@@ -48,7 +48,7 @@ function getInterrogationBg(caseId: string): string | null {
     case_001: '/images/backgrounds/case_001_interrogation.jpg',
     case_002: '/images/backgrounds/case_002_interrogation.jpg',
     case_003: '/images/backgrounds/case_003_interrogation.jpg',
-    mini_prologue: '/images/events/market_square.webp',
+    mini_prologue: '/images/fantasy_bg.png',
   };
   return bgs[caseId] ?? null;
 }

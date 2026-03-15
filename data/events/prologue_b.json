@@ -1,7 +1,7 @@
 {
   "id": "prologue_b",
   "steps": [
-    { "type": "scene", "background": "/images/events/market_square.webp" },
+    { "type": "scene", "background": "/images/fantasy_bg.png" },
     { "type": "character", "position": "left", "image": "/images/characters/gamekichi/defeated.png" },
     { "type": "dialogue", "speaker": "ガメ吉", "text": "……ちくしょう……ガキに見破られるなんて……" },
     { "type": "character", "position": "left", "image": null },
