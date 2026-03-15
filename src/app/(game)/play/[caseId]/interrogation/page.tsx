@@ -294,17 +294,29 @@ function ToimaruPanel({
   onClose,
   chips,
   onKeywordSubmit,
-  isTriggering,
-  panelResponse,
 }: {
   onClose: () => void;
   chips: string[];
-  onKeywordSubmit: (keyword: string) => void;
-  isTriggering: boolean;
-  panelResponse: string;
+  onKeywordSubmit: (keyword: string) => Promise<string>;
 }) {
   const [freeText, setFreeText] = useState('');
   const [showFreeInput, setShowFreeInput] = useState(false);
+  const [localResponse, setLocalResponse] = useState('');
+  const [localTriggering, setLocalTriggering] = useState(false);
+
+  const handleSubmit = async (keyword: string) => {
+    if (localTriggering) return;
+    setLocalTriggering(true);
+    setLocalResponse('');
+    try {
+      const line = await onKeywordSubmit(keyword);
+      if (line) setLocalResponse(line);
+    } finally {
+      setLocalTriggering(false);
+      setFreeText('');
+      setShowFreeInput(false);
+    }
+  };
 
   return (
     <div
@@ -323,8 +335,8 @@ function ToimaruPanel({
           <div className="w-12" />
         </div>
 
-        {/* トイマルアイコンとセリフ（反応表示） */}
-        <div className="mb-4 flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
+        {/* トイマルアイコンとセリフ */}
+        <div className="mb-4 flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
           <div className="relative h-12 w-12 shrink-0">
             <Image
               src="/images/characters/toimaru/event_normal.png"
@@ -335,11 +347,18 @@ function ToimaruPanel({
               onError={() => {}}
             />
           </div>
-          <p className="text-sm text-stone-700">
-            {panelResponse
-              ? `「${panelResponse}」`
-              : '「なにか気になったことがあったら教えるのだ！」'}
-          </p>
+          <div className="flex-1">
+            {localTriggering ? (
+              <div className="flex items-center gap-2 text-sm text-amber-600">
+                <div className="h-3 w-3 animate-spin rounded-full border border-amber-500 border-t-transparent" />
+                思い出し中なのだ…
+              </div>
+            ) : (
+              <p className="text-sm text-stone-700">
+                「{localResponse || 'なにか気になったことがあったら教えるのだ！'}」
+              </p>
+            )}
+          </div>
         </div>
 
         {/* キーワードチップ */}
@@ -349,8 +368,8 @@ function ToimaruPanel({
             {chips.map((chip, i) => (
               <button
                 key={i}
-                onClick={() => !isTriggering && onKeywordSubmit(chip)}
-                disabled={isTriggering}
+                onClick={() => handleSubmit(chip)}
+                disabled={localTriggering}
                 className="rounded-full border border-amber-400 bg-amber-50 px-3 py-1 text-sm text-amber-700 transition-colors hover:bg-amber-100 disabled:opacity-50"
               >
                 {chip}
@@ -372,32 +391,18 @@ function ToimaruPanel({
                 placeholder="キーワードを入力..."
                 className="flex-1 rounded-lg border border-stone-300 px-3 py-1.5 text-sm focus:border-amber-400 focus:outline-none"
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && freeText.trim() && !isTriggering) {
-                    onKeywordSubmit(freeText.trim());
-                    setFreeText('');
-                    setShowFreeInput(false);
+                  if (e.key === 'Enter' && freeText.trim() && !localTriggering) {
+                    handleSubmit(freeText.trim());
                   }
                 }}
               />
               <button
-                onClick={() => {
-                  if (freeText.trim() && !isTriggering) {
-                    onKeywordSubmit(freeText.trim());
-                    setFreeText('');
-                    setShowFreeInput(false);
-                  }
-                }}
-                disabled={!freeText.trim() || isTriggering}
+                onClick={() => { if (freeText.trim()) handleSubmit(freeText.trim()); }}
+                disabled={!freeText.trim() || localTriggering}
                 className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm text-white disabled:opacity-50"
               >
                 渡す
               </button>
-            </div>
-          )}
-          {isTriggering && (
-            <div className="mt-2 flex items-center gap-2 text-xs text-amber-600">
-              <div className="h-3 w-3 animate-spin rounded-full border border-amber-500 border-t-transparent" />
-              トイマルが思い出し中…
             </div>
           )}
         </div>
@@ -480,8 +485,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   // Toimaru state
   const [chips, setChips] = useState<string[]>([]);
   const [toimaruComment, setToimaruComment] = useState<string>('');
-  const [toimaruPanelResponse, setToimaruPanelResponse] = useState<string>('');
-  const [isTriggering, setIsTriggering] = useState(false);
   const [unlockBanner, setUnlockBanner] = useState<{ evId: string; name: string } | null>(null);
   const [newlyUnlockedIds, setNewlyUnlockedIds] = useState<string[]>([]);
   const [showToimaruCutin, setShowToimaruCutin] = useState(false);
@@ -585,10 +588,9 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     }
   }, [session?.messages]);
 
-  // キーワードをトイマルに渡してトリガー判定
-  const handleKeywordSubmit = useCallback(async (keyword: string) => {
-    if (!session || isTriggering) return;
-    setIsTriggering(true);
+  // キーワードをトイマルに渡してトリガー判定。パネル内で await して使うため string を返す
+  const handleKeywordSubmit = useCallback(async (keyword: string): Promise<string> => {
+    if (!session) return '';
 
     try {
       const conversationHistory = session.messages
@@ -615,31 +617,29 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         if (ev) {
           setUnlockBanner({ evId: data.unlockedEvidenceId, name: ev.name });
           setNewlyUnlockedIds((prev) => [...prev, data.unlockedEvidenceId]);
-          // 3秒後に新着マーク消す
           setTimeout(() => {
             setNewlyUnlockedIds((prev) => prev.filter((id) => id !== data.unlockedEvidenceId));
           }, 3000);
         }
-        // 「そういえば！」カットイン
-        setShowToimaruCutin(true);
-        setTimeout(() => setShowToimaruCutin(false), 2000);
-        // トイマルの発言をチャットとパネルに反映
+        // パネルを閉じてからカットイン（モーダルの上に表示するため）
+        setShowToimaru(false);
+        setTimeout(() => {
+          setShowToimaruCutin(true);
+          setTimeout(() => setShowToimaruCutin(false), 2000);
+        }, 50);
+        // チャットにもトイマル発言を反映
         if (data.toimaruLine) {
           setToimaruComment(data.toimaruLine);
-          setToimaruPanelResponse(data.toimaruLine);
         }
+        return data.toimaruLine ?? '';
       } else {
-        // ミス（ヒットなし）
-        if (data.toimaruLine) {
-          setToimaruPanelResponse(data.toimaruLine);
-        }
+        return data.toimaruLine ?? '';
       }
     } catch (err) {
       console.error('Companion trigger error:', err);
-    } finally {
-      setIsTriggering(false);
+      return '';
     }
-  }, [session, caseId, isTriggering, unlockEvidence, meta]);
+  }, [session, caseId, unlockEvidence, meta]);
 
   if (!session || !meta) return null;
 
@@ -671,12 +671,10 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 style={{
                   position: 'absolute',
                   left: '50%',
-                  top: 0,
+                  top: '-35%',
                   transform: 'translateX(-50%)',
-                  height: '280%',
+                  height: '300%',
                   width: 'auto',
-                  objectFit: 'cover',
-                  objectPosition: 'center 22%',
                   opacity: 0.9,
                 }}
               />
@@ -971,8 +969,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           onClose={() => setShowToimaru(false)}
           chips={chips}
           onKeywordSubmit={handleKeywordSubmit}
-          isTriggering={isTriggering}
-          panelResponse={toimaruPanelResponse}
         />
       )}
     </div>
