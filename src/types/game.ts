@@ -11,6 +11,7 @@ export interface GameSession {
   messages: ChatMessage[];
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
+  unlockedEvidenceIds: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,6 +39,7 @@ export interface CaseData {
   timeline: TimelineEvent[];
   criminal: CharacterData;
   evidence: Evidence[];
+  companionMemory?: CompanionMemory[];
 }
 
 export interface TimelineEvent {
@@ -70,6 +72,14 @@ export interface Evidence {
   content: string;
 }
 
+export interface CompanionMemory {
+  id: string;
+  unlocks_evidence: string;
+  trigger_keywords: string[];
+  toimaru_recall: string;
+  source_description: string;
+}
+
 // Firestore保存用（Dateの代わりにstring）
 export interface GameSessionData {
   sessionId: string;
@@ -83,6 +93,7 @@ export interface GameSessionData {
   messages: ChatMessageData[];
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
+  unlockedEvidenceIds: string[];
   createdAt: string;
   updatedAt: string;
 }

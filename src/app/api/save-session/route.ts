@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
         messages: [],
         isCompleted: false,
         verdict: null,
+        unlockedEvidenceIds: [],
         createdAt: now,
         updatedAt: now,
       };

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { message, caseId, coherence, conversationHistory, previousTestimony, proofLevel, contradictionDetail } = body;
+    const { message, caseId, coherence, conversationHistory, previousTestimony, proofLevel, contradictionDetail, unlockedEvidenceIds } = body;
 
     if (!message || !caseId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
       conversationHistory ?? [],
       previousTestimony ?? [],
       proofLevel ?? 'none',
-      contradictionDetail ?? null
+      contradictionDetail ?? null,
+      unlockedEvidenceIds ?? []
     );
 
     const ai = getGenAI();

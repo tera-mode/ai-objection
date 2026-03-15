@@ -19,6 +19,7 @@ interface GameContextType {
   sendMessage: (message: string) => Promise<void>;
   arrestChallenge: () => void;
   loadSession: (sessionId: string) => Promise<void>;
+  unlockEvidence: (evidenceId: string) => void;
 }
 
 const GameContext = createContext<GameContextType>({
@@ -31,6 +32,7 @@ const GameContext = createContext<GameContextType>({
   sendMessage: async () => {},
   arrestChallenge: () => {},
   loadSession: async () => {},
+  unlockEvidence: () => {},
 });
 
 export const useGame = () => {
@@ -109,6 +111,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
         messages: [],
+        unlockedEvidenceIds: data.session.unlockedEvidenceIds ?? [],
       };
       setSession(newSession);
 
@@ -212,6 +215,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           previousTestimony,
           proofLevel: proofLevel ?? 'none',
           contradictionDetail: contradictionDetail ?? null,
+          unlockedEvidenceIds: session.unlockedEvidenceIds ?? [],
         }),
       });
 
@@ -343,6 +347,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         ...data.session,
         maxCoherence,
         maxTurns,
+        unlockedEvidenceIds: data.session.unlockedEvidenceIds ?? [],
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
         messages: data.session.messages.map((m: { timestamp: string; role: 'player' | 'criminal'; content: string; coherenceAfter?: number; contradiction?: string }) => ({
@@ -355,8 +360,38 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  const unlockEvidence = useCallback((evidenceId: string) => {
+    setSession((prev) => {
+      if (!prev) return null;
+      if (prev.unlockedEvidenceIds.includes(evidenceId)) return prev;
+      const updated: GameSession = {
+        ...prev,
+        unlockedEvidenceIds: [...prev.unlockedEvidenceIds, evidenceId],
+        updatedAt: new Date(),
+      };
+      // セッションを保存（fire-and-forget）
+      authenticatedFetch('/api/save-session', {
+        method: 'POST',
+        body: JSON.stringify({
+          sessionId: prev.sessionId,
+          action: 'update',
+          session: {
+            ...updated,
+            createdAt: updated.createdAt.toISOString(),
+            updatedAt: updated.updatedAt.toISOString(),
+            messages: updated.messages.map((m) => ({
+              ...m,
+              timestamp: m.timestamp.toISOString(),
+            })),
+          },
+        }),
+      }).catch(console.error);
+      return updated;
+    });
+  }, []);
+
   return (
-    <GameContext.Provider value={{ session, previousTestimony, previousConversation, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession }}>
+    <GameContext.Provider value={{ session, previousTestimony, previousConversation, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession, unlockEvidence }}>
       {children}
     </GameContext.Provider>
   );
