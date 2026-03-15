@@ -452,7 +452,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 {isVoiceModeOn ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
                 {isVoiceModeOn ? '音声ON' : '音声OFF'}
               </button>
-              <span className="text-xs text-stone-500">コヒーレンス</span>
             </div>
           </div>
           <CoherenceMeter coherence={session.coherence} maxCoherence={session.maxCoherence} />
