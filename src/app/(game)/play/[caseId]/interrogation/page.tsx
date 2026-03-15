@@ -293,19 +293,15 @@ function LogModal({
 function ToimaruPanel({
   onClose,
   chips,
-  evidence,
-  caseId,
-  unlockedEvidenceIds,
   onKeywordSubmit,
   isTriggering,
+  panelResponse,
 }: {
   onClose: () => void;
   chips: string[];
-  evidence: Evidence[];
-  caseId: string;
-  unlockedEvidenceIds: string[];
   onKeywordSubmit: (keyword: string) => void;
   isTriggering: boolean;
+  panelResponse: string;
 }) {
   const [freeText, setFreeText] = useState('');
   const [showFreeInput, setShowFreeInput] = useState(false);
@@ -327,7 +323,7 @@ function ToimaruPanel({
           <div className="w-12" />
         </div>
 
-        {/* トイマルアイコンとセリフ */}
+        {/* トイマルアイコンとセリフ（反応表示） */}
         <div className="mb-4 flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
           <div className="relative h-12 w-12 shrink-0">
             <Image
@@ -340,12 +336,14 @@ function ToimaruPanel({
             />
           </div>
           <p className="text-sm text-stone-700">
-            「なにか気になったことがあったら教えるのだ！」
+            {panelResponse
+              ? `「${panelResponse}」`
+              : '「なにか気になったことがあったら教えるのだ！」'}
           </p>
         </div>
 
         {/* キーワードチップ */}
-        <div className="mb-4">
+        <div>
           <p className="mb-2 text-xs font-semibold text-stone-500">💬 気になる言葉は？</p>
           <div className="flex flex-wrap gap-2">
             {chips.map((chip, i) => (
@@ -402,26 +400,6 @@ function ToimaruPanel({
               トイマルが思い出し中…
             </div>
           )}
-        </div>
-
-        {/* トイマルの記録 */}
-        <div>
-          <p className="mb-2 text-xs font-semibold text-stone-500">── トイマルの記録 ──</p>
-          <ul className="space-y-2">
-            {evidence.map((ev) => {
-              const isUnlocked = unlockedEvidenceIds.includes(ev.id);
-              return (
-                <li key={ev.id} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-                  isUnlocked
-                    ? 'border border-amber-200 bg-amber-50 text-stone-700'
-                    : 'border border-stone-100 bg-stone-50 text-stone-400 opacity-60'
-                }`}>
-                  <span>{isUnlocked ? '🔓' : '🔒'}</span>
-                  <span>{isUnlocked ? ev.name : '？？？'}</span>
-                </li>
-              );
-            })}
-          </ul>
         </div>
       </div>
     </div>
@@ -502,9 +480,11 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   // Toimaru state
   const [chips, setChips] = useState<string[]>([]);
   const [toimaruComment, setToimaruComment] = useState<string>('');
+  const [toimaruPanelResponse, setToimaruPanelResponse] = useState<string>('');
   const [isTriggering, setIsTriggering] = useState(false);
   const [unlockBanner, setUnlockBanner] = useState<{ evId: string; name: string } | null>(null);
   const [newlyUnlockedIds, setNewlyUnlockedIds] = useState<string[]>([]);
+  const [showToimaruCutin, setShowToimaruCutin] = useState(false);
 
   const handleTranscript = useCallback((text: string) => {
     sendMessage(text);
@@ -640,14 +620,18 @@ function InterrogationContent({ caseId }: { caseId: string }) {
             setNewlyUnlockedIds((prev) => prev.filter((id) => id !== data.unlockedEvidenceId));
           }, 3000);
         }
-        // トイマルの発言をチャットに反映（コメントとして表示）
+        // 「そういえば！」カットイン
+        setShowToimaruCutin(true);
+        setTimeout(() => setShowToimaruCutin(false), 2000);
+        // トイマルの発言をチャットとパネルに反映
         if (data.toimaruLine) {
           setToimaruComment(data.toimaruLine);
+          setToimaruPanelResponse(data.toimaruLine);
         }
       } else {
-        // ミス
+        // ミス（ヒットなし）
         if (data.toimaruLine) {
-          setToimaruComment(data.toimaruLine);
+          setToimaruPanelResponse(data.toimaruLine);
         }
       }
     } catch (err) {
@@ -664,6 +648,65 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
   return (
     <div className="flex h-dvh flex-col bg-amber-50">
+      {/* 「そういえば！」カットイン演出（証拠アンロック時） */}
+      {showToimaruCutin && (
+        <>
+          <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+            <div
+              className="absolute left-0 right-0"
+              style={{
+                top: '32%',
+                height: '30%',
+                animation: 'cutinPanel 2.0s ease-out forwards',
+                clipPath: 'polygon(0 8%, 100% 0%, 100% 92%, 0% 100%)',
+                backgroundColor: '#1c3a2a',
+                overflow: 'hidden',
+              }}
+            >
+              {/* トイマルの目元クローズアップ */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/characters/toimaru/event_normal.png"
+                alt=""
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: 0,
+                  transform: 'translateX(-50%)',
+                  height: '280%',
+                  width: 'auto',
+                  objectFit: 'cover',
+                  objectPosition: 'center 22%',
+                  opacity: 0.9,
+                }}
+              />
+            </div>
+          </div>
+          <div
+            className="pointer-events-none fixed z-51 flex items-center justify-end pr-6"
+            style={{
+              top: '32%',
+              left: 0,
+              right: 0,
+              height: '30%',
+              animation: 'cutinText 2.0s ease-out forwards',
+            }}
+          >
+            <p
+              className="select-none font-black leading-none"
+              style={{
+                fontSize: 'clamp(2rem, 10vw, 4rem)',
+                color: '#fff',
+                textShadow: '3px 3px 0 #16a34a, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000',
+                transform: 'rotate(-3deg)',
+              }}
+            >
+              そういえば！
+            </p>
+          </div>
+        </>
+      )}
+
       {/* 「なんで？」カットイン演出 */}
       {showObjection && (
         <>
@@ -927,11 +970,9 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         <ToimaruPanel
           onClose={() => setShowToimaru(false)}
           chips={chips}
-          evidence={meta.evidence}
-          caseId={caseId}
-          unlockedEvidenceIds={unlockedEvidenceIds}
           onKeywordSubmit={handleKeywordSubmit}
           isTriggering={isTriggering}
+          panelResponse={toimaruPanelResponse}
         />
       )}
     </div>
