@@ -19,16 +19,16 @@
 
 | キャラクター | パス | 使用可能感情 |
 |------------|------|------------|
-| なの（南出なの） | `/images/nano_event_normal.png` | normal（上半身トリミング済み） |
-| なの（南出なの） | `/images/nano_event_surprise.png` | 驚き（上半身トリミング済み） |
-| なの（南出なの） | `/images/nano_event_tsukkomi.png` | ツッコミ（上半身トリミング済み） |
-| なの（南出なの） | `/images/nano_event_determined.png` | 決意（上半身トリミング済み） |
-| トイマル | `/images/toimaru_event_normal.png` | normal（全身・トリミング不要） |
-| トイマル | `/images/toimaru_event_happy.png` | 喜び（全身・トリミング不要） |
-| トイマル | `/images/toimaru_event_confused.png` | 困惑（全身・トリミング不要） |
+| なの（南出なの） | `/images/characters/nano/event_normal.png` | normal（上半身トリミング済み） |
+| なの（南出なの） | `/images/characters/nano/event_surprise.png` | 驚き（上半身トリミング済み） |
+| なの（南出なの） | `/images/characters/nano/event_tsukkomi.png` | ツッコミ（上半身トリミング済み） |
+| なの（南出なの） | `/images/characters/nano/event_determined.png` | 決意（上半身トリミング済み） |
+| トイマル | `/images/characters/toimaru/event_normal.png` | normal（全身・トリミング不要） |
+| トイマル | `/images/characters/toimaru/event_happy.png` | 喜び（全身・トリミング不要） |
+| トイマル | `/images/characters/toimaru/event_confused.png` | 困惑（全身・トリミング不要） |
 
 **新規キャラクターの生成先：**
-`public/images/characters/{characterId}/{emotion}.png`（例: `characters/gamekichi/smug.png`）
+`public/images/characters/{caseId}/{emotion}.png`（例: `characters/case_001/normal.png`）
 
 ---
 
@@ -106,8 +106,8 @@ special utility belt at waist with three small rectangular metal box devices cli
 
 | 項目 | 規則 |
 |------|------|
-| 保存先（ゲーム用） | `public/images/characters/{caseId}_{emotion}.png` |
-| 保存先（原画） | `public/images/characters/raw/{caseId}_{emotion}_raw.png` |
+| 保存先（ゲーム用） | `public/images/characters/{caseId}/{emotion}.png` |
+| 保存先（原画） | `public/images/characters/{caseId}/raw/{caseId}_{emotion}_raw.png` |
 | 生成サイズ | **1024 × 1024 px**（正方形） |
 | フォーマット | PNG（背景透過） |
 | 切り取り範囲 | **上半身のみ**（頭頂〜胸〜腰あたりまで。足は不要） |
@@ -393,45 +393,43 @@ centered object, absolutely NO text NO letters NO words NO numbers NO kanji NO h
 ```
 public/images/
 │
-│  ※ イベントモードの既存キャラ（ルートに直置き）
-│  ※ なのは上半身トリミング済み。トイマルは全身のまま
-├── nano_event_normal.png          ← なの normal（上半身トリミング済み）
-├── nano_event_surprise.png        ← なの 驚き（上半身トリミング済み）
-├── nano_event_tsukkomi.png        ← なの ツッコミ（上半身トリミング済み）
-├── nano_event_determined.png      ← なの 決意（上半身トリミング済み）
-├── nano_raw/                      ← なの全身原画バックアップ（変更禁止）
-│   ├── nano_event_normal_raw.png
-│   ├── nano_event_surprise_raw.png
-│   ├── nano_event_tsukkomi_raw.png
-│   └── nano_event_determined_raw.png
-├── toimaru_event_normal.png       ← トイマル normal（全身・変更禁止）
-├── toimaru_event_happy.png        ← トイマル 喜び（全身・変更禁止）
-├── toimaru_event_confused.png     ← トイマル 困惑（全身・変更禁止）
+├── ui/                            ← LP・共通UI素材
+│   ├── key_visual.webp
+│   └── cutin_nande.webp
+│
+├── backgrounds/                   ← 尋問・イベント背景
+│   ├── fantasy_bg.png
+│   ├── case_001_interrogation.jpg
+│   └── raw/
 │
 ├── characters/
-│   │  ※ 尋問モードキャラ（case_XXX_emotion.png 形式）
-│   ├── case_001_normal.png
-│   ├── case_001_nervous.png
-│   └── raw/
-│       └── case_001_normal_raw.png
+│   │  ※ 全キャラ共通：{characterId}/{emotion}.png 形式
 │   │
-│   │  ※ イベントモード新規キャラ（characterId/emotion.png 形式）
-│   ├── gamekichi/
-│   │   ├── smug.png               ← ゲーム用（背景透過）
+│   ├── nano/                      ← イベントキャラ（変更禁止）
+│   │   ├── event_normal.png
+│   │   ├── event_surprise.png
+│   │   ├── event_tsukkomi.png
+│   │   ├── event_determined.png
+│   │   └── raw/
+│   ├── toimaru/                   ← イベントキャラ（変更禁止）
+│   │   ├── event_normal.png
+│   │   ├── event_happy.png
+│   │   ├── event_confused.png
+│   │   └── raw/
+│   ├── gamekichi/                 ← ミニケースキャラ
+│   │   ├── smug.png
 │   │   ├── shaken.png
 │   │   ├── defeated.png
 │   │   └── raw/
-│   │       ├── gamekichi_smug_raw.png    ← Stability AI 生成原画
-│   │       ├── gamekichi_shaken_raw.png  ← Gemini 生成原画
-│   │       └── gamekichi_defeated_raw.png
-│   ├── momobaa/
-│   │   ├── distressed.png
+│   ├── case_001/                  ← 尋問モードキャラ（caseId単位）
+│   │   ├── normal.png
+│   │   ├── nervous.png
+│   │   ├── cornered.png
+│   │   ├── breaking.png
+│   │   ├── collapsed.png
 │   │   └── raw/
-│   │       └── momobaa_distressed_raw.png
-│   └── guard/
-│       ├── neutral.png
-│       └── raw/
-│           └── guard_neutral_raw.png
+│   │       └── case_001_normal_raw.png  ← 原画（変更禁止）
+│   └── case_XXX/                  ← 以降同じ構造
 │
 ├── backgrounds/
 │   ├── case_001_interrogation.jpg ← 尋問背景（圧縮済み）
@@ -652,21 +650,70 @@ stability-ai: generate_image
 → 保存先: public/images/characters/raw/case_XXX_normal_raw.png
 ```
 
+> ⚠️ **生成後はかならずユーザーにサンプルを提示し、承認を得てから次のステップへ進むこと。**
+> 承認前に raw コピー・バリアント生成・背景除去を実行してはいけない。
+
 **Step 2: variation 4枚を Gemini edit_image で生成**
 normal_raw.png を入力画像として、表情・ポーズだけ変えて生成。
 ```
 gemini: edit_image
-  image.path: public/images/characters/raw/case_XXX_normal_raw.png
+  image.path: public/images/characters/{caseId}/raw/{caseId}_normal_raw.png
   prompt: "Keep character design identical. Change ONLY expression/pose: [感情の説明]"
-  saveToFilePath: public/images/characters/raw/case_XXX_{emotion}_raw.png
+  saveToFilePath: public/images/characters/{caseId}/raw/{caseId}_{emotion}_raw.png
 ```
-※ Gemini はファイル名に `_1` サフィックスを付ける場合があるのでリネームすること
+⚠️ **Gemini の `saveToFilePath` は `C:/Windows/Temp/` など Temp フォルダ不可。プロジェクト内パスのみ有効。**
+⚠️ Gemini はファイル名に `_1` サフィックスを付ける場合があるのでリネームすること
+
+---
+
+### Gemini 出力の正方形化ワークフロー（必読）
+
+Gemini は出力サイズを制御できず、**常に非正方形（例: 1344×768 の横長）で出力される。**
+1024×1024 に変換する際は以下の手順を厳守すること。
+
+**❌ NG：`fit: 'fill'` を非正方形に適用**
+→ 縦横比が異なる場合に歪みが発生する。非正方形→正方形に `fit: 'fill'` を使ってはいけない。
+
+**✅ 正しい手順（sharp を使う場合）：**
+```js
+// Step A: trim（白余白を除去）→ 中間ファイルに書き出す
+sharp(src).trim({ background: '#ffffff', threshold: 15 }).toFile(tmp)
+
+// Step B: 短辺を長辺に合わせてパディング（正方形化）＋マージン追加
+const size = Math.max(info.width, info.height);
+const padV = size - info.height;  // 縦の差分
+const padH = size - info.width;   // 横の差分
+sharp(tmp).extend({
+  top: Math.floor(padV/2) + margin,
+  bottom: Math.ceil(padV/2) + margin,
+  left: Math.floor(padH/2) + margin,
+  right: Math.ceil(padH/2) + margin,
+  background: { r:255, g:255, b:255, alpha:1 }
+}).toFile(dst)
+
+// Step C: 1024×1024 リサイズ（この時点で正方形→歪みなし）
+sharp(dst).resize(1024, 1024).toFile(tmp)  // ← fit 指定不要
+```
+
+**⚠️ 重要：処理はステップごとにファイルに書き出すこと**
+sharp の `.trim().extend().resize()` チェーンは中間サイズの計算がズレることがある。
+必ず `toFile()` で中間ファイルに書き出し、`sharp(file).metadata()` で寸法を確認してから次のステップに進むこと。
+
+**⚠️ 処理後は必ず寸法確認してから報告すること**
+```js
+sharp(dst).metadata().then(m => console.log(m.width, 'x', m.height))
+// + Read ツールで目視確認も必ず行う
+```
+
+---
 
 **Step 3: 全5枚の背景除去**
 ```
 stability-ai: remove_background
-  imageFileUri: file://...raw/case_XXX_{emotion}_raw.png
-→ 保存先（手動コピー）: public/images/characters/case_XXX_{emotion}.png
+  imageFileUri: file://...{caseId}/raw/{caseId}_{emotion}_raw.png
+→ Temp に出力されるので手動コピー:
+  cp "C:/Windows/Temp/mcp-server-stability-ai/{emotion}.png"
+     "public/images/characters/{caseId}/{emotion}.png"
 ```
 
 **Step 4: 圧縮**
@@ -702,6 +749,11 @@ node scripts/compress-images.js
 | 看板・衣装に漢字が描かれる | NO text フレーズは入れても看板・記号は別扱いされる場合がある | 再生成 |
 | 【Gemini限定】ファイルが `_raw_1.png` で保存される | ツールが自動でサフィックスを付ける | 上記リネームコマンドを実行 |
 | 【Gemini限定】背景がグレー/白のチェック柄に見える | Gemini が透明背景で出力した | プロンプトに `solid opaque background` を追加して再生成 |
+| 【Gemini限定】出力が常に横長（1344×768 等）になる | Gemini はサイズ制御不可 | 上記「Gemini出力の正方形化ワークフロー」に従い変換する |
+| 【Gemini限定】`saveToFilePath` に Temp パスを指定するとエラー | パストラバーサル制限 | `C:/Users/User/Documents/ai-objection/` 以下のプロジェクトパスのみ使用可能 |
+| sharp で trim→extend→resize をチェーンすると寸法がズレる | チェーン内の中間計算が不正確 | ステップごとに `toFile()` で書き出し、`metadata()` で寸法を確認してから次のステップへ |
+| `fit: 'fill'` で画像が歪む | 入力が非正方形なのに強制リサイズした | `fit: 'fill'` は入力が既に正方形の場合のみ使用。非正方形は先に正方形化してからリサイズ |
+| control-style でキャラ外見まで参照元に引き寄せられる | control-style はスタイルだけでなくコンテンツ（色・形）も引き継ぐ | 別キャラのスタイル参照には `control-style` を使わず、**Gemini `edit_image` でスタイル参照元を入力画像として使う**（fidelity 問題を避けられる） |
 | 【Stability AI】出力先が固定される | MCP サーバーが `C:/Windows/Temp/mcp-server-stability-ai/` に保存する仕様 | 生成後に `cp` でプロジェクトの所定パスへ手動コピーが必要 |
 
 ### Stability AI MCP ツール使用時の必須ルール
