@@ -1,6 +1,7 @@
 {
   "id": "prologue_b",
   "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
     { "type": "scene", "background": "/images/fantasy_bg.png" },
     { "type": "character", "position": "left", "image": "/images/characters/gamekichi/defeated.png" },
     { "type": "dialogue", "speaker": "ガメ吉", "text": "……ちくしょう……ガキに見破られるなんて……" },
