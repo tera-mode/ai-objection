@@ -325,9 +325,21 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       if (!res.ok) throw new Error('Failed to load session');
 
       const data = await res.json();
+      const caseId = data.session.caseId;
+
+      // ケースJSONからmaxCoherenceを取得して上書き（Firebaseの古い値を使わない）
+      let maxCoherence = data.session.maxCoherence ?? 100;
+      if (caseId) {
+        const caseRes = await authenticatedFetch(`/api/get-case?caseId=${caseId}`);
+        if (caseRes.ok) {
+          const caseData = await caseRes.json();
+          maxCoherence = caseData.maxCoherence ?? maxCoherence;
+        }
+      }
+
       setSession({
         ...data.session,
-        maxCoherence: data.session.maxCoherence ?? 100,
+        maxCoherence,
         maxTurns: data.session.maxTurns ?? 15,
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
