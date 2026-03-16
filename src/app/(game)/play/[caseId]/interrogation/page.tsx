@@ -33,6 +33,8 @@ function getCharacterImage(caseId: string, coherence: number, maxCoherence: numb
   const available: Record<string, string[]> = {
     case_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
+    case_003: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
+    case_004: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_003: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
@@ -49,6 +51,8 @@ function getInterrogationBg(caseId: string): string | null {
   const bgs: Record<string, string> = {
     case_001: '/images/backgrounds/case_001_interrogation.jpg',
     case_002: '/images/backgrounds/case_002_interrogation.jpg',
+    case_003: '/images/backgrounds/case_003_interrogation.jpg',
+    case_004: '/images/backgrounds/case_004_interrogation.jpg',
     case_sample_001: '/images/backgrounds/case_sample_001_interrogation.jpg',
     case_sample_002: '/images/backgrounds/case_sample_002_interrogation.jpg',
     case_sample_003: '/images/backgrounds/case_sample_003_interrogation.jpg',
