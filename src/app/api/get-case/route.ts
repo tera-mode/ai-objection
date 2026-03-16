@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
       initialCoherence: (caseData as { initialCoherence?: number }).initialCoherence ?? 100,
       maxCoherence: (caseData as { maxCoherence?: number }).maxCoherence ?? 100,
       maxTurns: (caseData as { maxTurns?: number }).maxTurns ?? null,
+      hasCompanion: Array.isArray((caseData as { companionMemory?: unknown[] }).companionMemory) && (caseData as { companionMemory: unknown[] }).companionMemory.length > 0,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

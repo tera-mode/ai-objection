@@ -61,6 +61,7 @@ interface CaseMeta {
   criminalName: string;
   criminalGender: 'male' | 'female';
   evidence: Evidence[];
+  hasCompanion: boolean;
 }
 
 // 証拠アイコン（/images/evidence/{caseId}/{evId}.png、なければプレースホルダー）
@@ -378,11 +379,13 @@ function GameFooter({
   onLogOpen,
   onToimaruOpen,
   disabled,
+  hasCompanion,
 }: {
   onEvidenceOpen: () => void;
   onLogOpen: () => void;
   onToimaruOpen: () => void;
   disabled: boolean;
+  hasCompanion: boolean;
 }) {
   return (
     <div className="shrink-0 border-t border-stone-200 bg-white">
@@ -401,14 +404,16 @@ function GameFooter({
           <span className="text-lg">📁</span>
           <span>証拠</span>
         </button>
-        <button
-          onClick={onToimaruOpen}
-          disabled={disabled}
-          className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-amber-600 transition-colors hover:text-amber-500 disabled:text-stone-300"
-        >
-          <span className="text-lg">🐾</span>
-          <span>トイマル</span>
-        </button>
+        {hasCompanion && (
+          <button
+            onClick={onToimaruOpen}
+            disabled={disabled}
+            className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-amber-600 transition-colors hover:text-amber-500 disabled:text-stone-300"
+          >
+            <span className="text-lg">🐾</span>
+            <span>トイマル</span>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -462,7 +467,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   useEffect(() => {
     authenticatedFetch(`/api/get-case?caseId=${caseId}`)
       .then((res) => res.json())
-      .then((data) => setMeta({ criminalName: data.criminalName, criminalGender: data.criminalGender ?? 'male', evidence: data.evidence }))
+      .then((data) => setMeta({ criminalName: data.criminalName, criminalGender: data.criminalGender ?? 'male', evidence: data.evidence, hasCompanion: data.hasCompanion ?? false }))
       .catch(console.error);
   }, [caseId]);
 
@@ -508,6 +513,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   // 犯人の新しいメッセージ → チップ生成
   useEffect(() => {
     if (!session) return;
+    if (!meta?.hasCompanion) return;
     const messages = session.messages;
     const latest = messages[messages.length - 1];
     if (latest?.role !== 'criminal') return;
@@ -826,7 +832,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
             <MessageBubble key={i} message={msg} criminalName={meta.criminalName} />
           ))}
           {/* トイマルのコメント（最新の犯人メッセージの後に表示） */}
-          {toimaruComment && session.messages.length > 0 && session.messages[session.messages.length - 1]?.role === 'criminal' && (
+          {meta.hasCompanion && toimaruComment && session.messages.length > 0 && session.messages[session.messages.length - 1]?.role === 'criminal' && (
             <div className="flex items-start gap-2">
               <div className="h-6 w-6 shrink-0 rounded-full overflow-hidden bg-amber-100 flex items-center justify-center text-xs">
                 🐾
@@ -889,6 +895,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         onLogOpen={() => setShowLog(true)}
         onToimaruOpen={() => setShowToimaru(true)}
         disabled={isCriminalThinking}
+        hasCompanion={meta.hasCompanion}
       />
 
       {/* モーダル */}
@@ -908,7 +915,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           onClose={() => setShowLog(false)}
         />
       )}
-      {showToimaru && (
+      {showToimaru && meta.hasCompanion && (
         <ToimaruPanel
           onClose={() => setShowToimaru(false)}
           chips={chips}
