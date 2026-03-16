@@ -52,7 +52,7 @@ function getInterrogationBg(caseId: string): string | null {
     case_sample_001: '/images/backgrounds/case_sample_001_interrogation.jpg',
     case_sample_002: '/images/backgrounds/case_sample_002_interrogation.jpg',
     case_sample_003: '/images/backgrounds/case_sample_003_interrogation.jpg',
-    mini_prologue: '/images/backgrounds/fantasy_bg.png',
+    mini_prologue: '/images/backgrounds/fantasy_bg.jpg',
   };
   return bgs[caseId] ?? null;
 }
