@@ -27,11 +27,15 @@ export async function POST(request: NextRequest) {
       let initialCoherence = 100;
       let maxCoherence = 100;
       let maxTurns: number | null = null;
+      let initialUnlockedEvidenceIds: string[] = [];
       try {
-        const caseData = loadCase(caseId) as { initialCoherence?: number; maxCoherence?: number; maxTurns?: number };
+        const caseData = loadCase(caseId) as { initialCoherence?: number; maxCoherence?: number; maxTurns?: number; allEvidenceUnlocked?: boolean; evidence?: { id: string }[] };
         maxCoherence = caseData.maxCoherence ?? 100;
         initialCoherence = caseData.initialCoherence ?? maxCoherence;
         maxTurns = caseData.maxTurns ?? null;
+        if (caseData.allEvidenceUnlocked && caseData.evidence) {
+          initialUnlockedEvidenceIds = caseData.evidence.map((e) => e.id);
+        }
       } catch { /* ケースが見つからなくてもセッション作成は続行 */ }
 
       const newSession = {
@@ -46,7 +50,7 @@ export async function POST(request: NextRequest) {
         messages: [],
         isCompleted: false,
         verdict: null,
-        unlockedEvidenceIds: [],
+        unlockedEvidenceIds: initialUnlockedEvidenceIds,
         createdAt: now,
         updatedAt: now,
       };
