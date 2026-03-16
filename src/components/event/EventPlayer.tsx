@@ -15,6 +15,8 @@ export default function EventPlayer({
   const [background, setBackground] = useState<string | null>(null);
   const [leftChar, setLeftChar] = useState<string | null>(null);
   const [rightChar, setRightChar] = useState<string | null>(null);
+  const [leftCharName, setLeftCharName] = useState<string | null>(null);
+  const [rightCharName, setRightCharName] = useState<string | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState(1); // start black
   const [currentDialogue, setCurrentDialogue] = useState<{ speaker: string | null; text: string } | null>(null);
   const [displayedText, setDisplayedText] = useState('');
@@ -104,8 +106,13 @@ export default function EventPlayer({
         }
       } else if (step.type === 'character') {
         const img = step.image ?? null;
-        if (step.position === 'left') setLeftChar(img);
-        else setRightChar(img);
+        if (step.position === 'left') {
+          setLeftChar(img);
+          setLeftCharName(img ? (step.name ?? null) : null);
+        } else {
+          setRightChar(img);
+          setRightCharName(img ? (step.name ?? null) : null);
+        }
       } else if (step.type === 'effect') {
         const dur = step.duration ?? 500;
         if (step.name === 'fadeToBlack') {
@@ -187,9 +194,13 @@ export default function EventPlayer({
   const hasBothChars = !!(leftChar && rightChar);
   const singleChar = leftChar || rightChar;
 
+  // 発話者ポジション判定（z-index制御用）
+  const speakerIsLeft = !!(currentDialogue?.speaker && leftCharName && currentDialogue.speaker === leftCharName);
+  const speakerIsRight = !!(currentDialogue?.speaker && rightCharName && currentDialogue.speaker === rightCharName);
+
   return (
     <div
-      className="relative h-screen w-full overflow-hidden cursor-pointer select-none"
+      className="relative h-dvh w-full overflow-hidden cursor-pointer select-none"
       style={{ fontFamily: '"Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif' }}
       onClick={handleTap}
     >
@@ -209,24 +220,24 @@ export default function EventPlayer({
         style={{ opacity: overlayOpacity }}
       />
 
-      {/* キャラクター（2人） */}
+      {/* キャラクター（2人）: 各60vw幅、中央1/3重なるレイアウト */}
       {hasBothChars && (
         <>
-          <div className="absolute bottom-[180px] left-[3%] z-20">
+          <div className={`absolute bottom-[180px] ${speakerIsLeft ? 'z-30' : 'z-20'}`} style={{ left: '-16vw' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={leftChar!}
               alt=""
-              className="h-[50vh] max-h-[360px] max-w-[42vw] w-auto object-contain drop-shadow-xl"
+              className="w-[80vw] max-h-[75vh] object-contain drop-shadow-xl"
               draggable={false}
             />
           </div>
-          <div className="absolute bottom-[180px] right-[3%] z-20">
+          <div className={`absolute bottom-[180px] ${speakerIsRight ? 'z-30' : 'z-20'}`} style={{ right: '-16vw' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={rightChar!}
               alt=""
-              className="h-[50vh] max-h-[360px] max-w-[42vw] w-auto object-contain drop-shadow-xl"
+              className="w-[80vw] max-h-[75vh] object-contain drop-shadow-xl"
               draggable={false}
             />
           </div>
@@ -240,7 +251,7 @@ export default function EventPlayer({
           <img
             src={singleChar}
             alt=""
-            style={{ height: '45vh' }}
+            style={{ height: '55vh' }}
             className="w-auto drop-shadow-xl"
             draggable={false}
           />
@@ -250,14 +261,14 @@ export default function EventPlayer({
       {/* テキストボックス */}
       <div className="absolute bottom-0 left-0 right-0 z-30 p-3">
         <div className="mx-auto max-w-2xl rounded-2xl bg-stone-900/85 px-5 pt-4 pb-2 shadow-2xl ring-1 ring-stone-700/50 backdrop-blur-sm">
-          {/* 話者名 */}
-          {currentDialogue?.speaker && (
-            <div className="mb-2">
+          {/* 話者名 - 常に高さ確保してレイアウト固定 */}
+          <div className="mb-2 h-7">
+            {currentDialogue?.speaker && (
               <span className="inline-block rounded-md bg-amber-500/20 px-3 py-0.5 text-sm font-bold text-amber-300 ring-1 ring-amber-500/30">
                 {currentDialogue.speaker}
               </span>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* テキスト本文 - 固定高さ */}
           <div className="h-24 overflow-hidden">

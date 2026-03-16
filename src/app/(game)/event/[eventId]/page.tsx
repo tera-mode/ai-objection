@@ -52,7 +52,7 @@ export default function EventPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-stone-900">
+      <div className="flex h-dvh items-center justify-center bg-stone-900">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
       </div>
     );
@@ -60,7 +60,7 @@ export default function EventPage() {
 
   if (error || !eventData) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-stone-900 text-stone-300">
+      <div className="flex h-dvh flex-col items-center justify-center gap-4 bg-stone-900 text-stone-300">
         <p className="text-sm">{error ?? 'イベントが見つかりません'}</p>
         <button
           onClick={() => router.back()}

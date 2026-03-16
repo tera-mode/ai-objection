@@ -47,39 +47,12 @@ export default function LandingPage() {
 
         {/* タイトル */}
         <div className="flex flex-col gap-2 text-center">
-          <p className="text-xs font-semibold tracking-widest text-amber-600 uppercase">
-            AI Investigation Game
-          </p>
           <p className="text-base text-stone-600">
             AIが演じる犯人に自由に質問し、<br />
             矛盾を暴いて逮捕に追い込め。
           </p>
         </div>
 
-        {/* コンセプト説明 */}
-        <div className="flex w-full flex-col gap-3 rounded-2xl border border-amber-200 bg-white/70 p-5 text-left shadow-sm">
-          <div className="flex items-start gap-3">
-            <span className="text-xl">🔍</span>
-            <div>
-              <p className="font-semibold text-stone-800">自由に質問する</p>
-              <p className="text-sm text-stone-500">犯人AIは設定に基づいて自由に応答する。台本はない。</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="text-xl">⚖️</span>
-            <div>
-              <p className="font-semibold text-stone-800">矛盾を突く</p>
-              <p className="text-sm text-stone-500">証言の矛盾を見つけると動揺メーターが下がる。</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="text-xl">🔒</span>
-            <div>
-              <p className="font-semibold text-stone-800">逮捕に追い込む</p>
-              <p className="text-sm text-stone-500">15回以内に証拠を突きつけ、真犯人を追い詰めろ。</p>
-            </div>
-          </div>
-        </div>
 
         {/* アクションボタン */}
         <div className="flex w-full flex-col gap-3">
@@ -97,6 +70,32 @@ export default function LandingPage() {
             ログイン / 新規登録
           </button>
         </div>
+
+        {/* コンセプト説明 */}
+        <div className="flex w-full flex-col gap-3 rounded-2xl border border-amber-200 bg-white/70 p-5 text-left shadow-sm">
+          <div className="flex items-start gap-3">
+            <span className="text-xl">🔍</span>
+            <div>
+              <p className="font-semibold text-stone-800">自由に質問する</p>
+              <p className="text-sm text-stone-500">犯人AIは設定に基づいて自由に応答する。あなたは何を話してもいい。</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-xl">⚖️</span>
+            <div>
+              <p className="font-semibold text-stone-800">矛盾を突く</p>
+              <p className="text-sm text-stone-500">証言の矛盾を見つけ、犯人の嘘を暴こう。</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-xl">🔒</span>
+            <div>
+              <p className="font-semibold text-stone-800">逮捕に追い込む</p>
+              <p className="text-sm text-stone-500">矛盾を指摘し冷静さを失わせ、真犯人を追い詰めろ。</p>
+            </div>
+          </div>
+        </div>
+
 
         <p className="text-xs text-stone-400">
           © 2026 aigame.media

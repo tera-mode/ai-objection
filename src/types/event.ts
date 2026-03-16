@@ -9,6 +9,7 @@ export type EventStep =
       type: 'character';
       position: 'left' | 'right';
       image: string | null;
+      name?: string;
       transition?: 'fadeIn' | 'fadeOut' | 'cut';
     }
   | {
