@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 - 犯人が「否定した事実」は有力な候補（例：「近づいていない」「知らない」）
 - 犯人が具体的すぎる情報を漏らした箇所も有力な候補
 - 全てのチップがトリガーにヒットする必要はない（ハズレも混ぜてよい）
-${unlockedIds.length > 0 ? `- すでにアンロック済みの証拠（${unlockedIds.join(', ')}）に関連するキーワードは除外する` : ''}
+${unlockedIds.length > 0 ? `- すでにアンロック済みの証拠（${unlockedIds.join(', ')}）に関連するキーワードはchipsから除外する\n- toimaruCommentはアンロック済み証拠の内容を言及せず、犯人の感情状態のみに集中する` : ''}
 
 【犯人の直近の発言】
 "${criminalResponse}"

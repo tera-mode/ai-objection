@@ -513,6 +513,9 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     if (latest?.role !== 'criminal') return;
     if (messages.length <= prevMessageCountRef.current) return;
 
+    // 前のターンのリコールコメントをリセット
+    setToimaruComment('');
+
     // チップ生成API呼び出し
     const recentContext = messages.slice(-6).map((m) => `${m.role === 'player' ? 'プレイヤー' : '犯人'}: ${m.content}`).join('\n');
     authenticatedFetch('/api/companion-chips', {
@@ -527,7 +530,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.chips) setChips(data.chips);
-        if (data.toimaruComment) setToimaruComment(data.toimaruComment);
+        setToimaruComment(data.toimaruComment ?? '');
       })
       .catch(console.error);
   // eslint-disable-next-line react-hooks/exhaustive-deps
