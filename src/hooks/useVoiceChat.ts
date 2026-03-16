@@ -112,7 +112,7 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
   }, []);
 
   const speakText = useCallback(async (text: string) => {
-    if (!isVoiceModeOn) return;
+    // isVoiceModeOn のチェックは呼び出し側で行う（stale closure 回避）
     setVoiceState('speaking');
 
     try {
@@ -158,7 +158,7 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
       console.error('TTS error:', err);
       setVoiceState('idle');
     }
-  }, [isVoiceModeOn, criminalGender]);
+  }, [criminalGender]);
 
   const stopSpeaking = useCallback(() => {
     audioSourceRef.current?.stop();
