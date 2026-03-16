@@ -239,7 +239,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const finalMessages = [...updatedMessages, criminalMsg];
 
       // ゲーム終了判定
-      const isGameOver = currentTurn >= (session.maxTurns ?? 15) || newCoherence <= 0;
+      const isGameOver = (session.maxTurns != null && currentTurn >= session.maxTurns) || newCoherence <= 0;
       const verdict = isGameOver
         ? (newCoherence <= 0 ? 'arrest' : 'escape')
         : null;
