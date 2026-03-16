@@ -42,7 +42,7 @@
     },
     {
       "id": "006",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": null,
       "speaker": null,
       "text": "——ドスン、と石畳の上に落ちた。",
@@ -50,21 +50,21 @@
     },
     {
       "id": "007",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_surprise.png", "position": "center" },
       "speaker": "なの",
       "text": "「いっ……た……。ど、どこここ！？ ついさっき図書室にいたんだけど！？」"
     },
     {
       "id": "008",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "center" },
       "speaker": null,
       "text": "（見渡すと——石畳の街道、木骨造りの家、馬車。\n人……じゃないかもしれない耳の生き物もいる）"
     },
     {
       "id": "009",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "???",
@@ -72,7 +72,7 @@
     },
     {
       "id": "010",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "なの",
@@ -80,7 +80,7 @@
     },
     {
       "id": "011",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "トイマル",
@@ -88,7 +88,7 @@
     },
     {
       "id": "012",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_happy.png", "position": "right" },
       "speaker": "トイマル",
@@ -96,7 +96,7 @@
     },
     {
       "id": "013",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "なの",
@@ -104,7 +104,7 @@
     },
     {
       "id": "014",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "トイマル",
@@ -112,7 +112,7 @@
     },
     {
       "id": "015",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_tsukkomi.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_happy.png", "position": "right" },
       "speaker": "なの",
@@ -120,7 +120,7 @@
     },
     {
       "id": "016",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "トイマル",
@@ -128,21 +128,21 @@
     },
     {
       "id": "017",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_surprise.png", "position": "center" },
       "speaker": null,
       "text": "そのとき——衛兵詰所の方向から、叫び声が響いた。"
     },
     {
       "id": "018",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": null,
       "speaker": "衛兵",
       "text": "「大変だ！ 市場の果物商・ゴランじいさんが死んでいる！\n毒殺だ！」"
     },
     {
       "id": "019",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "トイマル",
@@ -150,7 +150,7 @@
     },
     {
       "id": "020",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_normal.png", "position": "right" },
       "speaker": "なの",
@@ -158,7 +158,7 @@
     },
     {
       "id": "021",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_confused.png", "position": "right" },
       "speaker": "トイマル",
@@ -166,7 +166,7 @@
     },
     {
       "id": "022",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_normal.png", "position": "left" },
       "character2": { "image": "/images/characters/toimaru/event_confused.png", "position": "right" },
       "speaker": null,
@@ -174,14 +174,14 @@
     },
     {
       "id": "023",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_determined.png", "position": "center" },
       "speaker": "なの",
       "text": "「……あたしがいる。\n帰れるかどうかはわからないけど——今は、この事件を解決する」"
     },
     {
       "id": "024",
-      "background": "/images/backgrounds/fantasy_bg.png",
+      "background": "/images/backgrounds/fantasy_bg.jpg",
       "character": { "image": "/images/characters/nano/event_determined.png", "position": "center" },
       "speaker": "なの",
       "text": "「——聞かせてもらっていい？」",
