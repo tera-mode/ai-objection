@@ -130,10 +130,20 @@ async function processIntros() {
     else console.log('  （変更なし）\n');
   };
 
-  await run('characters/ → PNG 512px', () => processPngDir(
-    path.join(ROOT, 'characters'), null,
-    /^case_\d{3}_(normal|nervous|cornered|breaking|collapsed)\.png$/, 512, false, null, 'characters'
-  ));
+  // characters: case_001/, case_002/ サブディレクトリ対応
+  console.log('📂 characters/ → PNG 512px (ケース別サブディレクトリ)');
+  const charsDir = path.join(ROOT, 'characters');
+  const charSubdirs = fs.existsSync(charsDir)
+    ? fs.readdirSync(charsDir).filter(f => /^case_\d{3}$/.test(f) && fs.statSync(path.join(charsDir, f)).isDirectory())
+    : [];
+  for (const sub of charSubdirs) {
+    const r = await processPngDir(
+      path.join(charsDir, sub), null,
+      /^(normal|nervous|cornered|breaking|collapsed)\.png$/, 512, false, null, `characters/${sub}`
+    );
+    total.count += r.count; total.saved += r.savedBytes;
+  }
+  console.log('');
 
   await run('backgrounds/ → raw/から16:9 JPEG 800px再生成', processBackgrounds);
 
