@@ -829,8 +829,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         </div>
       </div>
 
-      {/* 容疑者エリア */}
-      <div className="relative shrink-0 bg-amber-50">
+      {/* 容疑者エリア（z-0でスタッキングコンテキストを閉じ、内部z-20グラデが外に漏れないようにする） */}
+      <div className="relative z-0 shrink-0 bg-amber-50">
         {(() => {
           const imgSrc = getCharacterImage(caseId, session.coherence, session.maxCoherence);
           const bgSrc = getInterrogationBg(caseId);
