@@ -3,7 +3,7 @@
 import { use, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, Settings } from 'lucide-react';
 import { useGame } from '@/contexts/GameContext';
 import { MessageBubble } from '@/components/game/MessageBubble';
 import { CoherenceMeter } from '@/components/game/CoherenceMeter';
@@ -423,6 +423,62 @@ function GameFooter({
   );
 }
 
+// 設定メニュー（ボトムシート）
+function SettingsMenu({
+  onClose,
+  onRestart,
+  onGoToCaseSelect,
+  onGoToTitle,
+  disabled,
+}: {
+  onClose: () => void;
+  onRestart: () => void;
+  onGoToCaseSelect: () => void;
+  onGoToTitle: () => void;
+  disabled: boolean;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-t-2xl border border-stone-200 bg-white p-4 sm:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="font-semibold text-stone-700">設定</h3>
+          <button onClick={onClose} className="text-stone-400 hover:text-stone-700">✕</button>
+        </div>
+        <div className="space-y-2">
+          <button
+            onClick={onRestart}
+            disabled={disabled}
+            className="flex w-full items-center gap-3 rounded-xl border border-stone-200 px-4 py-3 text-left text-sm text-stone-700 transition-colors hover:bg-stone-50 disabled:opacity-40"
+          >
+            <span>↩</span>
+            <span>やりなおし</span>
+          </button>
+          <button
+            onClick={onGoToCaseSelect}
+            className="flex w-full items-center gap-3 rounded-xl border border-stone-200 px-4 py-3 text-left text-sm text-stone-700 transition-colors hover:bg-stone-50"
+          >
+            <span>📋</span>
+            <span>ケース選択に戻る</span>
+          </button>
+          <button
+            onClick={onGoToTitle}
+            className="flex w-full items-center gap-3 rounded-xl border border-stone-200 px-4 py-3 text-left text-sm text-stone-700 transition-colors hover:bg-stone-50"
+          >
+            <span>🏠</span>
+            <span>タイトルに戻る</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // 証拠アンロック通知バナー
 function UnlockBanner({ evidenceName, onDismiss }: { evidenceName: string; onDismiss: () => void }) {
   useEffect(() => {
@@ -449,6 +505,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const [showLog, setShowLog] = useState(false);
   const [showToimaru, setShowToimaru] = useState(false);
   const [showObjection, setShowObjection] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const prevMessageCountRef = useRef(0);
   const [meta, setMeta] = useState<CaseMeta | null>(null);
 
@@ -747,21 +804,6 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           <div className="flex items-center justify-between">
             <TurnCounter turn={session.turn} maxTurns={session.maxTurns} />
             <div className="flex items-center gap-2">
-              {/* やりなおしボタン */}
-              <button
-                onClick={() => {
-                  if (confirm('尋問をやり直しますか？')) {
-                    setToimaruComment('');
-                    setChips([]);
-                    prevMessageCountRef.current = 0;
-                    startSession(caseId);
-                  }
-                }}
-                disabled={isCriminalThinking}
-                className="flex items-center gap-1 rounded-full bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-700 disabled:opacity-40"
-              >
-                ↩ やりなおし
-              </button>
               {/* 音声モードトグル */}
               <button
                 onClick={() => setIsVoiceModeOn(!isVoiceModeOn)}
@@ -773,6 +815,13 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               >
                 {isVoiceModeOn ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
                 {isVoiceModeOn ? '音声ON' : '音声OFF'}
+              </button>
+              {/* 設定ボタン */}
+              <button
+                onClick={() => setShowSettings(true)}
+                className="flex items-center justify-center rounded-full bg-stone-100 p-1.5 text-stone-500 transition-colors hover:bg-stone-200 hover:text-stone-700"
+              >
+                <Settings className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
@@ -786,7 +835,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           const imgSrc = getCharacterImage(caseId, session.coherence, session.maxCoherence);
           const bgSrc = getInterrogationBg(caseId);
           return imgSrc ? (
-            <div className="relative mx-auto w-full max-w-md overflow-hidden h-[30vh]">
+            <div className="relative mx-auto w-full max-w-md overflow-hidden h-[44vh]">
               {bgSrc && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -824,8 +873,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
       </div>
 
-      {/* メッセージエリア */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      {/* メッセージエリア（容疑者エリアに-mt-16でオーバーラップ、z-10で上位レイヤー） */}
+      <div className="relative z-10 -mt-16 flex-1 overflow-y-auto px-4 py-4">
         <div className="mx-auto flex max-w-md flex-col gap-3">
           {session.messages.length === 0 && (
             <div className="rounded-2xl border border-stone-200 bg-white p-4 text-center text-sm text-stone-500">
@@ -924,6 +973,29 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           onClose={() => setShowToimaru(false)}
           chips={chips}
           onKeywordSubmit={handleKeywordSubmit}
+        />
+      )}
+      {showSettings && (
+        <SettingsMenu
+          onClose={() => setShowSettings(false)}
+          disabled={isCriminalThinking}
+          onRestart={() => {
+            setShowSettings(false);
+            if (confirm('尋問をやり直しますか？')) {
+              setToimaruComment('');
+              setChips([]);
+              prevMessageCountRef.current = 0;
+              startSession(caseId);
+            }
+          }}
+          onGoToCaseSelect={() => {
+            setShowSettings(false);
+            router.push('/play');
+          }}
+          onGoToTitle={() => {
+            setShowSettings(false);
+            router.push('/');
+          }}
         />
       )}
     </div>
