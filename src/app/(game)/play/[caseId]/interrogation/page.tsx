@@ -879,7 +879,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         className="relative z-10 -mt-16 flex-1 overflow-hidden"
         style={{ maskImage: 'linear-gradient(to bottom, transparent 0px, black 80px)' }}
       >
-        <div className="h-full overflow-y-auto px-4 py-4">
+        <div className="h-full overflow-y-auto px-4 pb-4 pt-20">
         <div className="mx-auto flex max-w-md flex-col gap-3">
           {session.messages.length === 0 && (
             <div className="rounded-2xl border border-stone-200 bg-white p-4 text-center text-sm text-stone-500">
