@@ -855,11 +855,9 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 priority
               />
               <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-20 bg-gradient-to-t from-amber-50 to-transparent" />
-              {isCriminalThinking && (
-                <div className="absolute inset-0 z-20 flex items-center justify-center bg-stone-900/40">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+              <div className={`absolute inset-0 z-20 flex items-center justify-center bg-stone-900/40 transition-opacity duration-300 ${isCriminalThinking ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                  <div className={`h-6 w-6 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent transition-opacity duration-300 ${isCriminalThinking ? 'opacity-100' : 'opacity-0'}`} />
                 </div>
-              )}
             </div>
           ) : (
             <div className="flex h-40 w-full flex-col items-center justify-center gap-2 border-b border-stone-200">
