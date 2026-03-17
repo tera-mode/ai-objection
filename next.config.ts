@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     '/api/list-cases': ['./data/**/*'],
     '/api/save-session': ['./data/**/*'],
     '/api/get-session': ['./data/**/*'],
+    '/api/story-flow': ['./data/**/*'],
   },
   async headers() {
     return [

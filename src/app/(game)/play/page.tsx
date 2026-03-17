@@ -1,13 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
-const PROLOGUE_SEEN_KEY = 'event_prologue_b_seen';
+interface StoryFlowItem {
+  type: 'event' | 'case';
+  id: string;
+  title: string;
+  difficulty?: string;
+  description?: string;
+  card?: {
+    characterImage: string;
+    backgroundImage: string;
+  } | null;
+}
 
-interface CaseItem {
+interface CaseSummary {
   id: string;
   title: string;
   difficulty: string;
@@ -20,46 +31,89 @@ const difficultyLabel: Record<string, string> = {
   hard: '上級',
 };
 
-const difficultyColor: Record<string, string> = {
-  easy: 'text-green-600 border-green-300 bg-green-50',
-  medium: 'text-yellow-600 border-yellow-300 bg-yellow-50',
-  hard: 'text-red-600 border-red-300 bg-red-50',
+const difficultyStars: Record<string, string> = {
+  easy: '★☆☆',
+  medium: '★★☆',
+  hard: '★★★',
 };
+
+function isItemCompleted(item: StoryFlowItem): boolean {
+  if (typeof window === 'undefined') return false;
+  if (item.type === 'event') {
+    // 互換: 旧キー event_prologue_b_seen も prologue の完了として扱う
+    if (item.id === 'prologue') {
+      return (
+        localStorage.getItem('event_prologue_seen') === '1' ||
+        !!localStorage.getItem('event_prologue_b_seen')
+      );
+    }
+    return localStorage.getItem(`event_${item.id}_seen`) === '1';
+  } else {
+    return localStorage.getItem(`case_${item.id}_cleared`) === '1';
+  }
+}
+
+function isItemUnlocked(items: StoryFlowItem[], index: number): boolean {
+  if (index === 0) return true;
+  const prev = items[index - 1];
+  return isItemCompleted(prev);
+}
 
 export default function PlayPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const [cases, setCases] = useState<CaseItem[]>([]);
-  const [sampleCases, setSampleCases] = useState<CaseItem[]>([]);
-
-  // プロローグ未視聴の場合はリダイレクト
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const seen = localStorage.getItem(PROLOGUE_SEEN_KEY);
-      if (!seen) {
-        router.push('/event/prologue_a');
-      }
-    }
-  }, [router]);
+  const [items, setItems] = useState<StoryFlowItem[]>([]);
+  const [sampleCases, setSampleCases] = useState<CaseSummary[]>([]);
+  const [sampleOpen, setSampleOpen] = useState(false);
+  const [, forceUpdate] = useState(0);
+  const firstUnlockedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    authenticatedFetch('/api/list-cases')
+    authenticatedFetch('/api/story-flow')
       .then((res) => res.json())
       .then((data) => {
-        setCases(data.cases ?? []);
+        setItems(data.items ?? []);
         setSampleCases(data.sampleCases ?? []);
+        forceUpdate((n) => n + 1);
       })
       .catch(console.error);
   }, []);
 
+  // 最初のアンロック済み・未完了アイテムに自動スクロール
+  useEffect(() => {
+    if (items.length === 0) return;
+    const firstUnlockedNotDone = items.findIndex(
+      (item, i) => isItemUnlocked(items, i) && !isItemCompleted(item)
+    );
+    if (firstUnlockedNotDone >= 0) {
+      firstUnlockedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [items]);
+
+  function handleItemClick(item: StoryFlowItem, index: number) {
+    if (!isItemUnlocked(items, index)) return;
+    if (item.type === 'event') {
+      // prologue は prologue_a → mini_prologue → prologue_b のフロー
+      const eventRoute = item.id === 'prologue' ? 'prologue_a' : item.id;
+      router.push(`/event/${eventRoute}`);
+    } else {
+      router.push(`/play/${item.id}/crime-scene`);
+    }
+  }
+
+  const firstUnlockedNotDoneIndex = items.findIndex(
+    (item, i) => isItemUnlocked(items, i) && !isItemCompleted(item)
+  );
+
   return (
     <div className="min-h-screen bg-amber-50 px-4 py-8">
       <div className="mx-auto max-w-md">
+        {/* ヘッダー */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-black text-stone-900">ケース選択</h1>
+            <h1 className="text-2xl font-black text-stone-900">問わない異世界の探偵少女</h1>
             <p className="mt-1 text-sm text-stone-500">
-              {user?.isAnonymous ? 'ゲストプレイ中' : user?.displayName ?? user?.email}
+              {user?.isAnonymous ? 'ゲストプレイ中' : (user?.displayName ?? user?.email)}
             </p>
           </div>
           <button
@@ -75,46 +129,152 @@ export default function PlayPage() {
           </button>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {cases.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => router.push(`/play/${c.id}/crime-scene`)}
-              data-testid={`case-select-${c.id}`}
-              className="group flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-5 text-left shadow-sm transition-all hover:border-amber-400 hover:shadow-md"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="text-lg font-bold text-stone-900 group-hover:text-amber-600">
-                  {c.title}
-                </h2>
-                <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-semibold ${difficultyColor[c.difficulty] ?? ''}`}>
-                  {difficultyLabel[c.difficulty] ?? c.difficulty}
-                </span>
-              </div>
-              <p className="text-sm text-stone-500">{c.description}</p>
-              <div className="flex items-center gap-2 text-xs text-amber-600">
-                <span>プレイする</span>
-                <span>→</span>
-              </div>
-            </button>
-          ))}
+        {/* ストーリーセクション */}
+        <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-stone-400">
+          ストーリー
         </div>
 
+        <div className="flex flex-col gap-3">
+          {items.map((item, index) => {
+            const unlocked = isItemUnlocked(items, index);
+            const completed = isItemCompleted(item);
+            const isFirstTarget = index === firstUnlockedNotDoneIndex;
+
+            if (item.type === 'event') {
+              return (
+                <div key={item.id} ref={isFirstTarget ? firstUnlockedRef : null}>
+                  <button
+                    onClick={() => handleItemClick(item, index)}
+                    disabled={!unlocked}
+                    className={`w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${
+                      !unlocked
+                        ? 'border-stone-200 bg-stone-100 opacity-50 cursor-not-allowed'
+                        : completed
+                        ? 'border-stone-200 bg-stone-50 hover:border-stone-300'
+                        : 'border-amber-300 bg-amber-50 hover:border-amber-400 hover:bg-amber-100'
+                    }`}
+                  >
+                    <span className="text-lg">📖</span>
+                    <span className={`flex-1 text-sm font-semibold ${completed ? 'text-stone-400' : 'text-stone-700'}`}>
+                      {item.title}
+                    </span>
+                    {!unlocked && <span className="text-base">🔒</span>}
+                    {unlocked && !completed && (
+                      <span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
+                        NEW
+                      </span>
+                    )}
+                    {completed && <span className="text-green-500 text-sm font-bold">✓</span>}
+                  </button>
+                </div>
+              );
+            }
+
+            // ケースカード
+            const card = item.card;
+            return (
+              <div key={item.id} ref={isFirstTarget ? firstUnlockedRef : null}>
+                <button
+                  onClick={() => handleItemClick(item, index)}
+                  disabled={!unlocked}
+                  data-testid={`case-select-${item.id}`}
+                  className={`w-full relative overflow-hidden rounded-2xl text-left transition-all ${
+                    !unlocked
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:scale-[1.01] active:scale-100'
+                  }`}
+                  style={{ height: '160px' }}
+                >
+                  {/* 背景画像 */}
+                  {card?.backgroundImage ? (
+                    <Image
+                      src={card.backgroundImage}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="448px"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-stone-700" />
+                  )}
+
+                  {/* 暗めオーバーレイ */}
+                  <div className="absolute inset-0 bg-black/50" />
+
+                  {/* キャラ画像 */}
+                  {card?.characterImage && unlocked && (
+                    <div className="absolute bottom-0 right-4 h-full flex items-end">
+                      <Image
+                        src={card.characterImage}
+                        alt=""
+                        width={100}
+                        height={140}
+                        className="object-contain object-bottom drop-shadow-lg"
+                      />
+                    </div>
+                  )}
+
+                  {/* テキスト（左下） */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-xs text-amber-300 font-semibold mb-0.5">
+                          {difficultyStars[item.difficulty ?? 'easy']} {difficultyLabel[item.difficulty ?? 'easy']}
+                        </p>
+                        <h2 className="text-base font-bold text-white leading-tight">
+                          {item.title}
+                        </h2>
+                        {item.description && (
+                          <p className="text-xs text-stone-300 mt-0.5 line-clamp-1">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="shrink-0 ml-2">
+                        {!unlocked && <span className="text-xl">🔒</span>}
+                        {unlocked && !completed && (
+                          <span className="rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
+                            NEW
+                          </span>
+                        )}
+                        {completed && (
+                          <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-bold text-white">
+                            ✓ クリア
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* サンプルシナリオ */}
         {sampleCases.length > 0 && (
           <div className="mt-8 border-t border-stone-200 pt-6">
-            <p className="mb-3 text-xs text-stone-400">サンプルシナリオ</p>
-            <div className="flex flex-col gap-2">
-              {sampleCases.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => router.push(`/play/${c.id}/crime-scene`)}
-                  data-testid={`case-select-${c.id}`}
-                  className="text-left text-xs text-stone-400 underline-offset-2 hover:text-stone-600 hover:underline"
-                >
-                  {c.title}（{difficultyLabel[c.difficulty] ?? c.difficulty}）→
-                </button>
-              ))}
-            </div>
+            <button
+              onClick={() => setSampleOpen((v) => !v)}
+              className="flex w-full items-center justify-between text-xs text-stone-400 hover:text-stone-600"
+            >
+              <span>サンプルシナリオ</span>
+              <span>{sampleOpen ? '▲' : '▼'}</span>
+            </button>
+            {sampleOpen && (
+              <div className="mt-3 flex flex-col gap-2">
+                {sampleCases.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => router.push(`/play/${c.id}/crime-scene`)}
+                    data-testid={`case-select-${c.id}`}
+                    className="text-left text-xs text-stone-400 underline-offset-2 hover:text-stone-600 hover:underline"
+                  >
+                    {c.title}（{difficultyLabel[c.difficulty] ?? c.difficulty}）→
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

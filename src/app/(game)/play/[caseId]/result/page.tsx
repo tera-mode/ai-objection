@@ -41,6 +41,13 @@ function ResultContent({ caseId }: { caseId: string }) {
 
   const isArrest = session.verdict === 'arrest';
 
+  // 逮捕成功時にクリア記録をlocalStorageに保存
+  useEffect(() => {
+    if (isArrest && typeof window !== 'undefined') {
+      localStorage.setItem(`case_${caseId}_cleared`, '1');
+    }
+  }, [isArrest, caseId]);
+
   return (
     <div className="min-h-screen bg-amber-50 px-4 py-8">
       <div className="mx-auto flex max-w-md flex-col items-center gap-8">

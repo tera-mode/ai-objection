@@ -1,0 +1,65 @@
+{
+  "items": [
+    {
+      "type": "event",
+      "id": "prologue",
+      "title": "プロローグ：はじまりの問い"
+    },
+    {
+      "type": "case",
+      "id": "case_001",
+      "title": "ケース1：流行通りの色水",
+      "card": {
+        "characterImage": "/images/characters/case_001/normal.png",
+        "backgroundImage": "/images/backgrounds/case_001_interrogation.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_001",
+      "title": "ケース1 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_002",
+      "title": "ケース2：闘技場の惨劇",
+      "card": {
+        "characterImage": "/images/characters/case_002/normal.png",
+        "backgroundImage": "/images/backgrounds/case_002_interrogation.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_002",
+      "title": "ケース2 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_003",
+      "title": "ケース3：噂と真実の間",
+      "card": {
+        "characterImage": "/images/characters/case_003/normal.png",
+        "backgroundImage": "/images/backgrounds/case_003_interrogation.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_003",
+      "title": "ケース3 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_004",
+      "title": "ケース4：仮面の歌姫",
+      "card": {
+        "characterImage": "/images/characters/case_004/normal.png",
+        "backgroundImage": "/images/backgrounds/case_004_interrogation.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_004",
+      "title": "ケース4 後日談"
+    }
+  ]
+}

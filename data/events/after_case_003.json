@@ -1,0 +1,31 @@
+{
+  "id": "after_case_003",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/craftsmen_district_evening.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "なの", "text": "……ねぇトイマル。あたしが質問するたびに、周りの人が凍りつくの、気づいてる？" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "え？ ……そう言われれば、みんなビックリした顔するのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "ビックリじゃなくて……怖がってるんだよ。『質問する』こと自体を" },
+    { "type": "scene", "background": "/images/events/old_library_interior.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "事件の調べの途中で見つけた、古い書庫の奥の部屋——" },
+    { "type": "dialogue", "speaker": "なの", "text": "この本……『問いの書』？ 封印されてる" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "なの、それ、触っちゃダメなのだ！ 禁書なのだ！" },
+    { "type": "dialogue", "speaker": "なの", "text": "中身……ほとんど空白。でもページの端に——『問え。考えよ。自らの——』" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……ボク、この文字……知ってる気がするのだ。でも思い出せないのだ" },
+    { "type": "scene", "background": "/images/events/street_night.webp", "transition": "fade", "duration": 600 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_determined.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "なの", "text": "（この世界には『問うこと』を封じた何かがある。看板も、碑文も、この本も——全部消されてる）" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "なの……。今度は酒場で事件が起きたらしいのだ。有名な歌姫が関わってるって" },
+    { "type": "dialogue", "speaker": "なの", "text": "歌姫……。行こう、トイマル" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 600 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}

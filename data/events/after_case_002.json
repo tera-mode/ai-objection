@@ -1,0 +1,30 @@
+{
+  "id": "after_case_002",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/arena_exterior_night.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "な、なの……怖くなかったのだ？ イバルド、すごく怖かったのだ……" },
+    { "type": "dialogue", "speaker": "なの", "text": "怖かったよ。でも、怖いからって黙ったら——ハカール先生と同じことが繰り返される" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……なの、カッコいいのだ" },
+    { "type": "scene", "background": "/images/events/arena_wall_inscription.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "闘技場の壁に、削られた碑文があった。" },
+    { "type": "dialogue", "speaker": "なの", "text": "『力なき言葉にも——』……続き、消されてるね" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……この字、古いのだ。誰かがわざと削ったように見えるのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "（また見つけた。誰かが『問う』ことに関する言葉を消している……）" },
+    { "type": "scene", "background": "/images/events/street_night.webp", "transition": "fade", "duration": 600 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "数日後——街で不穏な噂が広がり始めた。" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "なの、聞いたのだ？ 職人街で怖い事件があったらしいのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "職人街……鍛冶工房のあたりだっけ" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 600 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}

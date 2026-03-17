@@ -7,6 +7,15 @@ import { useRouter } from 'next/navigation';
 const PROGRESS_KEYS = [
   'event_prologue_a_seen',
   'event_prologue_b_seen',
+  'event_prologue_seen',
+  'event_after_case_001_seen',
+  'event_after_case_002_seen',
+  'event_after_case_003_seen',
+  'event_after_case_004_seen',
+  'case_case_001_cleared',
+  'case_case_002_cleared',
+  'case_case_003_cleared',
+  'case_case_004_cleared',
 ];
 
 export default function SettingsPage() {
@@ -17,7 +26,7 @@ export default function SettingsPage() {
     if (typeof window !== 'undefined') {
       PROGRESS_KEYS.forEach((key) => localStorage.removeItem(key));
     }
-    router.replace('/event/prologue_a');
+    router.replace('/play');
   };
 
   return (

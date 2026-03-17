@@ -1,0 +1,31 @@
+{
+  "id": "after_case_004",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/tavern_exterior_night.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……なの" },
+    { "type": "dialogue", "speaker": "なの", "text": "ん？" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "ボク……カブリーナのこと、完全に信じちゃったのだ。泣いてて、きれいで、かわいそうだったから。……でもそれは、理由にならないんだよね？" },
+    { "type": "dialogue", "speaker": "なの", "text": "ならない。事実を見なきゃ。……でもトイマル、気づけたじゃん。それが大事なんだよ" },
+    { "type": "scene", "background": "/images/events/tavern_cellar.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "事件の後、地下室で見つけた古い楽譜のことが、トイマルの頭から離れなかった。" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "あの楽譜……『問いの歌』。ボク、あの旋律、知ってる気がするのだ。ずっと昔に聴いたような……" },
+    { "type": "dialogue", "speaker": "なの", "text": "楽譜の端に変な記号があったよね。トイマルの耳の模様に似てた" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……ボクの種族と関係があるのだ？ でも……思い出せないのだ" },
+    { "type": "scene", "background": "/images/events/street_dawn.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_determined.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "なの", "text": "（消された看板、削られた碑文、封印された本、消された歌詞——全部つながってる気がする。この世界で『問うこと』を消したのは、一体誰？）" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "なの、マコト堂の長老さまが、ボクたちに話があるって言ってたのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "マコト堂の長老……。いよいよ、この世界の秘密に近づいてるのかもね" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 600 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}

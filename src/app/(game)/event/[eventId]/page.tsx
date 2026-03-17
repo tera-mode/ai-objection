@@ -7,6 +7,7 @@ import { EventData } from '@/types/event';
 import EventPlayer from '@/components/event/EventPlayer';
 
 const PROLOGUE_SEEN_KEY = 'event_prologue_b_seen';
+const PROLOGUE_UNIFIED_KEY = 'event_prologue_seen';
 
 export default function EventPage() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function EventPage() {
       // プロローグB完了時はメインの「見た」フラグも立てる
       if (eventId === 'prologue_b') {
         localStorage.setItem(PROLOGUE_SEEN_KEY, '1');
+        localStorage.setItem(PROLOGUE_UNIFIED_KEY, '1');
       }
     }
 
