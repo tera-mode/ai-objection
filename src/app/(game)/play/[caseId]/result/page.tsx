@@ -31,10 +31,13 @@ function ResultContent({ caseId }: { caseId: string }) {
       .catch(console.error);
   }, [caseId]);
 
-  if (!session) {
-    router.push('/play');
-    return null;
-  }
+  useEffect(() => {
+    if (!session) {
+      router.push('/play');
+    }
+  }, [session, router]);
+
+  if (!session) return null;
 
   const isArrest = session.verdict === 'arrest';
 
