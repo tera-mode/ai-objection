@@ -30,19 +30,34 @@ export async function POST(request: NextRequest) {
     );
 
     const ai = getGenAI();
-    const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
-      config: {
-        systemInstruction: systemPrompt,
-        maxOutputTokens: 200,
-        thinkingConfig: { thinkingBudget: 0 },
-      },
-      history,
-    });
 
-    const result = await chat.sendMessage({ message });
+    let result;
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const chat = ai.chats.create({
+        model: 'gemini-2.5-flash',
+        config: {
+          systemInstruction: systemPrompt,
+          maxOutputTokens: 200,
+          thinkingConfig: { thinkingBudget: 0 },
+        },
+        history,
+      });
+      try {
+        result = await chat.sendMessage({ message });
+        break;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        const isRetryable = msg.includes('503') || msg.includes('UNAVAILABLE') || msg.includes('timed out');
+        if (isRetryable && attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, 1000 * attempt));
+          continue;
+        }
+        throw err;
+      }
+    }
     // Geminiが証明度トークン(__confirmed__等)を出力することがあるため除去する
-    const response = result.text?.replace(/^__\w+__\s*/, '').trim();
+    const response = result!.text?.replace(/^__\w+__\s*/, '').trim();
 
     if (!response) {
       return NextResponse.json({ error: 'Empty response from AI' }, { status: 500 });
