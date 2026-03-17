@@ -873,10 +873,12 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
       </div>
 
-      {/* メッセージエリア（容疑者エリアに-mt-16でオーバーラップ、z-10で上位レイヤー） */}
-      <div className="relative z-10 -mt-16 flex-1 overflow-hidden">
-        {/* 上部フェードアウト：スクロールと独立して常に表示 */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-amber-50 to-transparent" />
+      {/* メッセージエリア（容疑者エリアに-mt-16でオーバーラップ、z-10で上位レイヤー）
+           mask-imageで上部80pxを透明→不透明にフェードし、キャラ画像との境界を自然に溶かす */}
+      <div
+        className="relative z-10 -mt-16 flex-1 overflow-hidden"
+        style={{ maskImage: 'linear-gradient(to bottom, transparent 0px, black 80px)' }}
+      >
         <div className="h-full overflow-y-auto px-4 py-4">
         <div className="mx-auto flex max-w-md flex-col gap-3">
           {session.messages.length === 0 && (
