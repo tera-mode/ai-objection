@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useGame } from '@/contexts/GameContext';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
-import { Evidence } from '@/types/game';
 
 // ケース別イントロ画像
 const INTRO_IMAGES: Record<string, string> = {
+  case_001: '/images/intro/case_001_intro.jpg',
+  case_002: '/images/intro/case_002_intro.jpg',
+  case_004: '/images/intro/case_004_intro.jpg',
   case_sample_001: '/images/intro/case_sample_001_intro.jpg',
   case_sample_002: '/images/intro/case_sample_002_intro.jpg',
   case_sample_003: '/images/intro/case_sample_003_intro.jpg',
@@ -20,13 +22,12 @@ interface CasePageData {
     intro: string;
     criminalIntro: string;
   };
-  evidence: Evidence[];
 }
 
 function CrimeSceneContent({ caseId }: { caseId: string }) {
   const router = useRouter();
   const { startSession, isLoading, previousTestimony } = useGame();
-  const [phase, setPhase] = useState<'intro' | 'evidence' | 'criminal' | 'previous'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'criminal' | 'previous'>('intro');
   const [data, setData] = useState<CasePageData | null>(null);
 
   useEffect(() => {
@@ -85,28 +86,6 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
             <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
               <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">事件概要</p>
               <p className="text-sm leading-relaxed text-stone-700 whitespace-pre-line">{data.storyText.intro}</p>
-            </div>
-            <button
-              onClick={() => setPhase('evidence')}
-              className="w-full rounded-xl bg-stone-200 py-4 font-semibold text-stone-800 transition-colors hover:bg-stone-300"
-            >
-              証拠を確認する →
-            </button>
-          </div>
-        )}
-
-        {phase === 'evidence' && (
-          <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-              <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">証拠一覧</p>
-              <ul className="space-y-2">
-                {data.evidence.map((ev) => (
-                  <li key={ev.id} className="flex items-start gap-2 text-sm text-stone-700">
-                    <span className="mt-0.5 text-amber-500">▸</span>
-                    <span>{ev.name}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
             <button
               onClick={() => setPhase('criminal')}
