@@ -61,11 +61,24 @@ function getInterrogationBg(caseId: string): string | null {
   return bgs[caseId] ?? null;
 }
 
+// ケース別イントロ画像（crime-scene/page.tsx と同じマップ）
+const INTRO_IMAGES: Record<string, string> = {
+  case_001: '/images/intro/case_001_intro.jpg',
+  case_002: '/images/intro/case_002_intro.jpg',
+  case_003: '/images/intro/case_003_intro.jpg',
+  case_004: '/images/intro/case_004_intro.jpg',
+  case_sample_001: '/images/intro/case_sample_001_intro.jpg',
+  case_sample_002: '/images/intro/case_sample_002_intro.jpg',
+  case_sample_003: '/images/intro/case_sample_003_intro.jpg',
+};
+
 interface CaseMeta {
   criminalName: string;
   criminalGender: 'male' | 'female';
   evidence: Evidence[];
   hasCompanion: boolean;
+  intro: string;
+  title: string;
 }
 
 // 証拠アイコン（/images/evidence/{caseId}/{evId}.png、なければプレースホルダー）
@@ -160,6 +173,52 @@ function EvidenceModal({
             })}
           </ul>
         )}
+      </div>
+    </div>
+  );
+}
+
+// 事件概要モーダル
+function CaseIntroModal({
+  caseId,
+  title,
+  intro,
+  onClose,
+}: {
+  caseId: string;
+  title: string;
+  intro: string;
+  onClose: () => void;
+}) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const introImg = INTRO_IMAGES[caseId];
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl border border-stone-200 bg-white overflow-hidden"
+        style={{ maxHeight: '80vh', overflowY: 'auto' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {introImg && !imgFailed && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={introImg}
+            alt=""
+            className="w-full h-auto object-cover"
+            onError={() => setImgFailed(true)}
+          />
+        )}
+        <div className="p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="font-semibold text-stone-800">{title}</h3>
+            <button onClick={onClose} className="text-stone-400 hover:text-stone-700">✕</button>
+          </div>
+          <p className="mb-2 text-xs font-semibold text-amber-600 uppercase tracking-wider">事件概要</p>
+          <p className="text-sm leading-relaxed text-stone-700 whitespace-pre-line">{intro}</p>
+        </div>
       </div>
     </div>
   );
@@ -379,12 +438,14 @@ function ToimaruPanel({
 
 // ゲーム専用フッター（逮捕ボタン削除、トイマルボタン追加）
 function GameFooter({
+  onIntroOpen,
   onEvidenceOpen,
   onLogOpen,
   onToimaruOpen,
   disabled,
   hasCompanion,
 }: {
+  onIntroOpen: () => void;
   onEvidenceOpen: () => void;
   onLogOpen: () => void;
   onToimaruOpen: () => void;
@@ -394,6 +455,13 @@ function GameFooter({
   return (
     <div className="shrink-0 border-t border-stone-200 bg-white">
       <div className="mx-auto flex max-w-md items-center">
+        <button
+          onClick={onIntroOpen}
+          className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-stone-500 transition-colors hover:text-amber-600"
+        >
+          <span className="text-lg">📋</span>
+          <span>事件概要</span>
+        </button>
         <button
           onClick={onLogOpen}
           className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-stone-500 transition-colors hover:text-amber-600"
@@ -501,6 +569,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const router = useRouter();
   const { session, previousTestimony, previousConversation, isCriminalThinking, sendMessage, arrestChallenge, startSession, unlockEvidence } = useGame();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showIntro, setShowIntro] = useState(false);
   const [showEvidence, setShowEvidence] = useState(false);
   const [showLog, setShowLog] = useState(false);
   const [showToimaru, setShowToimaru] = useState(false);
@@ -528,7 +597,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   useEffect(() => {
     authenticatedFetch(`/api/get-case?caseId=${caseId}`)
       .then((res) => res.json())
-      .then((data) => setMeta({ criminalName: data.criminalName, criminalGender: data.criminalGender ?? 'male', evidence: data.evidence, hasCompanion: data.hasCompanion ?? false }))
+      .then((data) => setMeta({ criminalName: data.criminalName, criminalGender: data.criminalGender ?? 'male', evidence: data.evidence, hasCompanion: data.hasCompanion ?? false, intro: data.storyText?.intro ?? '', title: data.title ?? '' }))
       .catch(console.error);
   }, [caseId]);
 
@@ -948,6 +1017,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
 
       {/* ゲーム専用フッター（逮捕ボタンなし、トイマルボタンあり） */}
       <GameFooter
+        onIntroOpen={() => setShowIntro(true)}
         onEvidenceOpen={() => setShowEvidence(true)}
         onLogOpen={() => setShowLog(true)}
         onToimaruOpen={() => setShowToimaru(true)}
@@ -956,6 +1026,14 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       />
 
       {/* モーダル */}
+      {showIntro && (
+        <CaseIntroModal
+          caseId={caseId}
+          title={meta.title}
+          intro={meta.intro}
+          onClose={() => setShowIntro(false)}
+        />
+      )}
       {showEvidence && (
         <EvidenceModal
           evidence={meta.evidence}
