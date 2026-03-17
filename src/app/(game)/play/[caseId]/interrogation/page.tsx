@@ -113,11 +113,11 @@ function EvidenceModal({
   const unlockedEvidence = evidence.filter((ev) => unlockedEvidenceIds.includes(ev.id));
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-2xl border border-stone-200 bg-white p-4 sm:rounded-2xl"
+        className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
@@ -180,11 +180,11 @@ function LogModal({
   const [tab, setTab] = useState<'current' | 'previous'>('current');
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
-        className="flex w-full max-w-md flex-col rounded-t-2xl border border-stone-200 bg-white sm:rounded-2xl"
+        className="flex w-full max-w-md flex-col rounded-2xl border border-stone-200 bg-white"
         style={{ maxHeight: '70vh' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -286,11 +286,11 @@ function ToimaruPanel({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-2xl border border-stone-200 bg-white p-4"
+        className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-4"
         style={{ maxHeight: '80vh', overflowY: 'auto' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -439,11 +439,11 @@ function SettingsMenu({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-2xl border border-stone-200 bg-white p-4 sm:rounded-2xl"
+        className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
