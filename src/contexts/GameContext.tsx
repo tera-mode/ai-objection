@@ -127,7 +127,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
             coherence: newSession.coherence,
             conversationHistory: [],
           }),
-        });
+        }, 30000); // 30秒タイムアウト: Vercelコールドスタート対策
 
         if (openingRes.ok) {
           const { response } = await openingRes.json();

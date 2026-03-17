@@ -2,10 +2,12 @@ import { auth } from '@/lib/firebase/config';
 
 /**
  * Firebase認証トークン付きでAPIを呼び出すヘルパー
+ * @param timeoutMs タイムアウト（ミリ秒）。省略時はタイムアウトなし
  */
 export async function authenticatedFetch(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  timeoutMs?: number
 ): Promise<Response> {
   const user = auth.currentUser;
 
@@ -19,10 +21,17 @@ export async function authenticatedFetch(
   headers.set('Authorization', `Bearer ${token}`);
   headers.set('Content-Type', 'application/json');
 
-  return fetch(url, {
-    ...options,
-    headers,
-  });
+  if (timeoutMs == null) {
+    return fetch(url, { ...options, headers });
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, headers, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /**
