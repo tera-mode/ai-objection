@@ -313,6 +313,19 @@ always one hand extended as if ready to shake hands
 | ブローチ | ゴールド |
 | 歯 | 不自然に白い |
 
+#### 各感情プロンプト（Gemini `generate_image` 用 — design_skills.md セクション4にも記載）
+
+> ⚠️ キャラクター normal は **Gemini `generate_image`** で生成。Stability AI は AA 風になりにくく不向き。
+> ⚠️ `edit_image` で画風変換を試みてはいけない（機能しない）。
+
+| emotion | プロンプト全文 |
+|---------|--------------|
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading with sharp shadow edges NO gradients NO soft shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, tall and well-groomed, classic politician appearance, perfectly styled swept-back silver-streaked dark hair, unnaturally white perfectly straight teeth showing in a broad smile, warm-looking hazel eyes (practiced warmth but subtly hollow), clean-shaven strong jawline, wearing a pristine navy blue ceremonial robe with white fur-trimmed collar (thick fluffy white fur band around neckline), a golden brooch shaped like clasped hands on chest, one hand open in welcoming gesture extended toward viewer, EMOTION: perfect practiced politician smile, head nodding slightly, trustworthy charismatic facade, both confident and somehow unsettling, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, perfectly styled swept-back silver-streaked dark hair, unnaturally white teeth, hazel eyes, clean-shaven strong jawline, navy blue ceremonial robe with white fur-trimmed collar, golden clasped-hands brooch on chest, EMOTION: smile still perfect but eyes have gone slightly blank and glassy, hand gestures becoming repetitive and mechanical like a puppet, subtle wrongness in the performance, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, perfectly styled swept-back silver-streaked dark hair slightly disheveled, unnaturally white teeth clenched, hazel eyes showing panic, navy blue ceremonial robe, white fur collar, golden clasped-hands brooch, EMOTION: smile frozen and rigid cannot drop it, eyes starting to show panic behind the fixed grin, hands gripping desperately, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, hair no longer perfectly styled, hazel eyes wild with rage, navy blue ceremonial robe disheveled, white fur collar, golden clasped-hands brooch, EMOTION: smile cracking asymmetrically one half smiling while other half contorts in rage, grotesque half-mask expression completely unsettling, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, disheveled hair, hazel eyes vacant and wet with tears, navy blue ceremonial robe, white fur collar, EMOTION: crying but still smiling, tears streaming down face while mouth remains locked in a perfect grin, frozen performance that cannot stop, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+
 ---
 
 ### 被害者：イロンダ（女）
@@ -345,11 +358,12 @@ sleeves rolled up, soot smudges on face and hands
 
 ```
 Fantasy world woman age 38, tall and impeccably composed, cold intellectual beauty,
-sharp angular face with high cheekbones, narrow ice-blue eyes behind thin silver-framed glasses,
+sharp angular face with high cheekbones, narrow ice-blue eyes behind thin wire-rimmed silver spectacles,
 platinum blonde hair in a severe tight bun with not a single strand out of place,
-wearing a high-collared charcoal grey uniform jacket with silver star-shaped rank pins (five stars) on collar,
+wearing a high-collared charcoal grey ceremonial coat with stiffened structured shoulders,
+five silver star-shaped authority insignia pinned on collar (fantasy medieval official attire NOT modern suit or military uniform),
 always holding an open leather-bound ledger book in one hand,
-a silver fountain pen tucked behind one ear
+a silver quill pen tucked behind one ear
 ```
 
 #### 感情別
@@ -406,10 +420,11 @@ a small hand-carved wooden bird visible in breast pocket
 Fantasy world man age 52, tall and broad-shouldered but gentle and non-threatening,
 warm round face with deep laugh lines, kind dark brown eyes that seem to embrace,
 short chestnut brown hair with grey streaks neatly combed, a well-trimmed short beard also greying,
-wearing cream-colored teacher robe of Makoto Church with gold trim and a book-shaped brooch,
-a pair of reading glasses pushed up on forehead,
-right hand always partially hidden in robe sleeve or behind back (hiding a scar on ring finger)
+wearing cream-colored teacher robe of Makoto Church with gold trim and a book-shaped gold brooch on chest (fantasy medieval religious scholar attire),
+a pair of gold wire-rimmed spectacles perched on forehead
 ```
+
+> ⚠️ 右手を隠すポーズ（scar on ring finger）は感情別プロンプトで指定すること。基本設定に入れると生成AIが毎回変なポーズを出す。
 
 #### 感情別
 
@@ -461,14 +476,15 @@ always carrying a worn leather notebook
 #### 共通キャラクター設定（全5感情で使用）
 
 ```
-Fantasy world elderly man age 80, frail and ancient but dignified,
+Fantasy world elderly man age 80, frail and ancient but dignified (NOT Gandalf — distinguish clearly),
 long flowing white beard reaching mid-chest, deeply wrinkled kind face,
-milky pale blue eyes that have seen everything, bushy white eyebrows,
-bald head with a few wisps of white hair,
-wearing a deep burgundy archivist robe with ancient gold embroidery depicting books and keys,
-leaning on a gnarled wooden staff topped with an amber crystal,
-a heavy iron key ring hanging from belt
+milky pale blue eyes, bushy white eyebrows, bald head with a few wisps of white hair,
+wearing a DEEP BURGUNDY archivist robe (NOT grey NOT blue NOT white) with intricate ancient gold embroidery depicting books and keys,
+leaning on a gnarled dark wooden staff topped with a glowing AMBER CRYSTAL,
+a heavy IRON KEY RING with multiple large keys hanging from belt
 ```
+
+> ⚠️ ガンダルフに似やすい。バーガンディ色のローブ・鍵束・琥珀の水晶杖の3点を必ずプロンプトに入れること。グレーや白のローブにならないよう `deep burgundy robe NOT grey NOT white` と明示すること。
 
 #### 感情別
 

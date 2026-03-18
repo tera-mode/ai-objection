@@ -36,7 +36,7 @@
 
 | 用途 | ツール | 理由 |
 |------|--------|------|
-| キャラクター normal 画像（初回のみ） | **Stability AI** `generate_image` | 高品質な初期デザイン生成 |
+| キャラクター normal 画像（初回のみ） | **Gemini** `generate_image` | AA風スタイル指定の再現性が高い。Stability AI より直接AA風が出やすい |
 | キャラクター variation（2枚目以降の感情差分） | **Gemini** `edit_image` | normal を下敷きにすることで造詣・衣装・体型を維持できる |
 | イントロ画像 | **Stability AI** `generate_image` | 背景シーンの高品質生成 |
 | 背景画像（尋問室） | **Stability AI** `generate_image` | 同上 |
@@ -44,9 +44,17 @@
 | 証拠アイコン | **Gemini** `generate_image` | Stability AI より文字混入が少なく、オブジェクト中心の小さいアイコンに向いている |
 | 背景除去 | **Stability AI** `remove_background` | 精度が高くエッジが綺麗 |
 
+**Gemini `generate_image` をキャラクター normal に使う理由（重要）：**
+Stability AI はリアル寄り・写真寄りの絵柄になりやすく、AA風（太い黒縁・フラットセルシェーディング）が出にくい。
+Gemini `generate_image` は「Ace Attorney visual novel style, bold black outlines, flat vibrant colors」の指示をそのまま反映するため、1発目からAA風が得られる確率が高い。
+
+**⛔ `edit_image` でのスタイル変換は絶対に試みないこと：**
+画風（リアル系→アニメ系など）の変換を `edit_image` で行おうとしても、**元画像のスタイルが強く残り変わらない。** 何度試しても無駄。API コストだけ消費する。
+→ スタイルが合わない場合は **正しいスタイルプロンプトで `generate_image` から再生成する。**
+
 **Gemini `edit_image` を variation に使う理由：**
-Stability AI で感情ごとに別々にテキスト生成すると毎回顔つき・体型・目の色がブレ、5枚が別人になる。
-Gemini `edit_image` は元画像のスタイル・構造を参照して編集するため、同一人物感を維持しやすい。
+感情ごとに別々に `generate_image` すると毎回顔つき・体型・目の色がブレ、5枚が別人になる。
+`edit_image` は元画像のスタイル・構造を参照して編集するため、同一人物感を維持しやすい。
 表情だけでなくポーズ変更も可能（手を上げる、後ずさりする等）。
 
 ### スタイル（用途別）
@@ -640,18 +648,177 @@ absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO kataka
 
 ---
 
+### case_005「市民裁定広場の多数決」
+
+#### 容疑者：シュガロン（45歳・男性）
+
+**キャラクター基本設定（全感情共通）：**
+- 45歳男性、長身・清潔感のある政治家タイプ
+- 後ろに流したシルバー混じりのダークブラウン髪
+- 不自然に白い歯、ヘーゼルの目（練習された温かみ）
+- ネイビーブルーの儀礼用ローブ、白毛皮の襟
+- 胸に金色の「握手する手」型ブローチ
+- 常に片手を伸ばし握手を求めるポーズ
+- ⚠️ ローブや衣装に文字が描かれないよう NO text を必ず入れること
+
+**各感情のプロンプト（Gemini `generate_image` で生成）：**
+
+| emotion | プロンプト |
+|---------|-----------|
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading with sharp shadow edges NO gradients NO soft shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, tall and well-groomed, classic politician appearance, perfectly styled swept-back silver-streaked dark hair, unnaturally white perfectly straight teeth showing in a broad smile, warm-looking hazel eyes (practiced warmth but subtly hollow), clean-shaven strong jawline, wearing a pristine navy blue ceremonial robe with white fur-trimmed collar (thick fluffy white fur band around neckline), a golden brooch shaped like clasped hands on chest, one hand open in welcoming gesture extended toward viewer, EMOTION: perfect practiced politician smile, head nodding slightly, trustworthy charismatic facade, both confident and somehow unsettling, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, perfectly styled swept-back silver-streaked dark hair, unnaturally white teeth, hazel eyes, clean-shaven strong jawline, navy blue ceremonial robe with white fur-trimmed collar, golden clasped-hands brooch on chest, EMOTION: smile still perfect but eyes have gone slightly blank and glassy, hand gestures becoming repetitive and mechanical like a puppet, subtle wrongness in the performance, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, perfectly styled swept-back silver-streaked dark hair slightly disheveled, unnaturally white teeth clenched, hazel eyes showing panic, navy blue ceremonial robe, white fur collar, golden clasped-hands brooch, EMOTION: smile frozen and rigid cannot drop it, eyes starting to show panic behind the fixed grin, hands gripping desperately, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, hair no longer perfectly styled, hazel eyes wild with rage, navy blue ceremonial robe disheveled, white fur collar, golden clasped-hands brooch, EMOTION: smile cracking asymmetrically one half smiling while other half contorts in rage, grotesque half-mask expression completely unsettling, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 45, disheveled hair, hazel eyes vacant and wet with tears, navy blue ceremonial robe, white fur collar, EMOTION: crying but still smiling, tears streaming down face while mouth remains locked in a perfect grin, the most disturbing expression — frozen performance that cannot stop, plain white background (for background removal), absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+
+**背景（尋問室）プロンプト：**
+```
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
+fantasy medieval public assembly hall interior used as interrogation room,
+circular amphitheater-style stone seating visible in background,
+official podium or desk in foreground, banner-draped stone columns,
+torch lighting with dramatic shadows, political authority atmosphere,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+1024x1024, clean illustration"
+```
+
+---
+
+### case_006「格付け塔の星」
+
+#### 容疑者：カクスター（38歳・女性）
+
+**キャラクター基本設定（全感情共通）：**
+- 38歳女性、長身・冷徹な知的美人
+- プラチナブロンドの髪を一本も乱れない厳しいお団子に
+- 細いワイヤーフレームの銀眼鏡、アイスブルーの瞳
+- チャコールグレーの礼装コート（ファンタジー官僚服）、衿に銀の星型位階章5つ
+- 片手に革装丁の採点帳、耳に銀の羽根ペン
+- ⚠️ 「uniform jacket」はモダンに見えるので禁止。必ず「ceremonial coat」「fantasy medieval official attire」と明示
+
+**各感情のプロンプト（Gemini `generate_image` で生成）：**
+
+| emotion | プロンプト |
+|---------|-----------|
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading NO gradients, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world woman age 38, tall and impeccably composed, cold intellectual beauty, sharp angular face with high cheekbones, narrow ice-blue eyes behind thin wire-rimmed silver spectacles, platinum blonde hair in a severe tight bun not a single strand out of place, wearing a high-collared charcoal grey ceremonial coat with stiffened shoulders (fantasy medieval official attire NOT modern suit), five silver star-shaped authority insignia pinned on collar, holding an open leather-bound ledger book in one hand, a silver quill pen tucked behind one ear, EMOTION: cold composed expression looking down at viewer over glasses, one eyebrow slightly raised in judgment, pen poised over ledger as if scoring, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world woman age 38, sharp angular face, ice-blue eyes behind thin wire-rimmed silver spectacles, platinum blonde hair in severe tight bun, high-collared charcoal grey ceremonial coat (fantasy medieval official), five silver star insignia on collar, leather ledger in hand, silver quill pen at ear, EMOTION: pushing spectacles up with trembling finger, eyes darting to ledger for reassurance, lips pressed tightly, composure cracking at edges, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world woman age 38, sharp angular face, ice-blue eyes behind slightly askew thin silver spectacles, platinum blonde hair bun slightly loosening, high-collared charcoal grey ceremonial coat (fantasy medieval official), silver star insignia on collar, leather ledger gripped with white knuckles, EMOTION: spectacles askew, knuckles white on ledger grip, eyes wide behind lenses, mathematical certainty crumbling, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world woman age 38, sharp angular face, wild ice-blue eyes, platinum blonde hair now with wisps escaping the bun, high-collared charcoal grey ceremonial coat disheveled, silver star insignia, ledger open frantically, EMOTION: frantically flipping through ledger pages, hair coming loose from bun, eyes unfocused and panicked, muttering, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world woman age 38, angular face now looking vulnerable, tired ice-blue eyes without spectacles (glasses removed), platinum blonde hair half-fallen from bun, high-collared charcoal grey ceremonial coat still on, a single small dried flower petal caught in her hair, EMOTION: ledger dropped or clutched to chest, spectacles removed revealing tired vulnerable eyes, hair half-fallen, looking suddenly older and fragile, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+
+**背景（尋問室）プロンプト：**
+```
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
+interior of a fantasy medieval rating and ranking tower, stone walls covered with official plaques and numbered ledger slots,
+high gothic windows with harsh cold light, an imposing stone desk with inkwells and stacked ledgers,
+tall bookshelves filled with identical bound rating records, austere cold bureaucratic atmosphere,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+1024x1024, clean illustration"
+```
+
+---
+
+### case_007「マコト堂の恩師」
+
+#### 容疑者：ジオーネ（52歳・男性）
+
+**キャラクター基本設定（全感情共通）：**
+- 52歳男性、長身・がっしりしているが温和で威圧感なし
+- 温かい丸顔、深い笑い皺、ダークブラウンの目
+- チェスナットブラウン＋グレーの短髪、同色の整えた短い髭
+- クリーム色のマコト堂教師ローブ（金のトリム、胸に金の本型ブローチ）
+- 額に金ワイヤーの老眼鏡
+- ⚠️ 右手の指の傷は感情別で指定する。基本設定に「right hand hidden」と書かない（ポーズが崩れる）
+
+**各感情のプロンプト（Gemini `generate_image` で生成）：**
+
+| emotion | プロンプト |
+|---------|-----------|
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading NO gradients, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 52, tall and broad-shouldered but gentle and non-threatening, warm round face with deep laugh lines, kind dark brown eyes, short chestnut brown hair with grey streaks neatly combed, well-trimmed short beard also greying, wearing cream-colored teacher robe with gold trim (fantasy medieval religious scholar attire), a gold book-shaped brooch on chest, gold wire-rimmed spectacles perched on forehead, both hands clasped gently in front, EMOTION: warm fatherly smile, head tilted with caring expression, the picture of a kind trustworthy teacher, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 52, warm round face with laugh lines, kind dark brown eyes, chestnut brown and grey hair and beard, cream teacher robe with gold trim (fantasy medieval scholar), gold book brooch, gold spectacles on forehead, EMOTION: smile unchanged but right hand moved behind back hiding from view, eyes maintaining warmth but micro-tension in forehead, still composed, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 52, round face, dark brown eyes now cold with warmth drained, chestnut and grey hair and beard, cream teacher robe with gold trim (fantasy medieval scholar), gold book brooch, EMOTION: smile still present but eyes have gone cold — warmth drained while mouth stays curved, uncanny valley effect, right hand tucked into sleeve, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 52, round face still wearing the exact same kind expression but tears rolling down cheeks, chestnut and grey hair and beard, cream teacher robe with gold trim (fantasy medieval scholar), gold book brooch, EMOTION: the exact same kind fatherly expression but tears streaming — not sad but frustrated, the mask cannot be removed because it has fused with his face, grotesque mismatch of smile and tears, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world man age 52, round face now showing exhaustion and old pain, hollow dark brown eyes, chestnut and grey hair and beard, cream teacher robe with gold trim (fantasy medieval scholar), gold book brooch, EMOTION: smile finally dropped revealing decades of exhaustion, right hand raised showing ring finger with a visible old scar, eyes hollow but relieved, performance ending, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+
+**背景（尋問室）プロンプト：**
+```
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
+interior of a fantasy medieval religious study hall — the Makoto Church teaching room,
+warm wooden bookshelves filled with handwritten scrolls and bound books,
+a large candle chandelier casting golden light, stone floor with woven rugs,
+a teaching lectern at center, stained glass window in background with abstract pattern,
+warm comforting atmosphere turned slightly ominous,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+1024x1024, clean illustration"
+```
+
+---
+
+### case_008「大裁定官の書庫」
+
+#### 容疑者：フルモーン（80歳・男性）
+
+**キャラクター基本設定（全感情共通）：**
+- 80歳男性、老いて儚いが威厳あり
+- 胸まで届く長い白い髭、深い皺の顔、薄いペールブルーの目、白いふさふさの眉、少し白髪の残る禿頭
+- **深いバーガンディ色**のアーキビスト・ローブ（古い金刺繍：本と鍵の模様）
+- ダークブラウンのこぶしだらけの杖＋琥珀のクリスタル
+- ベルトに鉄の鍵束
+- ⚠️ ガンダルフにならないよう `deep burgundy robe NOT grey NOT white` を必ず明示。杖の琥珀と鍵束も必須
+
+**各感情のプロンプト（Gemini `generate_image` で生成）：**
+
+| emotion | プロンプト |
+|---------|-----------|
+| `normal` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading NO gradients, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world elderly man age 80, frail and ancient but dignified (NOT Gandalf), long flowing white beard reaching mid-chest, deeply wrinkled kind face, milky pale blue eyes, bushy white eyebrows, bald head with wisps of white hair, wearing DEEP BURGUNDY archivist robe (NOT grey NOT white NOT blue) with intricate ancient gold embroidery of books and keys motifs, leaning on a gnarled dark wooden staff topped with a glowing AMBER CRYSTAL, heavy iron key ring hanging from belt, EMOTION: serene wise old man expression, gentle half-smile, one hand resting on staff, eyes half-closed as if remembering something distant, grandfatherly warmth, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `nervous` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world elderly man age 80 (NOT Gandalf), long white beard, wrinkled face, pale blue eyes, bald with white wisps, deep burgundy archivist robe NOT grey with gold book-and-key embroidery, gnarled staff with amber crystal, iron key ring at belt, EMOTION: eyes opening wider, hand gripping staff tighter, slight stiffness in posture, the gentleness becoming guarded, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `cornered` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world elderly man age 80 (NOT Gandalf), long white beard, wrinkled face, pale blue eyes now sharp and alert, bald with white wisps, deep burgundy archivist robe NOT grey with gold embroidery, gnarled staff with amber crystal, free hand reaching toward iron key ring protectively, EMOTION: jaw set firm, eyes suddenly very sharp and alert despite age, ancient authority radiating, guarding something, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `breaking` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world elderly man age 80 (NOT Gandalf), long white beard trembling, deeply wrinkled face contorted, pale blue eyes glistening with unshed tears, bald with white wisps, deep burgundy archivist robe with gold embroidery, staff shaking visibly, EMOTION: trembling with emotion, staff shaking, face contorting between anger and grief, decades of suppressed emotion surfacing, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+| `collapsed` | `"Anime cel-shaded character portrait, Ace Attorney visual novel style, Japanese comic exaggeration, bold thick black outlines, flat vibrant colors, hard cel-shading, UPPER BODY ONLY tightly framed from head to chest NO legs NO feet, Fantasy world elderly man age 80 (NOT Gandalf), long white beard with tears soaking into it, deeply wrinkled face with tears flowing freely, pale blue eyes looking upward, bald with white wisps, deep burgundy archivist robe with gold embroidery, EMOTION: staff dropped (not visible), shoulders sagging under invisible weight, tears flowing into white beard, eyes looking upward as if apologizing to the dead, profound sorrow and relief mixed, plain white background, absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana, clean illustration"` |
+
+**背景（尋問室）プロンプト：**
+```
+"Anime Ace Attorney visual novel style, bold black outlines, cel-shaded,
+interior of a fantasy medieval grand archivist's library — stone vaulted ceiling, towering shelves of ancient tomes and scrolls,
+amber torch light casting long dramatic shadows, dust particles floating in beams of light,
+a heavy oak desk with opened scrolls and candle holders, iron-banded strongbox in corner,
+oppressive weight of ancient secrets, dark and solemn atmosphere,
+wide establishing shot, no characters, only environment, solid opaque background,
+full frame edge-to-edge illustration filling entire canvas including all corners and edges,
+absolutely NO letterbox NO black bars NO borders NO vignette on edges,
+absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana,
+1024x1024, clean illustration"
+```
+
+---
+
 ## 5. 生成手順（標準フロー）
 
 ### キャラクター画像（全感情セット）
 
-**Step 1: normal を Stability AI で生成**
+**Step 1: normal を Gemini generate_image で生成**
 ```
-stability-ai: generate_image
-→ 保存先: public/images/characters/raw/case_XXX_normal_raw.png
+gemini: generate_image
+  prompt: [キャラクタープロンプトテンプレートに従う。必ず AA style 明示]
+  saveToFilePath: public/images/characters/{caseId}/raw/{caseId}_normal_raw.png
 ```
 
 > ⚠️ **生成後はかならずユーザーにサンプルを提示し、承認を得てから次のステップへ進むこと。**
 > 承認前に raw コピー・バリアント生成・背景除去を実行してはいけない。
+
+> ⚠️ **出力が非正方形の場合は後述「Gemini 出力の正方形化ワークフロー」で正方形化すること。**
+
+> ⛔ **「スタイルが違う」「AA風になっていない」と感じた場合、`edit_image` でスタイル変換を試みてはいけない。**
+> プロンプトを修正して `generate_image` で再生成する。`edit_image` はスタイル変換に機能しない。
 
 **Step 2: variation 4枚を Gemini edit_image で生成**
 normal_raw.png を入力画像として、表情・ポーズだけ変えて生成。
@@ -742,6 +909,8 @@ node scripts/compress-images.js
 
 | 現象 | 原因 | 対処 |
 |------|------|------|
+| **【最重要】edit_image でスタイル変換しようとしても全く変わらない** | `edit_image` は元画像のスタイルを強く保持する仕様。画風変換には使えない | プロンプトを見直して **`generate_image` で最初から再生成** する。edit_image でスタイル変換を繰り返すのは API コストの無駄 |
+| Stability AI の出力がリアル寄り・AA風でない | Stability AI はリアル絵柄に引っ張られやすい | キャラクター normal は **Gemini `generate_image`** を使う（AA style 指定の再現性が高い） |
 | キャラに謎の文字・漢字が入る | NO text フレーズ不足 | `absolutely NO text NO letters NO words NO numbers NO kanji NO hiragana NO katakana` を追加 |
 | 感情5枚が別人に見える | キャラ設定が感情ごとにバラバラ | 共通キャラ設定文を5枚すべてに入れる |
 | 全身（足まで）が出力される | フレーミング指定不足 **or プロンプトに `full body` が含まれている** | `UPPER BODY ONLY tightly framed from head to chest NO legs NO feet` を追加し、**プロンプト中に `full body` を絶対に書かない** |
