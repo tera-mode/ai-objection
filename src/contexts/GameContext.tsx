@@ -112,6 +112,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         updatedAt: new Date(data.session.updatedAt),
         messages: [],
         unlockedEvidenceIds: data.session.unlockedEvidenceIds ?? [],
+        exploitedWeaknesses: data.session.exploitedWeaknesses ?? [],
       };
       setSession(newSession);
 
@@ -193,6 +194,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           criminalResponse: '',
           conversationHistory,
           previousTestimony,
+          exploitedWeaknesses: session.exploitedWeaknesses ?? [],
         }),
       });
 
@@ -201,7 +203,24 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error(`Judge response failed: ${errData.error ?? judgeRes.status}`);
       }
 
-      const { hasContradiction, contradictionDetail, coherenceChange, proofLevel } = await judgeRes.json();
+      const { hasContradiction, contradictionDetail, coherenceChange: rawCoherenceChange, proofLevel, playerReasoning } = await judgeRes.json();
+
+      // 推理度に基づくコヒーレンス減衰（hasContradiction: true のときのみ適用）
+      const reasoningMultiplier = ({
+        low: 0.33,
+        medium: 0.66,
+        high: 1.0,
+      } as Record<string, number>)[playerReasoning as string] ?? 1.0;
+
+      const coherenceChange = hasContradiction
+        ? Math.round(rawCoherenceChange * reasoningMultiplier)
+        : rawCoherenceChange;
+
+      // confirmed の矛盾を解決済みリストに追加（リピート防止用）
+      let updatedExploitedWeaknesses = [...(session.exploitedWeaknesses ?? [])];
+      if (proofLevel === 'confirmed' && contradictionDetail) {
+        updatedExploitedWeaknesses = [...updatedExploitedWeaknesses, contradictionDetail];
+      }
 
       // 2. proofLevel + contradictionDetail をCriminalAIに渡して返答を生成
       const criminalRes = await authenticatedFetch('/api/criminal-response', {
@@ -216,6 +235,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
           proofLevel: proofLevel ?? 'none',
           contradictionDetail: contradictionDetail ?? null,
           unlockedEvidenceIds: session.unlockedEvidenceIds ?? [],
+          playerReasoning: playerReasoning ?? 'high',
         }),
       });
 
@@ -233,6 +253,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         content: criminalResponse,
         coherenceAfter: newCoherence,
         contradiction: hasContradiction ? contradictionDetail : undefined,
+        playerReasoning: hasContradiction ? (playerReasoning as 'low' | 'medium' | 'high') : undefined,
         timestamp: new Date(),
       };
 
@@ -249,6 +270,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         messages: finalMessages,
         turn: currentTurn,
         coherence: newCoherence,
+        exploitedWeaknesses: updatedExploitedWeaknesses,
         phase: isGameOver ? 'result' : 'interrogation',
         isCompleted: isGameOver,
         verdict,
@@ -348,9 +370,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         maxCoherence,
         maxTurns,
         unlockedEvidenceIds: data.session.unlockedEvidenceIds ?? [],
+        exploitedWeaknesses: data.session.exploitedWeaknesses ?? [],
         createdAt: new Date(data.session.createdAt),
         updatedAt: new Date(data.session.updatedAt),
-        messages: data.session.messages.map((m: { timestamp: string; role: 'player' | 'criminal'; content: string; coherenceAfter?: number; contradiction?: string }) => ({
+        messages: data.session.messages.map((m: { timestamp: string; role: 'player' | 'criminal'; content: string; coherenceAfter?: number; contradiction?: string; playerReasoning?: 'low' | 'medium' | 'high' }) => ({
           ...m,
           timestamp: new Date(m.timestamp),
         })),

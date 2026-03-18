@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { caseId, criminalResponse, unlockedEvidenceIds, conversationContext } = body;
+    const { caseId, criminalResponse, unlockedEvidenceIds, conversationContext, playerReasoning } = body;
 
     if (!caseId || !criminalResponse) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -47,7 +47,11 @@ ${conversationContext ? `【直近の会話の流れ】\n${conversationContext}\
 - 犯人が余裕で否定している → 「この人、すごく自信があるのだ……」
 - 犯人がやや動揺している → 「なんか今、声が変わったのだ……？」
 - 犯人が怒鳴った・威圧的 → 「な、なの……この人、怖いのだ……」
-- 犯人が的外れな話をした → 「今の話、聞かれてないことまで話してるのだ？」`;
+- 犯人が的外れな話をした → 「今の話、聞かれてないことまで話してるのだ？」${playerReasoning === 'low'
+  ? `\n\n【プレイヤーの質問の質: low】\nトイマルのコメントで、プレイヤーにもっと自分の言葉で考えるよう優しく促してください。\n以下のいずれかのパターンで書いてください：\n- 「なの、声を見せるだけじゃなくて、この人の言ったこととどう違うか言ってほしいのだ！」\n- 「うーん……証拠はあるのに、なんでおかしいかをもっと言葉にしてほしいのだ」\n- 「なの、もうちょっと自分の言葉で説明したら、もっと効くと思うのだ！」\n犯人の状態コメントより、このフィードバックを優先してください。`
+  : playerReasoning === 'medium'
+  ? `\n\n【プレイヤーの質問の質: medium】\nトイマルのコメントで、あと一歩踏み込めば良いことをほのめかしてください。\n- 「おっ、いい線なのだ！ この人が何て言ってたか、もうちょっと具体的に突っ込めそうなのだ」\n- 「もうちょっとなのだ……この人の言い分のどこがおかしいか、ズバッと言ってほしいのだ！」\n犯人の状態コメントと組み合わせてOKです。`
+  : ''}`;
 
     const ai = getGenAI();
     const result = await ai.models.generateContent({

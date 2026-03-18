@@ -679,6 +679,7 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         criminalResponse: latest.content,
         unlockedEvidenceIds: session.unlockedEvidenceIds ?? [],
         conversationContext: recentContext,
+        playerReasoning: latest.playerReasoning ?? null,
       }),
     })
       .then((res) => res.json())

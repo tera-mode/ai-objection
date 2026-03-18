@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         isCompleted: false,
         verdict: null,
         unlockedEvidenceIds: initialUnlockedEvidenceIds,
+        exploitedWeaknesses: [],
         createdAt: now,
         updatedAt: now,
       };

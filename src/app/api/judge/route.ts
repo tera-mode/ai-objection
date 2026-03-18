@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { caseId, playerMessage, criminalResponse, conversationHistory, previousTestimony } = body;
+    const { caseId, playerMessage, criminalResponse, conversationHistory, previousTestimony, exploitedWeaknesses } = body;
 
     if (!caseId || !playerMessage) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
       playerMessage,
       criminalResponse,
       conversationHistory ?? [],
-      previousTestimony ?? []
+      previousTestimony ?? [],
+      exploitedWeaknesses ?? []
     );
 
     const ai = getGenAI();
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
       contradictionDetail: judgeResult.contradictionDetail,
       coherenceChange: judgeResult.coherenceChange,
       proofLevel: judgeResult.proofLevel,
+      playerReasoning: judgeResult.playerReasoning,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

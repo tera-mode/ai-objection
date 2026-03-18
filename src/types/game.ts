@@ -12,6 +12,7 @@ export interface GameSession {
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
   unlockedEvidenceIds: string[];
+  exploitedWeaknesses: string[];  // confirmed で解決済みの矛盾detail（リピート防止用）
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +22,7 @@ export interface ChatMessage {
   content: string;
   coherenceAfter?: number;  // 犯人発言後のコヒーレンス値
   contradiction?: string;   // JudgeAIが検出した矛盾の説明（あれば）
+  playerReasoning?: 'low' | 'medium' | 'high';  // プレイヤーの推理度
   timestamp: Date;
 }
 
@@ -94,6 +96,7 @@ export interface GameSessionData {
   isCompleted: boolean;
   verdict: 'arrest' | 'escape' | null;
   unlockedEvidenceIds: string[];
+  exploitedWeaknesses: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -103,5 +106,6 @@ export interface ChatMessageData {
   content: string;
   coherenceAfter?: number;
   contradiction?: string;
+  playerReasoning?: 'low' | 'medium' | 'high';
   timestamp: string;
 }
