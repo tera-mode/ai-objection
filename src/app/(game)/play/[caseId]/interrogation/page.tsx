@@ -647,7 +647,13 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     const messages = session.messages;
     const latest = messages[messages.length - 1];
     if (latest?.role === 'criminal') {
-      speakText(latest.content);
+      // 括弧（）の動作・情景描写を除去してから読み上げ（画面表示と同じテキスト）
+      const spokenText = latest.content
+        .replace(/（[^）]*）/g, '')
+        .replace(/\([^)]*\)/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      speakText(spokenText);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.messages.length, isVoiceModeOn]);
