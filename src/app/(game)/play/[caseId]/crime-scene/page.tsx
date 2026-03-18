@@ -116,7 +116,7 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
           <div className="flex flex-col gap-6">
             {/* 犯人キャラ＋背景カード */}
             {(CRIMINAL_BG[caseId] || CRIMINAL_CHAR[caseId]) && (
-              <div className="relative overflow-hidden rounded-2xl shadow-sm" style={{ height: '240px' }}>
+              <div className="relative overflow-hidden rounded-2xl shadow-sm" style={{ height: '300px' }}>
                 {CRIMINAL_BG[caseId] && (
                   <Image
                     src={CRIMINAL_BG[caseId]}
@@ -127,28 +127,23 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
                     priority
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/10" />
                 {CRIMINAL_CHAR[caseId] && (
-                  <div className="absolute bottom-0 right-0 h-full flex items-end">
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <Image
                       src={CRIMINAL_CHAR[caseId]}
                       alt="容疑者"
-                      width={180}
-                      height={240}
-                      className="object-contain object-bottom drop-shadow-2xl"
+                      width={260}
+                      height={300}
+                      className="object-contain drop-shadow-2xl"
                       priority
                     />
                   </div>
                 )}
-                <div className="absolute bottom-3 left-4">
-                  <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider">容疑者登場</p>
-                </div>
               </div>
             )}
             <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-5">
-              {!CRIMINAL_BG[caseId] && (
-                <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">容疑者登場</p>
-              )}
+              <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">容疑者登場</p>
               <p className="text-sm leading-relaxed text-stone-700 whitespace-pre-line">{data.storyText.criminalIntro}</p>
             </div>
             <button
