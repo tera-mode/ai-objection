@@ -129,13 +129,13 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/10" />
                 {CRIMINAL_CHAR[caseId] && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-center">
                     <Image
                       src={CRIMINAL_CHAR[caseId]}
                       alt="容疑者"
                       width={260}
                       height={300}
-                      className="object-contain drop-shadow-2xl"
+                      className="object-contain object-bottom drop-shadow-2xl"
                       priority
                     />
                   </div>
