@@ -1,0 +1,29 @@
+{
+  "id": "after_case_007",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/mako_hall_corridor.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "なの", "text": "……ジオーネ先生は、自分も問おうとした人だったんだ。指を切られて……問うのをやめた" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……ボクも、問うのが怖いのだ。でも——" },
+    { "type": "dialogue", "speaker": "なの", "text": "でも？" },
+    { "type": "scene", "background": "/images/events/mako_hall_exterior_dusk.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……ボク、怖いけど——もう黙ってられないのだ。ボクの種族のこと。この世界のこと。……全部知りたいのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "トイマル……" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "大裁定官の居城に、全ての記録があるはずなのだ。行こう、なの" },
+    { "type": "dialogue", "speaker": "なの", "text": "……うん。最後まで、一緒に行こう" },
+    { "type": "scene", "background": "/images/events/street_dawn.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_determined.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "全ての始まりの場所へ。全ての嘘が生まれた場所へ。二人は歩き出した。" },
+    { "type": "dialogue", "speaker": null, "text": "——これが、最後の事件になる。" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 600 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}

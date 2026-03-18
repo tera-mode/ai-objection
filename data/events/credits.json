@@ -1,0 +1,32 @@
+{
+  "id": "credits",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "dialogue", "speaker": null, "text": "問わない異世界の探偵少女" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_001/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース1：市場の毒殺事件" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_002/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース2：闘技場の不正" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_003/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース3：伝言ギルドの噂" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_004/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース4：月夜の唄の歌姫" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_005/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース5：市民裁定広場の多数決" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_006/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース6：格付け塔の星" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_007/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース7：マコト堂の恩師" },
+    { "type": "character", "position": "right", "image": "/images/characters/case_008/normal.png", "name": "" },
+    { "type": "dialogue", "speaker": null, "text": "ケース8：大裁定官の書庫" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "主人公：南出 なの　相棒：トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "「この世界に足りないのは、たったひとつの言葉。——『なんで？』」" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 1000 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}

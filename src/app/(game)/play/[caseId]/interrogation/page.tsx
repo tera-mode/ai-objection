@@ -35,6 +35,10 @@ function getCharacterImage(caseId: string, coherence: number, maxCoherence: numb
     case_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_003: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_004: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
+    case_005: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
+    case_006: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
+    case_007: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
+    case_008: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_001: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_002: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
     case_sample_003: ['normal', 'nervous', 'cornered', 'breaking', 'collapsed'],
@@ -53,6 +57,10 @@ function getInterrogationBg(caseId: string): string | null {
     case_002: '/images/backgrounds/case_002_interrogation.jpg',
     case_003: '/images/backgrounds/case_003_interrogation.jpg',
     case_004: '/images/backgrounds/case_004_interrogation.jpg',
+    case_005: '/images/backgrounds/case_005_interrogation.jpg',
+    case_006: '/images/backgrounds/case_006_interrogation.jpg',
+    case_007: '/images/backgrounds/case_007_interrogation.jpg',
+    case_008: '/images/backgrounds/case_008_interrogation.jpg',
     case_sample_001: '/images/backgrounds/case_sample_001_interrogation.jpg',
     case_sample_002: '/images/backgrounds/case_sample_002_interrogation.jpg',
     case_sample_003: '/images/backgrounds/case_sample_003_interrogation.jpg',
@@ -67,6 +75,10 @@ const INTRO_IMAGES: Record<string, string> = {
   case_002: '/images/intro/case_002_intro.jpg',
   case_003: '/images/intro/case_003_intro.jpg',
   case_004: '/images/intro/case_004_intro.jpg',
+  case_005: '/images/intro/case_005_intro.jpg',
+  case_006: '/images/intro/case_006_intro.jpg',
+  case_007: '/images/intro/case_007_intro.jpg',
+  case_008: '/images/intro/case_008_intro.jpg',
   case_sample_001: '/images/intro/case_sample_001_intro.jpg',
   case_sample_002: '/images/intro/case_sample_002_intro.jpg',
   case_sample_003: '/images/intro/case_sample_003_intro.jpg',
@@ -467,7 +479,7 @@ function GameFooter({
           className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-stone-500 transition-colors hover:text-amber-600"
         >
           <span className="text-lg">📜</span>
-          <span>証言記録</span>
+          <span>証言</span>
         </button>
         <button
           onClick={onEvidenceOpen}

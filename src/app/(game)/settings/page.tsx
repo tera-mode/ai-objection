@@ -12,10 +12,20 @@ const PROGRESS_KEYS = [
   'event_after_case_002_seen',
   'event_after_case_003_seen',
   'event_after_case_004_seen',
+  'event_after_case_005_seen',
+  'event_after_case_006_seen',
+  'event_after_case_007_seen',
+  'event_after_case_008_seen',
+  'event_ending_seen',
+  'event_credits_seen',
   'case_case_001_cleared',
   'case_case_002_cleared',
   'case_case_003_cleared',
   'case_case_004_cleared',
+  'case_case_005_cleared',
+  'case_case_006_cleared',
+  'case_case_007_cleared',
+  'case_case_008_cleared',
 ];
 
 export default function SettingsPage() {

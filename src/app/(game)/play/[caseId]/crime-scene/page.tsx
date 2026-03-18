@@ -12,6 +12,10 @@ const INTRO_IMAGES: Record<string, string> = {
   case_002: '/images/intro/case_002_intro.jpg',
   case_003: '/images/intro/case_003_intro.jpg',
   case_004: '/images/intro/case_004_intro.jpg',
+  case_005: '/images/intro/case_005_intro.jpg',
+  case_006: '/images/intro/case_006_intro.jpg',
+  case_007: '/images/intro/case_007_intro.jpg',
+  case_008: '/images/intro/case_008_intro.jpg',
   case_sample_001: '/images/intro/case_sample_001_intro.jpg',
   case_sample_002: '/images/intro/case_sample_002_intro.jpg',
   case_sample_003: '/images/intro/case_sample_003_intro.jpg',
@@ -23,6 +27,10 @@ const CRIMINAL_BG: Record<string, string> = {
   case_002: '/images/backgrounds/case_002_interrogation.jpg',
   case_003: '/images/backgrounds/case_003_interrogation.jpg',
   case_004: '/images/backgrounds/case_004_interrogation.jpg',
+  case_005: '/images/backgrounds/case_005_interrogation.jpg',
+  case_006: '/images/backgrounds/case_006_interrogation.jpg',
+  case_007: '/images/backgrounds/case_007_interrogation.jpg',
+  case_008: '/images/backgrounds/case_008_interrogation.jpg',
 };
 
 const CRIMINAL_CHAR: Record<string, string> = {
@@ -30,6 +38,10 @@ const CRIMINAL_CHAR: Record<string, string> = {
   case_002: '/images/characters/case_002/normal.png',
   case_003: '/images/characters/case_003/normal.png',
   case_004: '/images/characters/case_004/normal.png',
+  case_005: '/images/characters/case_005/normal.png',
+  case_006: '/images/characters/case_006/normal.png',
+  case_007: '/images/characters/case_007/normal.png',
+  case_008: '/images/characters/case_008/normal.png',
 };
 
 interface CasePageData {

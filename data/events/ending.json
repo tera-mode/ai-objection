@@ -1,0 +1,33 @@
+{
+  "id": "ending",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/market_morning.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "なの。……ボク、聞いていいのだ？" },
+    { "type": "dialogue", "speaker": "なの", "text": "……なに？" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "なのは、いつか元の世界に帰るのだ？" },
+    { "type": "dialogue", "speaker": "なの", "text": "……わかんない。でも——あたしがここにいる意味は、あったと思う" },
+    { "type": "dialogue", "speaker": null, "text": "そのとき——なのの手にした推理小説のページが、再び光り始めた。" },
+    { "type": "character", "position": "left" },
+    { "type": "dialogue", "speaker": "なの", "text": "あ……また光って——トイマル！ ありがとう！ あたし——" },
+    { "type": "dialogue", "speaker": null, "text": "光に包まれて、なのの姿が消えた。残されたのは、石畳の上に落ちた一冊の本と、本を見つめる小さな生き物だけだった。" },
+    { "type": "scene", "background": "/images/events/library_sunset.webp", "transition": "fade", "duration": 1000 },
+    { "type": "character", "position": "right" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "dialogue", "speaker": "なの", "text": "……あれ。図書室？ あたし、夢……？ ……ううん。違う。夢なんかじゃない" },
+    { "type": "dialogue", "speaker": null, "text": "放課後の図書室。窓から西日が差し込んでいる。手には、あの推理小説。——でも、目を閉じると、石畳の街と、大きな耳の小さな友達の声が聞こえる気がした。" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 800 },
+    { "type": "character", "position": "left" },
+    { "type": "character", "position": "right", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "dialogue", "speaker": "なの", "text": "——ねぇ" },
+    { "type": "dialogue", "speaker": "なの", "text": "マコト界のみんなは、問うことを忘れてた。『信じることが優しさ』って教えられて、誰も『なんで？』って言わなくなった。——ねえ、あなたの世界はどう？ 動画で見たこと、そのまま信じてない？ AIが言ったこと、確かめてる？" },
+    { "type": "dialogue", "speaker": "なの", "text": "……べつに、全部疑えって言ってるんじゃないよ。ただ——『本当かな？』って、一回だけ立ち止まってみて。それだけで、世界はちょっと変わるから。" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 1000 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/event/credits"
+  }
+}

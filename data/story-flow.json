@@ -60,6 +60,72 @@
       "type": "event",
       "id": "after_case_004",
       "title": "ケース4 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_005",
+      "title": "ケース5：市民裁定広場の多数決",
+      "card": {
+        "characterImage": "/images/characters/case_005/normal.png",
+        "backgroundImage": "/images/intro/case_005_intro.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_005",
+      "title": "ケース5 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_006",
+      "title": "ケース6：格付け塔の星",
+      "card": {
+        "characterImage": "/images/characters/case_006/normal.png",
+        "backgroundImage": "/images/intro/case_006_intro.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_006",
+      "title": "ケース6 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_007",
+      "title": "ケース7：マコト堂の恩師",
+      "card": {
+        "characterImage": "/images/characters/case_007/normal.png",
+        "backgroundImage": "/images/intro/case_007_intro.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_007",
+      "title": "ケース7 後日談"
+    },
+    {
+      "type": "case",
+      "id": "case_008",
+      "title": "ケース8：大裁定官の書庫",
+      "card": {
+        "characterImage": "/images/characters/case_008/normal.png",
+        "backgroundImage": "/images/intro/case_008_intro.jpg"
+      }
+    },
+    {
+      "type": "event",
+      "id": "after_case_008",
+      "title": "ケース8 後日談"
+    },
+    {
+      "type": "event",
+      "id": "ending",
+      "title": "エンディング：なのの帰還"
+    },
+    {
+      "type": "event",
+      "id": "credits",
+      "title": "エンドロール"
     }
   ]
 }
