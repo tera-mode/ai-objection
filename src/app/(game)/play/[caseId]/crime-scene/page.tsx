@@ -17,6 +17,21 @@ const INTRO_IMAGES: Record<string, string> = {
   case_sample_003: '/images/intro/case_sample_003_intro.jpg',
 };
 
+// ケース別・容疑者登場用画像
+const CRIMINAL_BG: Record<string, string> = {
+  case_001: '/images/backgrounds/case_001_interrogation.jpg',
+  case_002: '/images/backgrounds/case_002_interrogation.jpg',
+  case_003: '/images/backgrounds/case_003_interrogation.jpg',
+  case_004: '/images/backgrounds/case_004_interrogation.jpg',
+};
+
+const CRIMINAL_CHAR: Record<string, string> = {
+  case_001: '/images/characters/case_001/normal.png',
+  case_002: '/images/characters/case_002/normal.png',
+  case_003: '/images/characters/case_003/normal.png',
+  case_004: '/images/characters/case_004/normal.png',
+};
+
 interface CasePageData {
   title: string;
   storyText: {
@@ -99,8 +114,41 @@ function CrimeSceneContent({ caseId }: { caseId: string }) {
 
         {phase === 'criminal' && (
           <div className="flex flex-col gap-6">
+            {/* 犯人キャラ＋背景カード */}
+            {(CRIMINAL_BG[caseId] || CRIMINAL_CHAR[caseId]) && (
+              <div className="relative overflow-hidden rounded-2xl shadow-sm" style={{ height: '240px' }}>
+                {CRIMINAL_BG[caseId] && (
+                  <Image
+                    src={CRIMINAL_BG[caseId]}
+                    alt=""
+                    fill
+                    className="object-cover object-top"
+                    sizes="448px"
+                    priority
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+                {CRIMINAL_CHAR[caseId] && (
+                  <div className="absolute bottom-0 right-0 h-full flex items-end">
+                    <Image
+                      src={CRIMINAL_CHAR[caseId]}
+                      alt="容疑者"
+                      width={180}
+                      height={240}
+                      className="object-contain object-bottom drop-shadow-2xl"
+                      priority
+                    />
+                  </div>
+                )}
+                <div className="absolute bottom-3 left-4">
+                  <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider">容疑者登場</p>
+                </div>
+              </div>
+            )}
             <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-5">
-              <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">容疑者登場</p>
+              {!CRIMINAL_BG[caseId] && (
+                <p className="mb-3 text-xs font-semibold text-amber-600 uppercase tracking-wider">容疑者登場</p>
+              )}
               <p className="text-sm leading-relaxed text-stone-700 whitespace-pre-line">{data.storyText.criminalIntro}</p>
             </div>
             <button
