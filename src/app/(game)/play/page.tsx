@@ -90,8 +90,7 @@ export default function PlayPage() {
     }
   }, [items]);
 
-  function handleItemClick(item: StoryFlowItem, index: number) {
-    if (!isItemUnlocked(items, index)) return;
+  function handleItemClick(item: StoryFlowItem, _index: number) {
     if (item.type === 'event') {
       // prologue は prologue_a → mini_prologue → prologue_b のフロー
       const eventRoute = item.id === 'prologue' ? 'prologue_a' : item.id;
@@ -145,10 +144,9 @@ export default function PlayPage() {
                 <div key={item.id} ref={isFirstTarget ? firstUnlockedRef : null}>
                   <button
                     onClick={() => handleItemClick(item, index)}
-                    disabled={!unlocked}
                     className={`w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${
                       !unlocked
-                        ? 'border-stone-200 bg-stone-100 opacity-50 cursor-not-allowed'
+                        ? 'border-stone-200 bg-stone-100 opacity-60'
                         : completed
                         ? 'border-stone-200 bg-stone-50 hover:border-stone-300'
                         : 'border-amber-300 bg-amber-50 hover:border-amber-400 hover:bg-amber-100'
@@ -176,14 +174,13 @@ export default function PlayPage() {
               <div key={item.id} ref={isFirstTarget ? firstUnlockedRef : null}>
                 <button
                   onClick={() => handleItemClick(item, index)}
-                  disabled={!unlocked}
                   data-testid={`case-select-${item.id}`}
                   className={`w-full relative overflow-hidden rounded-2xl text-left transition-all ${
                     !unlocked
-                      ? 'opacity-50 cursor-not-allowed'
+                      ? 'opacity-60'
                       : 'hover:scale-[1.01] active:scale-100'
                   }`}
-                  style={{ height: '160px' }}
+                  style={{ height: '200px' }}
                 >
                   {/* 背景画像 */}
                   {card?.backgroundImage ? (
@@ -191,25 +188,25 @@ export default function PlayPage() {
                       src={card.backgroundImage}
                       alt=""
                       fill
-                      className="object-cover"
+                      className="object-cover object-top"
                       sizes="448px"
                     />
                   ) : (
                     <div className="absolute inset-0 bg-stone-700" />
                   )}
 
-                  {/* 暗めオーバーレイ */}
-                  <div className="absolute inset-0 bg-black/50" />
+                  {/* 暗めオーバーレイ（下側を強く） */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
 
                   {/* キャラ画像 */}
-                  {card?.characterImage && unlocked && (
-                    <div className="absolute bottom-0 right-4 h-full flex items-end">
+                  {card?.characterImage && (
+                    <div className="absolute bottom-0 right-2 h-full flex items-end">
                       <Image
                         src={card.characterImage}
                         alt=""
-                        width={100}
-                        height={140}
-                        className="object-contain object-bottom drop-shadow-lg"
+                        width={160}
+                        height={200}
+                        className="object-contain object-bottom drop-shadow-2xl"
                       />
                     </div>
                   )}

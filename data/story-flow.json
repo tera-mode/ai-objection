@@ -11,7 +11,7 @@
       "title": "ケース1：流行通りの色水",
       "card": {
         "characterImage": "/images/characters/case_001/normal.png",
-        "backgroundImage": "/images/backgrounds/case_001_interrogation.jpg"
+        "backgroundImage": "/images/intro/case_001_intro.jpg"
       }
     },
     {
@@ -25,7 +25,7 @@
       "title": "ケース2：闘技場の惨劇",
       "card": {
         "characterImage": "/images/characters/case_002/normal.png",
-        "backgroundImage": "/images/backgrounds/case_002_interrogation.jpg"
+        "backgroundImage": "/images/intro/case_002_intro.jpg"
       }
     },
     {
@@ -39,7 +39,7 @@
       "title": "ケース3：噂と真実の間",
       "card": {
         "characterImage": "/images/characters/case_003/normal.png",
-        "backgroundImage": "/images/backgrounds/case_003_interrogation.jpg"
+        "backgroundImage": "/images/intro/case_003_intro.jpg"
       }
     },
     {
@@ -53,7 +53,7 @@
       "title": "ケース4：仮面の歌姫",
       "card": {
         "characterImage": "/images/characters/case_004/normal.png",
-        "backgroundImage": "/images/backgrounds/case_004_interrogation.jpg"
+        "backgroundImage": "/images/intro/case_004_intro.jpg"
       }
     },
     {
