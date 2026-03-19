@@ -112,13 +112,25 @@ export function useVoiceChat({ criminalGender = 'male', onTranscript }: UseVoice
   }, []);
 
   const speakText = useCallback(async (text: string) => {
+    // マークダウン記号を除去して音声読み上げ向けにサニタイズ
+    const sanitized = text
+      .replace(/\*\*(.*?)\*\*/g, '$1')  // **bold**
+      .replace(/\*(.*?)\*/g, '$1')       // *italic*
+      .replace(/__(.*?)__/g, '$1')       // __bold__
+      .replace(/_(.*?)_/g, '$1')         // _italic_
+      .replace(/`{1,3}[^`]*`{1,3}/g, '') // `code` / ```code```
+      .replace(/#+\s/g, '')              // # heading
+      .replace(/>\s/g, '')               // > blockquote
+      .replace(/[-*+]\s/g, '')           // - list items
+      .trim();
+
     // isVoiceModeOn のチェックは呼び出し側で行う（stale closure 回避）
     setVoiceState('speaking');
 
     try {
       const res = await authenticatedFetch('/api/tts', {
         method: 'POST',
-        body: JSON.stringify({ text, gender: criminalGender }),
+        body: JSON.stringify({ text: sanitized, gender: criminalGender }),
       });
       const { audioBase64 } = await res.json();
 
