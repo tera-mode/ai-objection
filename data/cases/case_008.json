@@ -141,6 +141,27 @@
       "unlocks_evidence": "ev_preservation",
       "toimaru_recall": "隠し部屋にフルモーンさんの手書きのノートがあったのだ。50年分の記録。虫を払った日、布を替えた日……ずっと大切に守ってきたんだ。なんで捨てなかったんだろう",
       "source_description": "隠し部屋の中でトイマルが発見したフルモーンの個人保管記録"
+    },
+    {
+      "id": "mem_key_log",
+      "trigger_keywords": ["鍵", "時間", "点検", "鐘", "スケジュール", "いつ"],
+      "unlocks_evidence": "ev_key_log",
+      "toimaru_recall": "書庫の入口の管理人さんが衛兵に何か報告してたのだ。鍵の使用記録を見せながら……当日の時間帯の話をしてたのだ",
+      "source_description": "衛兵が書庫入口の管理人から鍵使用記録について聞いていた"
+    },
+    {
+      "id": "mem_notebook",
+      "trigger_keywords": ["ノート", "調査", "研究", "メモ", "カイゲーナ", "書いた"],
+      "unlocks_evidence": "ev_notebook",
+      "toimaru_recall": "カイゲーナさんのポケットにノートがあったのだ。最後のページに何か書いてあって……ボク、読んで胸が痛くなったのだ",
+      "source_description": "カイゲーナの遺留品からトイマルが確認したノートの最後のページ"
+    },
+    {
+      "id": "mem_dust",
+      "trigger_keywords": ["棚", "移動", "埃", "ずれ", "動かした", "レール"],
+      "unlocks_evidence": "ev_dust",
+      "toimaru_recall": "3階の棚の下の床に、棚を最近動かした跡があったのだ。衛兵さんが調べてて……埃のパターンがおかしいって言ってたのだ",
+      "source_description": "衛兵が書庫棟3階の棚を調べていたときにトイマルが見ていた"
     }
   ]
 }
