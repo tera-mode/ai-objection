@@ -82,6 +82,29 @@ function ResultContent({ caseId }: { caseId: string }) {
           </div>
         )}
 
+        {/* 負け時：リトライ訴求カード */}
+        {!isArrest && (
+          <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 w-full">
+            <p className="mb-3 text-sm font-bold text-amber-700">💡 もう一度挑戦できます</p>
+            <ul className="space-y-2 text-sm text-stone-700">
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-amber-500">📜</span>
+                <span>前回の会話は尋問画面の<span className="font-semibold">「証言」ログ</span>でいつでも確認できます</span>
+              </li>
+              {(session.unlockedEvidenceIds?.length ?? 0) > 0 && (
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5 shrink-0 text-amber-500">🔓</span>
+                  <span>
+                    アンロック済みの証拠
+                    <span className="font-semibold text-amber-600"> {session.unlockedEvidenceIds.length}件</span>
+                    はそのまま引き継がれます
+                  </span>
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
+
         {/* アクション */}
         <div className="flex w-full flex-col gap-3">
           {/* eventAfter がある場合（mini_prologue 等）は専用ボタン */}
@@ -100,7 +123,7 @@ function ResultContent({ caseId }: { caseId: string }) {
                   onClick={() => router.push(`/play/${caseId}/crime-scene`)}
                   className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400"
                 >
-                  もう一度挑戦する
+                  🔄 前回の証言を活かして再挑戦する
                 </button>
               )}
             </>
@@ -110,7 +133,7 @@ function ResultContent({ caseId }: { caseId: string }) {
                 onClick={() => router.push(`/play/${caseId}/crime-scene`)}
                 className="w-full rounded-xl bg-amber-500 py-4 font-bold text-white transition-colors hover:bg-amber-400"
               >
-                もう一度挑戦する
+                {isArrest ? 'もう一度挑戦する' : '🔄 前回の証言を活かして再挑戦する'}
               </button>
               <button
                 onClick={() => router.push('/play')}

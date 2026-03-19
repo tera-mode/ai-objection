@@ -52,6 +52,13 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
   const startSession = useCallback(async (caseId: string): Promise<GameSession> => {
     setIsLoading(true);
+
+    // リトライ時（同ケースで escape 負け）は証拠を引き継ぐ
+    const inheritEvidenceIds: string[] =
+      session?.caseId === caseId && session?.verdict === 'escape' && session.unlockedEvidenceIds.length > 0
+        ? session.unlockedEvidenceIds
+        : [];
+
     try {
       // 過去の完了セッションから犯人の証言を取得
       try {
@@ -97,7 +104,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       // セッション作成
       const res = await authenticatedFetch('/api/save-session', {
         method: 'POST',
-        body: JSON.stringify({ caseId, action: 'create' }),
+        body: JSON.stringify({ caseId, action: 'create', inheritEvidenceIds }),
       });
 
       if (!res.ok) {
@@ -155,7 +162,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const sendMessage = useCallback(async (message: string) => {
     if (!session || isCriminalThinking) return;

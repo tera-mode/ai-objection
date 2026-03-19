@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { action, caseId, sessionId, session } = body;
+    const { action, caseId, sessionId, session, inheritEvidenceIds } = body;
 
     if (action === 'create') {
       // 新規セッション作成
@@ -37,6 +37,12 @@ export async function POST(request: NextRequest) {
           initialUnlockedEvidenceIds = caseData.evidence.map((e) => e.id);
         }
       } catch { /* ケースが見つからなくてもセッション作成は続行 */ }
+
+      // リトライ時に前セッションのアンロック済み証拠を引き継ぐ
+      if (Array.isArray(inheritEvidenceIds) && inheritEvidenceIds.length > 0) {
+        const merged = new Set([...initialUnlockedEvidenceIds, ...inheritEvidenceIds]);
+        initialUnlockedEvidenceIds = Array.from(merged);
+      }
 
       const newSession = {
         sessionId: newSessionId,
