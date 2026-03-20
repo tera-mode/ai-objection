@@ -22,6 +22,13 @@
     { "type": "dialogue", "speaker": "なの", "text": "（消された看板、削られた碑文、封印された本、消された歌詞——全部つながってる気がする。この世界で『問うこと』を消したのは、一体誰？）" },
     { "type": "dialogue", "speaker": "トイマル", "text": "なの、マコト堂の長老さまが、ボクたちに話があるって言ってたのだ" },
     { "type": "dialogue", "speaker": "なの", "text": "マコト堂の長老……。いよいよ、この世界の秘密に近づいてるのかもね" },
+    { "type": "scene", "background": "/images/events/bokul_workshop.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "character", "position": "right", "image": "/images/characters/bokul/neutral.webp", "name": "ボクール" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……ボク、見た目がきれいだったから信じちゃったのだ" },
+    { "type": "dialogue", "speaker": "ルミーナ", "text": "泣いてるから正しいとは限らない。……でも泣いてる人を疑うのは、つらいよね" },
+    { "type": "dialogue", "speaker": "ボクール", "text": "ほっほ。わしの小鳥も見た目は下手じゃろう？ でも子供らは触れば分かる。手触りがいいんじゃ。見た目より、触って確かめることじゃよ" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……触って、確かめる。……なのだ" },
     { "type": "effect", "name": "fadeToBlack", "duration": 600 }
   ],
   "onComplete": {
