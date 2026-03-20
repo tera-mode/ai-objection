@@ -465,61 +465,71 @@ always carrying a worn leather notebook
 
 ## case_008「大裁定官の書庫」——昔からそうだった
 
-### 犯人：フルモーン（男）
+### 犯人：オキテオン（男）
 
-**名前の由来**: 「古守（ふるもり）」＋「-ン」。「フル＝古い」＋「ムーン＝守る」の二重読み
+**名前の由来**: 「掟（おきて）」＋「-オン」。掟そのものの擬人化。
 
-**「そのまんま」な部分**: 白い長い髭。杖をついた老人。穏やかで博識。「昔からそうじゃ」が口癖。まさに「伝統の守護者」。
+**「そのまんま」な部分**: 長身痩躯の厳格な裁定者。白銀の法衣＋翼の装飾マント。大裁定官の右腕にして事実上の最高権力者。「秩序のために」を絶対の信条とする冷静な確信犯。
 
-**ギャップ**: 書庫の奥の自分の部屋に、「問いの書」のオリジナルの写しを大切に保管している。改竄されたことを知っていて、しかも原本を守り続けてきた。「変えてはならない」と言いながら「変える前」を捨てられなかった矛盾。自分自身が「問う力」を最も恐れ、かつ最も敬っている人間。崩壊時に「……わしが守ってきたのは、秩序ではなく——嘘じゃった」。
+**ギャップ**: 原本を燃やせなかった＋ルミーナを殺しきれなかった。ルミーナ生存を知り、50年の「正しさ」が崩壊→改心。崩壊時に法典をテーブルに置いて手放す——翼マントが力なく垂れ下がる。
 
 #### 共通キャラクター設定（全5感情で使用）
 
 ```
-Fantasy world elderly man age 80, frail and ancient but dignified (NOT Gandalf — distinguish clearly),
-long flowing white beard reaching mid-chest, deeply wrinkled kind face,
-milky pale blue eyes, bushy white eyebrows, bald head with a few wisps of white hair,
-wearing a DEEP BURGUNDY archivist robe (NOT grey NOT blue NOT white) with intricate ancient gold embroidery depicting books and keys,
-leaning on a gnarled dark wooden staff topped with a glowing AMBER CRYSTAL,
-a heavy IRON KEY RING with multiple large keys hanging from belt
+Fantasy world elderly man age 70, tall imposing thin build with severe posture,
+long straight silver-white hair swept back severely past shoulders,
+pale ice-blue eyes, calm but cold expression radiating absolute authority,
+high angular cheekbones, clean-shaven, deep lines of conviction on face,
+wearing pure white and silver ceremonial judicial robe with high standing collar,
+intricate gold embroidery along edges depicting scales of justice,
+SIGNATURE FEATURE: large ornamental wing-shaped mantle attached to shoulders,
+the mantle fans out behind him like spread angel wings made of layered white fabric
+with gold-tipped edges and fine silver thread feather patterns,
+golden crest of Makoto Oath pinned at center of chest,
+holding a thick leather-bound law codex with gold clasps in right hand,
+gold signet rings on both hands
 ```
 
-> ⚠️ ガンダルフに似やすい。バーガンディ色のローブ・鍵束・琥珀の水晶杖の3点を必ずプロンプトに入れること。グレーや白のローブにならないよう `deep burgundy robe NOT grey NOT white` と明示すること。
+> ⚠️ 翼マントが最重要の視覚演出。4感情では堂々と広がっているが、collapsedでは力なく垂れ下がる。法典も4感情では必ず持っているが、collapsedで手放す。
 
 #### 感情別
 
 | emotion | EMOTION 記述 |
 |---------|-------------|
-| `normal` | serene wise old man expression, gentle half-smile, one hand resting on staff, eyes half-closed as if remembering something distant, grandfatherly warmth |
-| `nervous` | eyes opening wider, hand gripping staff tighter, slight stiffness in posture, the gentleness becoming guarded |
-| `cornered` | jaw set firm, eyes sharp and suddenly very alert despite age, free hand reaching protectively toward key ring, ancient authority radiating |
-| `breaking` | trembling, staff shaking, eyes glistening with unshed tears, face contorting between anger and grief, decades of suppressed emotion surfacing |
-| `collapsed` | staff dropped, shoulders sagging under invisible weight, tears flowing freely into white beard, eyes looking upward as if apologizing to someone no longer alive, profound sorrow and relief mixed |
+| `normal` | serene authoritative expression, chin slightly raised, law codex held firmly in right hand against chest, wing-mantle spread symmetrically behind like a protective shield, radiating calm absolute certainty |
+| `nervous` | same composed expression but eyes narrowing slightly, left hand adjusting collar, wing-mantle edges slightly ruffled, law codex grip tightening with whitened knuckles |
+| `cornered` | jaw clenched, ice-blue eyes widening with intensity, wing-mantle pulled forward defensively like folding wings, law codex raised as if it were a shield, first visible crack in composure |
+| `breaking` | composure shattering, voice raised for the first time, wing-mantle disheveled and asymmetrical, one hand gesturing forcefully while the other clutches law codex to chest, eyes showing fear beneath anger |
+| `collapsed` | law codex placed down on table (NOT held), hands empty and trembling, wing-mantle hanging limp and deflated behind him, shoulders dropped, eyes glistening with tears, an old man stripped of his false righteousness |
 
 #### カラーパレット
 | 部位 | 色 |
 |------|-----|
-| 髭・眉 | 白 |
-| 目 | 淡いペールブルー（老人の薄い色） |
-| ローブ | ディープバーガンディ＋金の刺繍 |
-| 杖 | ダークブラウンの木＋琥珀のクリスタル |
-| 鍵束 | 鉄の黒 |
+| 髪 | 白銀（シルバーホワイト） |
+| 目 | アイスブルー（冷たく薄い青） |
+| 法衣 | 純白＋銀の光沢 |
+| 翼マント | 白布地＋金の縁取り＋銀の羽模様 |
+| 刺繍 | ゴールド |
+| 法典 | ダークブラウン革＋金の留め具 |
 
 ---
 
-### 被害者：カイゲーナ（女）
+### 被害者：ルミーナ（女）
 
-**名前の由来**: 「開眼（真実に目覚める）」＋女性名語尾（-ナ）
+**名前の由来**: lumen（光）＋「-ナ」。暗い書庫を照らす光、真実に光を当てる者。
 
-**外見**: 25歳。若い女性の古文書研究者。知的だが活発な印象。セミロングの栗色の髪を無造作にまとめている。丸眼鏡。インクの染みた指。マコト堂の研究者ローブを着ているが、あちこちに古文書の紙片をメモ代わりに挟んでいる。なのと年齢は離れているが、「問う力」を持つ同志として共鳴する存在。
+**外見**: 16歳。マコト堂の見習い研究生。好奇心旺盛で行動派。なのの親友。**眼鏡なし**。なのと補完関係——なのが「考えてから動く」なら、ルミーナは「動きながら考える」。case_008で重体になるが生存。
 
 ```
-Fantasy world young woman age 25, energetic intellectual appearance,
-bright curious amber eyes behind round wire-rimmed glasses,
-medium-length chestnut hair messily tied up with a pencil stuck through the bun,
-ink-stained fingers, rosy cheeks from excitement,
-wearing Makoto Church researcher robe (lighter cream color) with countless paper scraps and bookmarks sticking out of every pocket and fold,
-a magnifying glass on a chain around neck
+Fantasy world young woman age 16, energetic and curious appearance,
+bright warm amber eyes (NO glasses),
+medium-length chestnut-brown hair messily tied up with a pencil stuck through the bun,
+rosy cheeks, slightly freckled nose,
+wearing Makoto Church apprentice researcher robe (light cream color, shorter than adult version),
+countless paper scraps and bookmarks sticking out of every pocket and fold,
+a small brass magnifying glass on a chain around neck,
+brown leather satchel overflowing with scrolls,
+cheerful and determined expression
 ```
 
 ---
@@ -535,7 +545,7 @@ a magnifying glass on a chain around neck
 | 5 | シュガロン | ネイビー＋白毛皮＋ゴールド | イロンダ | ブラウン革＋赤毛 |
 | 6 | カクスター | チャコールグレー＋シルバー | ボクール | ブラウン作業着＋白髭 |
 | 7 | ジオーネ | クリーム＋ゴールド | トイーダ | クリーム（汚れ）＋黒髪 |
-| 8 | フルモーン | バーガンディ＋ゴールド刺繍 | カイゲーナ | ライトクリーム＋栗色 |
+| 8 | オキテオン | 白銀＋ゴールド刺繍 | ルミーナ | ライトクリーム＋栗色 |
 
 全キャラのメインカラーが被らないように配色。ケース内で犯人と被害者のコントラストが出るよう設計。
 
@@ -552,7 +562,7 @@ a magnifying glass on a chain around neck
 | 5 | シュガロン | 完璧な笑顔の政治家 | 感情がない空っぽ。笑顔は練習の産物 | 泣きながら笑う凍った顔 |
 | 6 | カクスター | 冷徹な数字の権化 | 妹の押し花を帳簿に挟んでいる | 舞い散る押し花 |
 | 7 | ジオーネ | 温かい理想の先生 | 自身も「問い」を封じられた被害者 | 右手の指の傷跡 |
-| 8 | フルモーン | 伝統の守護者の老人 | 改竄前の原本を密かに守ってきた | 「守ったのは嘘だった」の告白 |
+| 8 | オキテオン | 大裁定官の威厳ある守護者 | 自身が最大の改竄者だった | 法典を静かに置き、膝をつく姿 |
 
 ---
 
@@ -567,6 +577,6 @@ a magnifying glass on a chain around neck
 | 5 | シュガロン | 男 | イロンダ | 女 |
 | 6 | カクスター | 女 | ボクール | 男 |
 | 7 | ジオーネ | 男 | トイーダ | 男 |
-| 8 | フルモーン | 男 | カイゲーナ | 女 |
+| 8 | オキテオン | 男 | ルミーナ | 女 |
 
 **女性8 / 男性8（50%）**
