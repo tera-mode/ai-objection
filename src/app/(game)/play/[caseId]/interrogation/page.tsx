@@ -975,8 +975,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           {session.messages.map((msg, i) => (
             <MessageBubble key={i} message={msg} criminalName={meta.criminalName} />
           ))}
-          {/* トイマルのコメント（最新の犯人メッセージの後に表示） */}
-          {meta.hasCompanion && toimaruComment && session.messages.length > 0 && session.messages[session.messages.length - 1]?.role === 'criminal' && (
+          {/* トイマルのコメント（最新の犯人メッセージの後に表示。ブロック警告中は非表示） */}
+          {meta.hasCompanion && toimaruComment && !blockedWarning && session.messages.length > 0 && session.messages[session.messages.length - 1]?.role === 'criminal' && (
             <div className="flex items-start gap-2">
               <div className="h-6 w-6 shrink-0 rounded-full overflow-hidden bg-amber-100 flex items-center justify-center text-xs">
                 🐾
