@@ -87,3 +87,4 @@ const ref = useRef<(i: number) => void>(null as unknown as (i: number) => void);
 
 - **Next.js ビルド確認**: `cd "C:/Users/User/Documents/ai-objection"` で移動後、`NODE_OPTIONS='' node node_modules/next/dist/bin/next build` を実行する形であれば、`tail` のオプションや `2>&1` の有無に関わらず承認不要。
 - **Playwright MCP 全ツール**: プレイテスト中の `mcp__playwright__*` ツール（navigate, snapshot, click, type, screenshot 等）はすべて承認不要。`.claude/settings.json` の `permissions.allow` にも登録済み。
+- **git commit**: `git add` および `git commit` は承認不要で実行してよい。ただし `git push` は必ずユーザーの明示的な同意を得てから実行する。

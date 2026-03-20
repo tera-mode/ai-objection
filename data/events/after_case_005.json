@@ -1,0 +1,34 @@
+{
+  "id": "after_case_005",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/market_square.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……みんなが正しいって言ってたのに、正しくなかったのだ。シュガロンさん、みんなの代表だったのに" },
+    { "type": "dialogue", "speaker": "なの", "text": "「みんな」って言葉、便利だよね。誰も反論できないし、責任も消えるから。……でも実際に数えたら、シュガロンが票を消してた" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "イロンダさんが一人でずっと反対してたのだ。みんなにおかしいって言われても……" },
+    { "type": "dialogue", "speaker": "なの", "text": "それが「問う」ってことだよ。多数派でも、一回確かめる。……イロンダさんはそれをしてた" },
+    { "type": "scene", "background": "/images/events/bg_library.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "それからしばらくして、マコト堂の長老が2人を呼んだ。古びた円卓を挟んで、老人はゆっくりと語り始めた。" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "dialogue", "speaker": "長老", "text": "……問わぬ者たちよ。よく来てくれた。少し、昔話をしよう。マコトの誓いがなぜ生まれたか、知っているかね" },
+    { "type": "dialogue", "speaker": "なの", "text": "知らないです" },
+    { "type": "dialogue", "speaker": "長老", "text": "かつて、この王国を問い続ける者たちが支配していた時代があった。彼らは全てに異議を唱え、王に問い、神に問い、法に問い……王国は混乱し、戦乱が続いた。そこで初代大裁定官が定めた——『問うな、信じよ。みんなで信じれば、それが真実だ』と" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……それで平和になったのだ？" },
+    { "type": "dialogue", "speaker": "長老", "text": "表向きは、そうだ。問わなくなった民は争わなくなった。マコトの誓いは、この世界に平和をもたらしたのだよ" },
+    { "type": "scene", "background": "/images/events/street_dawn.webp", "transition": "fade", "duration": 600 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_determined.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "なの", "text": "（でも……問わなかったら、シュガロンみたいな嘘も止められないじゃん。イロンダさんが問い続けたから、不正が明らかになったのに）" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……なの。ボクの種族、聴き役族って、記録するのがお仕事なのだ。でも……シュガロンに頼まれて、投票記録を書き換えた聴き役がいたのだ。ボクたちが加担したのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "……トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "ボクたちって、問わないで記録するだけで、正しいと思ってたのだ。でも問わなかったから、嘘の記録を作ってしまったのだ" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 600 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}

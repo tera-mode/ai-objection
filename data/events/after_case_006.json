@@ -1,0 +1,34 @@
+{
+  "id": "after_case_006",
+  "steps": [
+    { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
+    { "type": "scene", "background": "/images/events/street_evening.webp" },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……カクスターさん、押し花を持ってたのだ。数字じゃ測れないものを、ずっと持ってたのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "自分が一番わかってたんだよね。数字で測れないものが存在するって。でも認めたら、自分がやってきたことが全部崩れる——そう思って、ごまかし続けた" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "子供たちの手紙……。ボクも読んで、なんか胸が痛かったのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "うん。ボクールさんが大事にしてたものは、星じゃなかった" },
+    { "type": "scene", "background": "/images/events/old_library_interior.webp", "transition": "fade", "duration": 800 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_confused.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": null, "text": "格付け塔の地下記録保管庫。衛兵の調査で公開されたその場所に、なのたちは入ることができた。" },
+    { "type": "dialogue", "speaker": "なの", "text": "……この棚、一番奥の本。ホコリがすごい。触れていいのか……" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "これ、格付けの最初の基準書なのだ。すごく古いのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "第一条……文字が削られてる。うっすら読めるかな……『格付けは問いから始まる。なぜこの作品は美しいのか。なぜこの技術は価値があるのか』——" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……！ ここにも「問え」が消されてるのだ" },
+    { "type": "dialogue", "speaker": "なの", "text": "格付けって、本来は「なんで？」から始まるものだったんだ。でも誰かがそれを消した。数字だけ残して、問いを消した" },
+    { "type": "scene", "background": "/images/events/street_dawn.webp", "transition": "fade", "duration": 600 },
+    { "type": "character", "position": "left", "image": "/images/characters/nano/event_determined.png", "name": "なの" },
+    { "type": "character", "position": "right", "image": "/images/characters/toimaru/event_normal.png", "name": "トイマル" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "……なの。ボクたちの記録、投票記録（case_005で）も改竄された。格付けの問いも消された。この世界の「数字」も「記録」も……信じていいのだ？" },
+    { "type": "dialogue", "speaker": "なの", "text": "（看板の文字も、碑文も、封印された本も、歌詞も、問いの書も、投票記録も、格付けの基準も——全部誰かが消してる。誰が、なんのために？）" },
+    { "type": "dialogue", "speaker": "なの", "text": "マコト堂の長老に、もう少し聞かないといけないね" },
+    { "type": "dialogue", "speaker": "トイマル", "text": "うん……。なの、長老さまがまた話があるって言ってたのだ" },
+    { "type": "effect", "name": "fadeToBlack", "duration": 600 }
+  ],
+  "onComplete": {
+    "action": "navigate",
+    "path": "/play"
+  }
+}
