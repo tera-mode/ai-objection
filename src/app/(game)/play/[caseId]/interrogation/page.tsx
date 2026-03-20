@@ -579,7 +579,7 @@ function UnlockBanner({ evidenceName, onDismiss }: { evidenceName: string; onDis
 
 function InterrogationContent({ caseId }: { caseId: string }) {
   const router = useRouter();
-  const { session, previousTestimony, previousConversation, isCriminalThinking, sendMessage, arrestChallenge, startSession, unlockEvidence } = useGame();
+  const { session, previousTestimony, previousConversation, isCriminalThinking, blockedWarning, sendMessage, arrestChallenge, startSession, unlockEvidence } = useGame();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showIntro, setShowIntro] = useState(false);
   const [showEvidence, setShowEvidence] = useState(false);
@@ -984,6 +984,18 @@ function InterrogationContent({ caseId }: { caseId: string }) {
               <div className="rounded-2xl rounded-bl-sm border border-amber-200 bg-amber-50 px-3 py-2 max-w-[75%]">
                 <p className="mb-0.5 text-xs font-semibold text-amber-600">トイマル</p>
                 <p className="text-xs text-stone-600">{toimaruComment}</p>
+              </div>
+            </div>
+          )}
+          {/* NGワードブロック時のトイマル警告 */}
+          {blockedWarning && (
+            <div className="flex items-start gap-2">
+              <div className="h-6 w-6 shrink-0 rounded-full overflow-hidden bg-amber-100 flex items-center justify-center text-xs">
+                🐾
+              </div>
+              <div className="rounded-2xl rounded-bl-sm border border-red-200 bg-red-50 px-3 py-2 max-w-[75%]">
+                <p className="mb-0.5 text-xs font-semibold text-red-500">トイマル</p>
+                <p className="text-xs text-stone-600">{blockedWarning}</p>
               </div>
             </div>
           )}

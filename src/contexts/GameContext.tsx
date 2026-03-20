@@ -15,6 +15,7 @@ interface GameContextType {
   previousConversation: PreviousMessage[];
   isLoading: boolean;
   isCriminalThinking: boolean;
+  blockedWarning: string | null;
   startSession: (caseId: string) => Promise<GameSession>;
   sendMessage: (message: string) => Promise<void>;
   arrestChallenge: () => void;
@@ -28,6 +29,7 @@ const GameContext = createContext<GameContextType>({
   previousConversation: [],
   isLoading: false,
   isCriminalThinking: false,
+  blockedWarning: null,
   startSession: async () => { throw new Error('Not initialized'); },
   sendMessage: async () => {},
   arrestChallenge: () => {},
@@ -49,6 +51,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const [previousConversation, setPreviousConversation] = useState<PreviousMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCriminalThinking, setIsCriminalThinking] = useState(false);
+  const [blockedWarning, setBlockedWarning] = useState<string | null>(null);
 
   const startSession = useCallback(async (caseId: string): Promise<GameSession> => {
     setIsLoading(true);
@@ -168,6 +171,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
     if (!session || isCriminalThinking) return;
 
     setIsCriminalThinking(true);
+    setBlockedWarning(null);
 
     // プレイヤーメッセージを即座にUIに追加
     const playerMsg: ChatMessage = {
@@ -251,7 +255,20 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error(`Criminal response failed: ${errData.error ?? criminalRes.status}`);
       }
 
-      const { response: criminalResponse } = await criminalRes.json();
+      const criminalData = await criminalRes.json();
+
+      // NGワードブロック時：プレイヤーメッセージを戻してトイマル警告を表示
+      if (criminalData.blocked && criminalData.toimaruWarning) {
+        setSession((prev) => prev ? {
+          ...prev,
+          messages: prev.messages.slice(0, -1),
+          turn: prev.turn - 1,
+        } : null);
+        setBlockedWarning(criminalData.toimaruWarning);
+        return;
+      }
+
+      const { response: criminalResponse } = criminalData;
 
       const newCoherence = Math.max(0, Math.min(session.maxCoherence, session.coherence + coherenceChange));
 
@@ -421,7 +438,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <GameContext.Provider value={{ session, previousTestimony, previousConversation, isLoading, isCriminalThinking, startSession, sendMessage, arrestChallenge, loadSession, unlockEvidence }}>
+    <GameContext.Provider value={{ session, previousTestimony, previousConversation, isLoading, isCriminalThinking, blockedWarning, startSession, sendMessage, arrestChallenge, loadSession, unlockEvidence }}>
       {children}
     </GameContext.Provider>
   );

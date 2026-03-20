@@ -3,6 +3,8 @@ import { verifyAuth } from '@/lib/auth/verifyAuth';
 import { loadCase } from '@/lib/cases/caseLoader';
 import { buildCriminalAIPrompt } from '@/lib/prompts/criminalAI';
 import { getGenAI } from '@/lib/gemini';
+import { loadNGWords, checkContent } from '@/lib/moderation/contentFilter';
+import { HarmCategory, HarmBlockThreshold } from '@google/genai';
 
 export async function POST(request: NextRequest) {
   const auth = await verifyAuth(request);
@@ -16,6 +18,17 @@ export async function POST(request: NextRequest) {
 
     if (!message || !caseId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // NGワードチェック（APIコール前）
+    const ngWords = await loadNGWords();
+    const filterResult = checkContent(message, ngWords);
+    if (!filterResult.passed) {
+      return NextResponse.json({
+        response: null,
+        blocked: true,
+        toimaruWarning: filterResult.toimaruResponse,
+      });
     }
 
     const caseData = loadCase(caseId);
@@ -40,6 +53,12 @@ export async function POST(request: NextRequest) {
           systemInstruction: systemPrompt,
           maxOutputTokens: 200,
           thinkingConfig: { thinkingBudget: 0 },
+          safetySettings: [
+            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE },
+            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE },
+            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE },
+          ],
         },
         history,
       });
@@ -56,6 +75,16 @@ export async function POST(request: NextRequest) {
         throw err;
       }
     }
+    // safety_settings によるブロック判定
+    const finishReason = result?.candidates?.[0]?.finishReason;
+    if (finishReason === 'SAFETY') {
+      return NextResponse.json({
+        response: '……。',
+        blocked: false,
+        toimaruWarning: 'あれ？ この人、急に黙ったのだ……。別の質問をしてみるのだ！',
+      });
+    }
+
     // Geminiが証明度トークン(__confirmed__等)を出力することがあるため除去する
     const response = result!.text?.replace(/^__\w+__\s*/, '').trim();
 

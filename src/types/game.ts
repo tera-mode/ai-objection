@@ -66,6 +66,7 @@ export interface CharacterData {
     claim: string;
     structural_weaknesses: string[];
   };
+  offTopicBehavior?: string;
 }
 
 export interface Evidence {
