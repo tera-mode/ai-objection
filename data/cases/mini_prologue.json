@@ -4,7 +4,7 @@
   "difficulty": "easy",
   "description": "市場で果物商の老婆からリンゴを箱ごと盗んだ男を追い詰めろ。",
   "initialCoherence": 40,
-  "maxCoherence": 40,
+  "maxCoherence": 30,
   "eventAfter": {
     "victory": "/event/prologue_b"
   },
