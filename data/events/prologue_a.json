@@ -23,11 +23,11 @@
     { "type": "character", "position": "right", "image": null },
     { "type": "character", "position": "left", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
     { "type": "dialogue", "speaker": "なの", "text": "（……え？ 見えてるよね？ なんで誰も何も言わないの？）" },
-    { "type": "dialogue", "speaker": "なの", "text": "——あの、すみません！" },
+    { "type": "dialogue", "speaker": "なの", "text": "——え、なんで！？" },
     { "type": "dialogue", "speaker": null, "text": "全員がこちらを見る。" },
     { "type": "character", "position": "right", "image": "/images/characters/gamekichi/smug.png", "name": "ガメ吉" },
     { "type": "dialogue", "speaker": "ガメ吉", "text": "……あぁ？ なんだガキ" },
-    { "type": "dialogue", "speaker": "なの", "text": "その人、荷車の中にリンゴ入ってません？ あと、手にシミついてますけど" }
+    { "type": "dialogue", "speaker": "なの", "text": "その人、荷車の中にリンゴ入ってません？ なんで誰も問わないの？" }
   ],
   "onComplete": {
     "action": "navigate",
