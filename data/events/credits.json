@@ -4,7 +4,7 @@
     { "type": "effect", "name": "fadeFromBlack", "duration": 800 },
     { "type": "dialogue", "speaker": null, "text": "問わない異世界の探偵少女" },
     { "type": "character", "position": "right", "image": "/images/characters/case_001/normal.png", "name": "" },
-    { "type": "dialogue", "speaker": null, "text": "ケース1：市場の毒殺事件" },
+    { "type": "dialogue", "speaker": null, "text": "ケース1：流行通りの色水" },
     { "type": "character", "position": "right", "image": "/images/characters/case_002/normal.png", "name": "" },
     { "type": "dialogue", "speaker": null, "text": "ケース2：闘技場の不正" },
     { "type": "character", "position": "right", "image": "/images/characters/case_003/normal.png", "name": "" },

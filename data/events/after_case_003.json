@@ -10,6 +10,7 @@
     { "type": "dialogue", "speaker": "なの", "text": "ビックリじゃなくて……怖がってるんだよ。『質問する』こと自体を" },
     { "type": "dialogue", "speaker": "トイマル", "text": "……ボクも昔はそうだったのだ。『なんで？』って言葉を聞くと、ドキッとするのだ" },
     { "type": "dialogue", "speaker": "なの", "text": "……この世界、やっぱりおかしいよ" },
+    { "type": "dialogue", "speaker": null, "text": "——そのとき、明るい声が飛んできた。" },
     { "type": "character", "position": "right", "image": "/images/characters/lumina/happy.webp", "name": "ルミーナ" },
     { "type": "dialogue", "speaker": "ルミーナ", "text": "なの！ 事件解決おつかれさま！ ねぇ、今日ちょっと付き合ってよ" },
     { "type": "dialogue", "speaker": "なの", "text": "どこに？" },

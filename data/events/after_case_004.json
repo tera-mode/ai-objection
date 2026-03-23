@@ -17,6 +17,7 @@
     { "type": "dialogue", "speaker": "なの", "text": "楽譜の端に変な記号があったよね。トイマルの耳の模様に似てた" },
     { "type": "dialogue", "speaker": "トイマル", "text": "……ボクの種族と関係があるのだ？ でも……思い出せないのだ" },
     { "type": "scene", "background": "/images/events/makoto_old_archive.webp", "transition": "fade", "duration": 800 },
+    { "type": "dialogue", "speaker": null, "text": "翌日——マコト堂の旧書庫。ルミーナが息せき切って駆けてきた。" },
     { "type": "character", "position": "left", "image": "/images/characters/lumina/happy.webp", "name": "ルミーナ" },
     { "type": "character", "position": "right", "image": "/images/characters/nano/event_normal.png", "name": "なの" },
     { "type": "dialogue", "speaker": "ルミーナ", "text": "なの！ やっと見つけた！" },
