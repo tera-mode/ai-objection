@@ -270,7 +270,15 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { response: criminalResponse } = criminalData;
 
-      const newCoherence = Math.max(0, Math.min(session.maxCoherence, session.coherence + coherenceChange));
+      // 全弱点確認済み（coherenceChange=0）かつ残コヒーレンスが10%以下の場合、
+      // 毎ターン-1を強制適用してゲームが0に到達できるようにする
+      const isNearlyBroken =
+        coherenceChange === 0 &&
+        updatedExploitedWeaknesses.length > 0 &&
+        session.coherence <= Math.ceil(session.maxCoherence * 0.1);
+      const effectiveCoherenceChange = isNearlyBroken ? -1 : coherenceChange;
+
+      const newCoherence = Math.max(0, Math.min(session.maxCoherence, session.coherence + effectiveCoherenceChange));
 
       const criminalMsg: ChatMessage = {
         role: 'criminal',
