@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Volume2, VolumeX, Settings } from 'lucide-react';
 import { useGame } from '@/contexts/GameContext';
+import { useTips } from '@/components/tips/TipsProvider';
+import { TipsMenuButton } from '@/components/tips/TipsMenuButton';
 import { MessageBubble } from '@/components/game/MessageBubble';
 import { CoherenceMeter } from '@/components/game/CoherenceMeter';
 import { TurnCounter } from '@/components/game/TurnCounter';
@@ -483,6 +485,7 @@ function GameFooter({
         </button>
         <button
           onClick={onEvidenceOpen}
+          data-testid="evidence-panel"
           className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-stone-500 transition-colors hover:text-amber-600"
         >
           <span className="text-lg">📁</span>
@@ -492,6 +495,7 @@ function GameFooter({
           <button
             onClick={onToimaruOpen}
             disabled={disabled}
+            data-testid="toimaru-button"
             className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs text-amber-600 transition-colors hover:text-amber-500 disabled:text-stone-300"
           >
             <span className="text-lg">🐾</span>
@@ -509,12 +513,14 @@ function SettingsMenu({
   onRestart,
   onGoToCaseSelect,
   onGoToTitle,
+  onResetTips,
   disabled,
 }: {
   onClose: () => void;
   onRestart: () => void;
   onGoToCaseSelect: () => void;
   onGoToTitle: () => void;
+  onResetTips: () => void;
   disabled: boolean;
 }) {
   return (
@@ -553,6 +559,13 @@ function SettingsMenu({
             <span>🏠</span>
             <span>タイトルに戻る</span>
           </button>
+          <button
+            onClick={() => { onResetTips(); onClose(); }}
+            className="flex w-full items-center gap-3 rounded-xl border border-stone-200 px-4 py-3 text-left text-sm text-stone-700 transition-colors hover:bg-stone-50"
+          >
+            <span>❓</span>
+            <span>Tipsをリセット</span>
+          </button>
         </div>
       </div>
     </div>
@@ -580,6 +593,7 @@ function UnlockBanner({ evidenceName, onDismiss }: { evidenceName: string; onDis
 function InterrogationContent({ caseId }: { caseId: string }) {
   const router = useRouter();
   const { session, previousTestimony, previousConversation, isCriminalThinking, blockedWarning, sendMessage, arrestChallenge, startSession, unlockEvidence } = useGame();
+  const { checkAndShowTip, resetAllTips } = useTips();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showIntro, setShowIntro] = useState(false);
   const [showEvidence, setShowEvidence] = useState(false);
@@ -588,6 +602,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const [showObjection, setShowObjection] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const prevMessageCountRef = useRef(0);
+  const prevCoherenceRef = useRef<number | null>(null);
+  const prevUnlockedCountRef = useRef(-1); // -1 = 未初期化（セッション初回ロード時の誤発火防止）
   const [meta, setMeta] = useState<CaseMeta | null>(null);
 
   // Toimaru state
@@ -613,6 +629,12 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       .catch(console.error);
   }, [caseId]);
 
+  // 初回マウント時に screen_enter トリガー
+  useEffect(() => {
+    checkAndShowTip({ type: 'screen_enter', screen: 'interrogation', caseId });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!session) {
       router.push(`/play/${caseId}/crime-scene`);
@@ -628,6 +650,36 @@ function InterrogationContent({ caseId }: { caseId: string }) {
       router.push(`/play/${caseId}/result`);
     }
   }, [session?.phase, caseId, router]);
+
+  // コヒーレンス減少 → on_coherence_drop トリガー
+  useEffect(() => {
+    if (!session) return;
+    const current = session.coherence;
+    if (prevCoherenceRef.current !== null && current < prevCoherenceRef.current) {
+      checkAndShowTip({ type: 'coherence_drop', caseId });
+    }
+    prevCoherenceRef.current = current;
+  }, [session?.coherence, checkAndShowTip, caseId]);
+
+  // 証拠アンロック → on_first_evidence_unlock トリガー
+  // ※ セッション開始直後（prevCount が -1 = 未初期化）はスキップして
+  //   「最初から全証拠アンロック済み」の mini_prologue で誤発火しないようにする
+  useEffect(() => {
+    if (!session) {
+      prevUnlockedCountRef.current = -1;
+      return;
+    }
+    const count = (session.unlockedEvidenceIds ?? []).length;
+    if (prevUnlockedCountRef.current === -1) {
+      // セッション初回ロード時は現在値を基準にセットするだけ（トリガーしない）
+      prevUnlockedCountRef.current = count;
+      return;
+    }
+    if (count > prevUnlockedCountRef.current) {
+      checkAndShowTip({ type: 'evidence_unlock', caseId });
+    }
+    prevUnlockedCountRef.current = count;
+  }, [session?.unlockedEvidenceIds, checkAndShowTip]);
 
   // コヒーレンス0で自動逮捕
   useEffect(() => {
@@ -904,6 +956,8 @@ function InterrogationContent({ caseId }: { caseId: string }) {
                 {isVoiceModeOn ? <Volume2 className="h-3 w-3" /> : <VolumeX className="h-3 w-3" />}
                 {isVoiceModeOn ? '音声ON' : '音声OFF'}
               </button>
+              {/* Tipsボタン */}
+              <TipsMenuButton />
               {/* 設定ボタン */}
               <button
                 onClick={() => setShowSettings(true)}
@@ -1051,7 +1105,10 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         onIntroOpen={() => setShowIntro(true)}
         onEvidenceOpen={() => setShowEvidence(true)}
         onLogOpen={() => setShowLog(true)}
-        onToimaruOpen={() => setShowToimaru(true)}
+        onToimaruOpen={() => {
+          setShowToimaru(true);
+          checkAndShowTip({ type: 'toimaru_open', caseId });
+        }}
         disabled={isCriminalThinking}
         hasCompanion={meta.hasCompanion}
       />
@@ -1088,10 +1145,12 @@ function InterrogationContent({ caseId }: { caseId: string }) {
           onKeywordSubmit={handleKeywordSubmit}
         />
       )}
+
       {showSettings && (
         <SettingsMenu
           onClose={() => setShowSettings(false)}
           disabled={isCriminalThinking}
+          onResetTips={resetAllTips}
           onRestart={() => {
             setShowSettings(false);
             if (confirm('尋問をやり直しますか？')) {

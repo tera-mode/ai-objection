@@ -1,0 +1,120 @@
+{
+  "tips": [
+    {
+      "id": "tip_input_basics",
+      "title": "質問してみよう",
+      "text": "ここに文字を入力して、ガメ吉に質問しよう！\n「なんで手が汚れてるの？」のように、気になったことを自由に聞いてみよう。",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "on_first_enter_case",
+        "caseId": "mini_prologue"
+      },
+      "highlight": {
+        "targetTestId": "player-input",
+        "style": "pulse"
+      },
+      "order": 100
+    },
+    {
+      "id": "tip_coherence_intro",
+      "title": "動揺メーター",
+      "text": "上のメーターは容疑者の「動揺度」だよ。\nいい質問をすると、メーターが減っていく。ゼロになったら逮捕成功！",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "on_coherence_drop",
+        "caseId": "mini_prologue"
+      },
+      "highlight": {
+        "targetTestId": "coherence-meter",
+        "style": "pulse"
+      },
+      "order": 110
+    },
+    {
+      "id": "tip_crime_scene",
+      "title": "事件を確認しよう",
+      "text": "まずは事件のあらましを読もう。\n何が起きたか、だれが関わっているかを確かめてから尋問に進もう。",
+      "image": null,
+      "trigger": {
+        "screen": "crime-scene",
+        "timing": "on_first_enter_case",
+        "caseId": "case_001"
+      },
+      "highlight": null,
+      "order": 200
+    },
+    {
+      "id": "tip_evidence_check",
+      "title": "証拠を確認しよう",
+      "text": "証拠がアンロックされたよ！\nここから証拠を確認して、おかしな点を見つけよう。証拠をもとに質問すると効果バツグン！",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "on_first_evidence_unlock",
+        "caseId": null
+      },
+      "highlight": {
+        "targetTestId": "evidence-panel",
+        "style": "pulse"
+      },
+      "order": 210
+    },
+    {
+      "id": "tip_toimaru_intro",
+      "title": "トイマルに話しかけよう",
+      "text": "🐾 トイマルボタンを押すと、トイマルのパネルが開くよ。\n犯人の発言で気になった言葉をトイマルに伝えると、新しい証拠が見つかるかも！",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "on_first_enter_case",
+        "caseId": "case_001"
+      },
+      "highlight": {
+        "targetTestId": "toimaru-button",
+        "style": "pulse"
+      },
+      "order": 220
+    },
+    {
+      "id": "tip_toimaru_usage",
+      "title": "キーワードを渡そう",
+      "text": "犯人の発言から気になる言葉を選んで、トイマルに渡してみよう。\nトイマルが関連する証拠を思い出してくれるかも！",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "on_first_toimaru_open",
+        "caseId": null
+      },
+      "highlight": null,
+      "order": 230
+    },
+    {
+      "id": "tip_rules_overview",
+      "title": "ゲームのルール",
+      "text": "容疑者に自由に質問して、矛盾を見つけよう！\n\n🎯 目的：動揺メーターをゼロにして逮捕\n💬 質問：テキスト入力で自由に聞ける\n🐾 トイマル：証拠を見つけてくれるパートナー\n📦 証拠：トイマルがアンロックした証拠を突きつけよう",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "manual_only",
+        "caseId": null
+      },
+      "highlight": null,
+      "order": 10
+    },
+    {
+      "id": "tip_turn_limit",
+      "title": "ターン制限について",
+      "text": "質問できる回数には限りがあるよ。\nむだな質問はなるべく避けて、気になることをズバッと聞こう！\nトイマルに話しかけるのはターンを使わないよ。",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "manual_only",
+        "caseId": null
+      },
+      "highlight": null,
+      "order": 20
+    }
+  ]
+}

@@ -6,7 +6,7 @@ interface CoherenceMeterProps {
 }
 
 export function CoherenceMeter({ coherence, maxCoherence = 100 }: CoherenceMeterProps) {
-  const pct = maxCoherence > 0 ? coherence / maxCoherence : 0;
+  const pct = maxCoherence > 0 ? Math.min(1, Math.max(0, coherence / maxCoherence)) : 0;
 
   const getColor = () => {
     if (pct >= 0.7) return 'bg-cyan-500';

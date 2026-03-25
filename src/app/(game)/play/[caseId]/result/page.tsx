@@ -126,6 +126,12 @@ function ResultContent({ caseId }: { caseId: string }) {
                   🔄 前回の証言を活かして再挑戦する
                 </button>
               )}
+              <button
+                onClick={() => router.push('/play')}
+                className="w-full rounded-xl border border-stone-300 bg-white py-4 font-semibold text-stone-700 transition-colors hover:border-amber-400 hover:text-stone-900"
+              >
+                ケース選択に戻る
+              </button>
             </>
           ) : (
             <>

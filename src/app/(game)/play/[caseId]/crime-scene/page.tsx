@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useGame } from '@/contexts/GameContext';
+import { useTips } from '@/components/tips/TipsProvider';
 import { authenticatedFetch } from '@/lib/api/authenticatedFetch';
 
 // ケース別イントロ画像
@@ -23,6 +24,7 @@ const INTRO_IMAGES: Record<string, string> = {
 
 // ケース別・容疑者登場用画像
 const CRIMINAL_BG: Record<string, string> = {
+  mini_prologue: '/images/backgrounds/fantasy_bg.jpg',
   case_001: '/images/backgrounds/case_001_interrogation.jpg',
   case_002: '/images/backgrounds/case_002_interrogation.jpg',
   case_003: '/images/backgrounds/case_003_interrogation.jpg',
@@ -34,6 +36,7 @@ const CRIMINAL_BG: Record<string, string> = {
 };
 
 const CRIMINAL_CHAR: Record<string, string> = {
+  mini_prologue: '/images/characters/gamekichi/smug.png',
   case_001: '/images/characters/case_001/normal.png',
   case_002: '/images/characters/case_002/normal.png',
   case_003: '/images/characters/case_003/normal.png',
@@ -55,8 +58,15 @@ interface CasePageData {
 function CrimeSceneContent({ caseId }: { caseId: string }) {
   const router = useRouter();
   const { startSession, isLoading, previousTestimony } = useGame();
+  const { checkAndShowTip } = useTips();
   const [phase, setPhase] = useState<'intro' | 'criminal' | 'previous'>('intro');
   const [data, setData] = useState<CasePageData | null>(null);
+
+  // 初回マウント時に screen_enter トリガー
+  useEffect(() => {
+    checkAndShowTip({ type: 'screen_enter', screen: 'crime-scene', caseId });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     authenticatedFetch(`/api/get-case?caseId=${caseId}`)
