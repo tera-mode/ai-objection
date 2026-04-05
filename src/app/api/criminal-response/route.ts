@@ -86,7 +86,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Geminiが証明度トークン(__confirmed__等)を出力することがあるため除去する
-    const response = result!.text?.replace(/^__\w+__\s*/, '').trim();
+    let response = result!.text?.replace(/^__\w+__\s*/, '').trim();
+
+    // 殺害否定フィルター: 直接証拠が提示されていない場合の「殺してない」等の表現を除去
+    // （複数のプロンプト禁止ルールをAIが無視する場合の安全網）
+    if (response) {
+      const murderDenialPattern = /[^。！？\n]*?(殺してない|殺していない|殺すわけ[なねがー][えいい]|殺すわけない|俺が殺す|私が殺す|あたしが殺す|手を下して[なiいいは])[^。！？\n]*/g;
+      const cleaned = response.replace(murderDenialPattern, '').replace(/\n{3,}/g, '\n\n').trim();
+      if (cleaned.length > 0) {
+        response = cleaned;
+      }
+    }
 
     if (!response) {
       return NextResponse.json({ error: 'Empty response from AI' }, { status: 500 });
