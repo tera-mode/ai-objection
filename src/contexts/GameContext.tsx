@@ -292,10 +292,10 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
       const finalMessages = [...updatedMessages, criminalMsg];
 
       // ゲーム終了判定
-      const isGameOver = (session.maxTurns != null && currentTurn >= session.maxTurns) || newCoherence <= 0;
-      const verdict = isGameOver
-        ? (newCoherence <= 0 ? 'arrest' : 'escape')
-        : null;
+      // ※ newCoherence <= 0 は「犯人はあなたです！」ボタン表示の契機であり、
+      //   ここでは phase を 'result' にしない。arrestChallenge() が呼ばれたときに遷移する。
+      const isTurnOver = session.maxTurns != null && currentTurn >= session.maxTurns;
+      const verdict = isTurnOver ? 'escape' : null;
 
       const updatedSession: GameSession = {
         ...session,
@@ -303,8 +303,8 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
         turn: currentTurn,
         coherence: newCoherence,
         exploitedWeaknesses: updatedExploitedWeaknesses,
-        phase: isGameOver ? 'result' : 'interrogation',
-        isCompleted: isGameOver,
+        phase: isTurnOver ? 'result' : 'interrogation',
+        isCompleted: isTurnOver,
         verdict,
         updatedAt: new Date(),
       };
