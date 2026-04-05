@@ -7,6 +7,7 @@ export interface TipTrigger {
     | 'on_first_evidence_unlock'
     | 'on_coherence_drop'
     | 'on_first_toimaru_open'
+    | 'on_first_message_sent'
     | 'manual_only';
   caseId?: string | null;
   condition?: string | null;
@@ -37,7 +38,8 @@ export type TipTriggerEvent =
   | { type: 'turn_complete'; turn: number; caseId?: string }
   | { type: 'evidence_unlock'; caseId?: string }
   | { type: 'coherence_drop'; caseId?: string }
-  | { type: 'toimaru_open'; caseId?: string };
+  | { type: 'toimaru_open'; caseId?: string }
+  | { type: 'first_message_sent'; caseId?: string };
 
 export interface TipsContextValue {
   activeTip: Tip | null;

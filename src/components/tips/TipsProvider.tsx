@@ -80,6 +80,10 @@ export function TipsProvider({ children }: { children: ReactNode }) {
             Number(tip.trigger.condition) === event.turn
           );
         }
+        if (event.type === 'first_message_sent') {
+          if (tip.trigger.caseId && tip.trigger.caseId !== event.caseId) return false;
+          return tip.trigger.timing === 'on_first_message_sent';
+        }
         return false;
       });
 

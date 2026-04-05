@@ -604,7 +604,9 @@ function InterrogationContent({ caseId }: { caseId: string }) {
   const prevMessageCountRef = useRef(0);
   const prevCoherenceRef = useRef<number | null>(null);
   const prevUnlockedCountRef = useRef(-1); // -1 = 未初期化（セッション初回ロード時の誤発火防止）
+  const hasSentFirstMessageRef = useRef(false);
   const [meta, setMeta] = useState<CaseMeta | null>(null);
+  const [showArrestButton, setShowArrestButton] = useState(false);
 
   // Toimaru state
   const [chips, setChips] = useState<string[]>([]);
@@ -681,17 +683,24 @@ function InterrogationContent({ caseId }: { caseId: string }) {
     prevUnlockedCountRef.current = count;
   }, [session?.unlockedEvidenceIds, checkAndShowTip]);
 
-  // コヒーレンス0で自動逮捕
+  // コヒーレンス0 → 「犯人はあなたです！」ボタンを表示
   useEffect(() => {
     if (!session) return;
     if (session.coherence <= 0 && !session.isCompleted && !isCriminalThinking) {
-      // 少しディレイを置いて自然な流れに
-      const timer = setTimeout(() => {
-        arrestChallenge();
-      }, 800);
-      return () => clearTimeout(timer);
+      setShowArrestButton(true);
     }
-  }, [session?.coherence, session?.isCompleted, isCriminalThinking, arrestChallenge]);
+  }, [session?.coherence, session?.isCompleted, isCriminalThinking]);
+
+  // 初回メッセージ送信 → 音声入力Tipsトリガー
+  useEffect(() => {
+    if (!session) return;
+    if (hasSentFirstMessageRef.current) return;
+    const hasPlayerMessage = session.messages.some((m) => m.role === 'player');
+    if (hasPlayerMessage) {
+      hasSentFirstMessageRef.current = true;
+      checkAndShowTip({ type: 'first_message_sent', caseId });
+    }
+  }, [session?.messages, checkAndShowTip, caseId]);
 
   // 犯人の新しいメッセージ → TTS再生 + チップ生成
   useEffect(() => {
@@ -1074,31 +1083,50 @@ function InterrogationContent({ caseId }: { caseId: string }) {
         </div>
       </div>
 
-      {/* 入力エリア */}
-      <div className="shrink-0 border-t border-stone-200">
-        <div className="mx-auto max-w-md">
-          <div className="flex items-end gap-2 px-2 py-2">
-            <div className="flex-1">
-              <InputArea
-                onSend={sendMessage}
-                disabled={isCriminalThinking || isGameOver || voiceState === 'recording' || voiceState === 'processing'}
-                placeholder={isGameOver ? 'ゲーム終了' : '容疑者に質問する...'}
-              />
-            </div>
-            {isVoiceModeOn && (
-              <div className="mb-3 shrink-0">
-                <VoiceButton
-                  voiceState={voiceState}
-                  onStart={startRecording}
-                  onStop={stopRecording}
-                  onCancel={cancelRecording}
-                  disabled={isCriminalThinking || isGameOver}
-                />
-              </div>
-            )}
+      {/* コヒーレンス0 → 逮捕ボタン */}
+      {showArrestButton && !session.isCompleted && (
+        <div className="shrink-0 border-t border-stone-200 bg-amber-50 px-4 py-4">
+          <div className="mx-auto max-w-md">
+            <button
+              onClick={() => {
+                setShowArrestButton(false);
+                arrestChallenge();
+              }}
+              className="w-full rounded-2xl bg-red-600 px-6 py-4 text-base font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-red-700"
+            >
+              犯人はあなたです！
+            </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* 入力エリア */}
+      {!showArrestButton && (
+        <div className="shrink-0 border-t border-stone-200">
+          <div className="mx-auto max-w-md">
+            <div className="flex items-end gap-2 px-2 py-2">
+              <div className="flex-1">
+                <InputArea
+                  onSend={sendMessage}
+                  disabled={isCriminalThinking || isGameOver || voiceState === 'recording' || voiceState === 'processing'}
+                  placeholder={isGameOver ? 'ゲーム終了' : '容疑者に質問する...'}
+                />
+              </div>
+              {isVoiceModeOn && (
+                <div className="mb-3 shrink-0">
+                  <VoiceButton
+                    voiceState={voiceState}
+                    onStart={startRecording}
+                    onStop={stopRecording}
+                    onCancel={cancelRecording}
+                    disabled={isCriminalThinking || isGameOver}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ゲーム専用フッター（逮捕ボタンなし、トイマルボタンあり） */}
       <GameFooter

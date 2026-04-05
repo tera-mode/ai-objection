@@ -17,6 +17,22 @@
       "order": 100
     },
     {
+      "id": "tip_voice_input",
+      "title": "音声でプレイしよう",
+      "text": "文字入力が難しければ、音声とマイクでプレイしよう！\nマイクボタンを押して話しかけるだけで質問できるよ。",
+      "image": null,
+      "trigger": {
+        "screen": "interrogation",
+        "timing": "on_first_message_sent",
+        "caseId": "mini_prologue"
+      },
+      "highlight": {
+        "targetTestId": "voice-toggle-button",
+        "style": "pulse"
+      },
+      "order": 105
+    },
+    {
       "id": "tip_coherence_intro",
       "title": "動揺メーター",
       "text": "上のメーターは容疑者の「動揺度」だよ。\nいい質問をすると、メーターが減っていく。ゼロになったら逮捕成功！",

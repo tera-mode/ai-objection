@@ -23,7 +23,12 @@ function splitCriminalMessage(text: string): string[] {
     const ch = cleaned[i];
 
     // 文末記号で、ある程度長さがあればここで区切る
+    // ！？のような連続する文末記号はまとめて取り込んでから区切る（別吹き出し防止）
     if ('。！？'.includes(ch) && current.length >= 15) {
+      while (i + 1 < cleaned.length && '。！？'.includes(cleaned[i + 1])) {
+        i++;
+        current += cleaned[i];
+      }
       segments.push(current.trim());
       current = '';
     } else if (current.length >= 55 && (cleaned[i] === ' ' || cleaned[i] === '　')) {
