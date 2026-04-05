@@ -97,10 +97,22 @@ export async function POST(request: NextRequest) {
       const physicalAssaultPattern = /[^。！？\n]*?(わし[がはも]|私[がはも]|俺[がはも]|あたし[がはも]|ぼく[がはも]|僕[がはも])[^。！？\n]{0,20}(突き落とし|突き飛ばし|押してしまっ|もみ合い)[^。！？\n]*/g;
       // 暗示的自白パターン（「わしのせいで」「つもりはなかった」等）
       const impliedGuiltPattern = /[^。！？\n]*?(わしのせい[でに]|私のせい[でに]|俺のせい[でに]|あたしのせい[でに]|[傷殺]めるつもり[はなが]|ただ[^\n。！？]{0,15}たかっただけ)[^。！？\n]*/g;
+      // 動機+行動の告白パターン（「だから私は〜した/しました」）- proofLevel='none'時のみ
+      const motivationConfessionPattern = proofLevel === 'none'
+        ? /[^。！？\n]*?だから[^。！？\n]{0,10}(私|わし|俺|あたし|ぼく|僕)[はが][^。！？\n]*(しました|した。|させました|させた。)[^。！？\n]*/g
+        : null;
+      // 犯行計画告白パターン（「全て計算のうち」等）- proofLevel='none'時のみ
+      const planConfessionPattern = proofLevel === 'none'
+        ? /[^。！？\n]*?(全て?計算のうちでし|全て?計画のうちでし|最初から計算し|意図してい)[^。！？\n]*/g
+        : null;
+
       let cleaned = response
         .replace(murderDenialPattern, '')
         .replace(physicalAssaultPattern, '')
-        .replace(impliedGuiltPattern, '')
+        .replace(impliedGuiltPattern, '');
+      if (motivationConfessionPattern) cleaned = cleaned.replace(motivationConfessionPattern, '');
+      if (planConfessionPattern) cleaned = cleaned.replace(planConfessionPattern, '');
+      cleaned = cleaned
         .replace(/^[。！？\s]+$/gm, '')   // 残った孤立句読点行を除去
         .replace(/\n{3,}/g, '\n\n')
         .trim();
