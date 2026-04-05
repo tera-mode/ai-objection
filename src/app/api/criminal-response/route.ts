@@ -88,11 +88,22 @@ export async function POST(request: NextRequest) {
     // Geminiが証明度トークン(__confirmed__等)を出力することがあるため除去する
     let response = result!.text?.replace(/^__\w+__\s*/, '').trim();
 
-    // 殺害否定フィルター: 直接証拠が提示されていない場合の「殺してない」等の表現を除去
+    // 犯行自白フィルター: 物証なし状態での直接自白表現を除去
     // （複数のプロンプト禁止ルールをAIが無視する場合の安全網）
     if (response) {
+      // 殺害否定パターン（「殺してない」等）
       const murderDenialPattern = /[^。！？\n]*?(殺してない|殺していない|殺すわけ[なねがー][えいい]|殺すわけない|俺が殺す|私が殺す|あたしが殺す|手を下して[なiいいは])[^。！？\n]*/g;
-      const cleaned = response.replace(murderDenialPattern, '').replace(/\n{3,}/g, '\n\n').trim();
+      // 物理的加害自白パターン（「突き落とした」「突き飛ばした」等の一人称自白）
+      const physicalAssaultPattern = /[^。！？\n]*?(わし[がはも]|私[がはも]|俺[がはも]|あたし[がはも]|ぼく[がはも]|僕[がはも])[^。！？\n]{0,20}(突き落とし|突き飛ばし|押してしまっ|もみ合い)[^。！？\n]*/g;
+      // 暗示的自白パターン（「わしのせいで」「つもりはなかった」等）
+      const impliedGuiltPattern = /[^。！？\n]*?(わしのせい[でに]|私のせい[でに]|俺のせい[でに]|あたしのせい[でに]|[傷殺]めるつもり[はなが]|ただ[^\n。！？]{0,15}たかっただけ)[^。！？\n]*/g;
+      let cleaned = response
+        .replace(murderDenialPattern, '')
+        .replace(physicalAssaultPattern, '')
+        .replace(impliedGuiltPattern, '')
+        .replace(/^[。！？\s]+$/gm, '')   // 残った孤立句読点行を除去
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
       if (cleaned.length > 0) {
         response = cleaned;
       }
